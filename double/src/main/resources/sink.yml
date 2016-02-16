@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input: testtock
+  
