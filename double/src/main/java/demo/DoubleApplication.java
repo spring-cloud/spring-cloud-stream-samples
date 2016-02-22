@@ -17,7 +17,7 @@
 package demo;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.aggregate.AggregateApplication;
+import org.springframework.cloud.stream.aggregate.AggregateApplicationBuilder;
 
 import config.sink.SinkApplication;
 import config.source.SourceApplication;
@@ -26,7 +26,9 @@ import config.source.SourceApplication;
 public class DoubleApplication {
 
 	public static void main(String[] args) {
-		AggregateApplication.run(SourceApplication.class, SinkApplication.class);
+		new AggregateApplicationBuilder().
+				from(SourceApplication.class).args("--fixedDelay=5000")
+				.to(SinkApplication.class).args("--debug=true").run("--spring.application.name=aggregate-test");
 	}
 
 }
