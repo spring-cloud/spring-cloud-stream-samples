@@ -2,6 +2,11 @@
 
 There are several samples, all running on the redis transport (so you need redis running locally to test them).
 
+To build the samples do:
+
+```
+   ./mvnw clean build
+```
 
 NOTE: The main set of samples are "vanilla" in the sense that they are not deployable as XD modules by the current generation (1.x) of XD. You can still interact with an XD system using the appropriate naming convention for input and output channel names (`<stream>.<index>` format).
 
