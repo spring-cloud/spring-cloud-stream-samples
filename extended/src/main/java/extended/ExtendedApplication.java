@@ -20,12 +20,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.aggregate.AggregateBuilder;
 import org.springframework.cloud.stream.aggregate.AggregateConfigurer;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 
 import demo.LogSink;
 import demo.LoggingTransformer;
 import demo.TimeSource;
 
 @SpringBootApplication
+@EnableBinding
 public class ExtendedApplication implements AggregateConfigurer {
 
 	@Override
@@ -40,7 +42,7 @@ public class ExtendedApplication implements AggregateConfigurer {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(ExtendedApplication.class, args);
+		SpringApplication.run(ExtendedApplication.class, "--server.port=0");
 	}
 
 }
