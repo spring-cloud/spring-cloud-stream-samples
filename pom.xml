@@ -23,7 +23,6 @@
 		<module>sink</module>
 		<module>transform</module>
 		<module>double</module>
-		<module>extended</module>
 		<module>multibinder</module>
 		<module>multibinder-differentsystems</module>
 		<module>rxjava-processor</module>
