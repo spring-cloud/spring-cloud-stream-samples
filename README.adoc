@@ -18,8 +18,6 @@ NOTE: The main set of samples are "vanilla" in the sense that they are not deplo
 
 * `double` is a combination of 2 modules defined locally (a source and a sink, so the whole app is self contained).
 
-* `extended` is a multi-module mashup of `source | transform | transform | sink`, where the modules are defined in the other samples and referred to in this app just as dependencies.
-
 * `multibinder` is a sample application that shows how an application could use multiple binders. In this case, the processor's input/output channels connect to different brokers using their own binder configurations.
 
 * `multibinder-differentsystems` shows how an application could use same binder implementation but different configurations for its channels. In this case, a processor's input/output channels connect to same binder implementation but with two separate broker configurations.
