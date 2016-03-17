@@ -21,4 +21,5 @@ spring:
   cloud:
     stream:
       bindings:
-        output: xformed
+        output:
+          destination: xformed

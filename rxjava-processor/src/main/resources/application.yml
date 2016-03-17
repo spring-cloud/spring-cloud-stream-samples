@@ -4,5 +4,7 @@ spring:
   cloud:
     stream:
       bindings:
-        output: xformed
-        input: testtock
+        output:
+          destination: xformed
+        input:
+          destination: testtock
