@@ -33,8 +33,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.binder.BinderFactory;
+import org.springframework.cloud.stream.binder.kafka.KafkaConsumerProperties;
 import org.springframework.cloud.stream.binder.kafka.KafkaMessageChannelBinder;
+import org.springframework.cloud.stream.binder.kafka.KafkaProducerProperties;
 import org.springframework.cloud.stream.test.junit.kafka.KafkaTestSupport;
 import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.integration.channel.DirectChannel;
@@ -76,13 +79,15 @@ public class TwoKafkaBindersApplicationTest {
 
 	@Test
 	public void contextLoads() {
-		KafkaMessageChannelBinder kafka1 = (KafkaMessageChannelBinder) binderFactory.getBinder("kafka1");
+		Binder<MessageChannel, ?, ?> binder1 = binderFactory.getBinder("kafka1");
+		KafkaMessageChannelBinder kafka1 = (KafkaMessageChannelBinder) binder1;
 		DirectFieldAccessor directFieldAccessor = new DirectFieldAccessor(kafka1.getConnectionFactory());
 		Configuration configuration = (Configuration) directFieldAccessor.getPropertyValue("configuration");
 		List<BrokerAddress> brokerAddresses = configuration.getBrokerAddresses();
 		Assert.assertThat(brokerAddresses, hasSize(1));
 		Assert.assertThat(brokerAddresses, contains(BrokerAddress.fromAddress(kafkaTestSupport1.getBrokerAddress())));
-		KafkaMessageChannelBinder kafka2 = (KafkaMessageChannelBinder) binderFactory.getBinder("kafka2");
+		Binder<MessageChannel,? ,?> binder2 = binderFactory.getBinder("kafka2");
+		KafkaMessageChannelBinder kafka2 = (KafkaMessageChannelBinder) binder2;
 		DirectFieldAccessor directFieldAccessor2 = new DirectFieldAccessor(kafka2.getConnectionFactory());
 		Configuration configuration2 = (Configuration) directFieldAccessor2.getPropertyValue("configuration");
 		List<BrokerAddress> brokerAddresses2 = configuration2.getBrokerAddresses();
@@ -93,11 +98,12 @@ public class TwoKafkaBindersApplicationTest {
 	@Test
 	public void messagingWorks() {
 		DirectChannel dataProducer = new DirectChannel();
-		binderFactory.getBinder("kafka1").bindProducer("dataIn", dataProducer, null);
+		((KafkaMessageChannelBinder)binderFactory.getBinder("kafka1"))
+				.bindProducer("dataIn", dataProducer, new KafkaProducerProperties());
 
 		QueueChannel dataConsumer = new QueueChannel();
-		binderFactory.getBinder("kafka2").bindConsumer("dataOut", UUID.randomUUID().toString(),
-				dataConsumer, null);
+		((KafkaMessageChannelBinder)binderFactory.getBinder("kafka2")).bindConsumer("dataOut", UUID.randomUUID().toString(),
+				dataConsumer, new KafkaConsumerProperties());
 
 		String testPayload = "testFoo" + UUID.randomUUID().toString();
 		dataProducer.send(MessageBuilder.withPayload(testPayload).build());

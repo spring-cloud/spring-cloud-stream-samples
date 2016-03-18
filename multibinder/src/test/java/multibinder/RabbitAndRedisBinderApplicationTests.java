@@ -30,6 +30,10 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.stream.binder.BinderFactory;
+import org.springframework.cloud.stream.binder.ProducerProperties;
+import org.springframework.cloud.stream.binder.rabbit.RabbitConsumerProperties;
+import org.springframework.cloud.stream.binder.rabbit.RabbitMessageChannelBinder;
+import org.springframework.cloud.stream.binder.redis.RedisMessageChannelBinder;
 import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
 import org.springframework.integration.channel.DirectChannel;
@@ -77,11 +81,12 @@ public class RabbitAndRedisBinderApplicationTests {
 	@Test
 	public void messagingWorks() {
 		DirectChannel dataProducer = new DirectChannel();
-		binderFactory.getBinder("redis").bindProducer("dataIn", dataProducer, null);
+		((RedisMessageChannelBinder)binderFactory.getBinder("redis"))
+				.bindProducer("dataIn", dataProducer, new ProducerProperties());
 
 		QueueChannel dataConsumer = new QueueChannel();
-		binderFactory.getBinder("rabbit").bindConsumer("dataOut", this.randomGroup,
-				dataConsumer, null);
+		((RabbitMessageChannelBinder)binderFactory.getBinder("rabbit")).bindConsumer("dataOut", this.randomGroup,
+				dataConsumer, new RabbitConsumerProperties());
 
 		String testPayload = "testFoo" + this.randomGroup;
 		dataProducer.send(MessageBuilder.withPayload(testPayload).build());
