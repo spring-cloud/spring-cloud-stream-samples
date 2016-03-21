@@ -26,6 +26,7 @@
 		<module>multibinder-differentsystems</module>
 		<module>rxjava-processor</module>
 		<module>multi-io</module>
+		<module>stream-listener</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
