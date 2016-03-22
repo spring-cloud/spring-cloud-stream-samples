@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.binder.BinderFactory;
+import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
+import org.springframework.cloud.stream.binder.ExtendedProducerProperties;
 import org.springframework.cloud.stream.binder.kafka.KafkaConsumerProperties;
 import org.springframework.cloud.stream.binder.kafka.KafkaMessageChannelBinder;
 import org.springframework.cloud.stream.binder.kafka.KafkaProducerProperties;
@@ -86,7 +88,7 @@ public class TwoKafkaBindersApplicationTest {
 		List<BrokerAddress> brokerAddresses = configuration.getBrokerAddresses();
 		Assert.assertThat(brokerAddresses, hasSize(1));
 		Assert.assertThat(brokerAddresses, contains(BrokerAddress.fromAddress(kafkaTestSupport1.getBrokerAddress())));
-		Binder<MessageChannel,? ,?> binder2 = binderFactory.getBinder("kafka2");
+		Binder<MessageChannel, ?, ?> binder2 = binderFactory.getBinder("kafka2");
 		KafkaMessageChannelBinder kafka2 = (KafkaMessageChannelBinder) binder2;
 		DirectFieldAccessor directFieldAccessor2 = new DirectFieldAccessor(kafka2.getConnectionFactory());
 		Configuration configuration2 = (Configuration) directFieldAccessor2.getPropertyValue("configuration");
@@ -98,12 +100,12 @@ public class TwoKafkaBindersApplicationTest {
 	@Test
 	public void messagingWorks() {
 		DirectChannel dataProducer = new DirectChannel();
-		((KafkaMessageChannelBinder)binderFactory.getBinder("kafka1"))
-				.bindProducer("dataIn", dataProducer, new KafkaProducerProperties());
+		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka1"))
+				.bindProducer("dataIn", dataProducer, new ExtendedProducerProperties<>(new KafkaProducerProperties()));
 
 		QueueChannel dataConsumer = new QueueChannel();
-		((KafkaMessageChannelBinder)binderFactory.getBinder("kafka2")).bindConsumer("dataOut", UUID.randomUUID().toString(),
-				dataConsumer, new KafkaConsumerProperties());
+		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka2")).bindConsumer("dataOut", UUID.randomUUID().toString(),
+				dataConsumer, new ExtendedConsumerProperties<>(new KafkaConsumerProperties()));
 
 		String testPayload = "testFoo" + UUID.randomUUID().toString();
 		dataProducer.send(MessageBuilder.withPayload(testPayload).build());
