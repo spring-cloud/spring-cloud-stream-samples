@@ -24,16 +24,19 @@ message mapping and automatic type conversion.
                       The annotation @SendTo on the message handler method will make sure to send the output to the provided output channel.
 * SampleSink - the app that receives the converted message from the transformer output.
 
+Please note that the applications (SampleSource, SampleTransformer and SampleSink) are bundled inside the single application for the demo
+purpose only. In practice, these applications run on their own. If at all they need to be bundled together, the best practice is to use
+`AggregateApplicationBuilder`. Refer the sample `double` for more info on aggregate application.
 
 ## Building with Maven
 
 Build the sample by executing:
 
-	source>$ mvn clean package
+	>$ mvn clean package
 
 ## Running the Sample
 
 To start the source module execute the following:
 
-	stream-listener>$ java -jar target/spring-cloud-stream-sample-stream-listener-1.0.0.BUILD-SNAPSHOT-exec.jar
+	>$ java -jar target/spring-cloud-stream-sample-stream-listener-1.0.0.BUILD-SNAPSHOT-exec.jar
 
