@@ -17,8 +17,8 @@ spring:
            spring:
              cloud:
                stream:
-                binder:
-                  kafka:
+                kafka:
+                  binder:
                     brokers: ${kafkaBroker1}
                     zkNodes: ${zk1}
         kafka2:
@@ -27,7 +27,7 @@ spring:
            spring:
              cloud:
                stream:
-                 binder:
-                   kafka:
+                 kafka:
+                   binder:
                      brokers: ${kafkaBroker2}
                      zkNodes: ${zk2}
