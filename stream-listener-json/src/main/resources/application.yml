@@ -4,7 +4,7 @@ spring:
   cloud:
     stream:
       bindings:
-        sample-source:
+        output:
           destination: sample
-        sample-sink:
+        input:
           destination: sample

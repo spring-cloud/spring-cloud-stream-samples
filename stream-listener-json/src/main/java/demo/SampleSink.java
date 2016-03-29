@@ -17,44 +17,21 @@
 package demo;
 
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.SubscribableChannel;
+import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Ilayaperumal Gopinathan
  */
-@EnableBinding(SampleSink.Sink.class)
+@EnableBinding(Sink.class)
 public class SampleSink {
 
 	// Sink application definition
-	@StreamListener(Sink.SAMPLE)
-	public void receive(Bar barMessage) {
-		System.out.println("******************");
-		System.out.println("At the Sink");
-		System.out.println("******************");
-		System.out.println("Received transformed message value: " + barMessage.getValue() + " of type " + barMessage.getClass());
-		System.out.println("******************");
+	@StreamListener(Sink.INPUT)
+	public void receive(SimplePojo simplePojo) {
+		System.out.println("Received instance of " + simplePojo.getClass() + ", " + simplePojo.toString());
 	}
 
-	public interface Sink {
-		String SAMPLE = "sample-sink";
 
-		@Input(SAMPLE)
-		SubscribableChannel sampleSink();
-	}
-
-	public static class Bar {
-
-		private String value;
-
-		public String getValue() {
-			return this.value;
-		}
-
-		public void setValue(String value) {
-			this.value = value;
-		}
-
-	}
 }
