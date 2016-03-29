@@ -1,0 +1,10 @@
+server:
+  port: 8082
+spring:
+  cloud:
+    stream:
+      bindings:
+        sample-source:
+          destination: sample
+        sample-sink:
+          destination: sample
