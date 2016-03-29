@@ -20,6 +20,7 @@ import org.springframework.cloud.stream.converter.AbstractFromMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.util.MimeType;
 
 /**
@@ -49,11 +50,11 @@ public class Converters {
 
 	public static class Bar {
 
+		private String value = "init";
+
 		public Bar(String value) {
 			this.value = value;
 		}
-
-		private String value = "init";
 
 		public String getValue() {
 			return this.value;
@@ -92,7 +93,7 @@ public class Converters {
 			}
 			catch (Exception e) {
 				logger.error(e.getMessage(), e);
-				return null;
+				throw new MessageConversionException(e.getMessage());
 			}
 			return result;
 		}
