@@ -20,7 +20,8 @@ message mapping and automatic type conversion from JSON to POJO.
 * SampleSource - the app that generates a message of content-type `application/json`
 * SampleSink - the app that receives the converted message (JSON to the object of type Bar) from the Source output.
 				In this case, JsonToPojoMessageConverter is used automatically.
-
+				
+Note: For demo purpose, both the Source and Sink application configuration properties are updated in the same `application.yml` file.
 
 ## Building with Maven
 
@@ -33,4 +34,10 @@ Build the sample by executing:
 To start the source module execute the following:
 
 	>$ java -jar target/spring-cloud-stream-sample-stream-listener-json-1.0.0.BUILD-SNAPSHOT-exec.jar
+	
+Once the application is started (the Source application starts sending messages),
+you would see the messages received at the Sink like the following:
+
+Received instance of class demo.SimplePojo, SimplePojo{value='test'}
+Received instance of class demo.SimplePojo, SimplePojo{value='test'}
 

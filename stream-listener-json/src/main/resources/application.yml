@@ -6,5 +6,6 @@ spring:
       bindings:
         output:
           destination: sample
+          contentType: application/json
         input:
           destination: sample

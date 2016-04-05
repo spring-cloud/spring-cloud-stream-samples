@@ -17,16 +17,12 @@
 package demo;
 
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.annotation.InboundChannelAdapter;
-import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 
 /**
  * @author Ilayaperumal Gopinathan
@@ -38,13 +34,10 @@ public class SampleSource {
 	@InboundChannelAdapter(value = Source.OUTPUT)
 	public MessageSource<String> timerMessageSource() {
 		return new MessageSource<String>() {
+			@Override
 			public Message<String> receive() {
-				String message = "{\"value\":\"test\"}";
-				System.out.println("Sending JSON message: " + message);
-				return MessageBuilder.withPayload(message).setHeader("contentType", "application/json").build();
+				return MessageBuilder.withPayload("{\"value\":\"test\"}").build();
 			}
 		};
 	}
-
-
 }
