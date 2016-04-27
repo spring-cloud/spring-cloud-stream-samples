@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-stream-samples</artifactId>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/spring-cloud/spring-cloud-stream-samples</url>
 	<organization>
@@ -10,11 +12,13 @@
 	</organization>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-stream-parent</artifactId>
-		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<artifactId>spring-cloud-build</artifactId>
+		<version>1.1.0.RC2</version>
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring-cloud-stream.version>1.0.0.RC3</spring-cloud-stream.version>
+		<spring-cloud-stream-binder-redis.version>1.0.0.RC2</spring-cloud-stream-binder-redis.version>
 		<java.version>1.8</java.version>
 	</properties>
 	<modules>
@@ -30,6 +34,13 @@
 	</modules>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-dependencies</artifactId>
+				<version>${spring-cloud-stream.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-sample-source</artifactId>
@@ -48,7 +59,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-binder-redis</artifactId>
-				<version>1.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring-cloud-stream-binder-redis.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
