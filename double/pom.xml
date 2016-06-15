@@ -37,7 +37,7 @@
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-redis</artifactId>
+			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
 		</dependency>
 	</dependencies>
 

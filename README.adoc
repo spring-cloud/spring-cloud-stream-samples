@@ -1,6 +1,6 @@
 == Samples
 
-There are several samples, all running on the redis transport (so you need redis running locally to test them).
+There are several samples, all running on the RabbitMQ transport (so you need RabbitMQ running locally to test them).
 
 To build the samples do:
 

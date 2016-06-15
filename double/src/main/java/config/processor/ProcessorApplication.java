@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package demo;
-
-import config.sink.SinkApplication;
-import config.source.SourceApplication;
+package config.processor;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.aggregate.AggregateApplicationBuilder;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.context.ConfigurableApplicationContext;
 
+/**
+ * @author Marius Bogoevici
+ */
 @SpringBootApplication
-public class DoubleApplication {
-
-	public static void main(String[] args) {
-		new AggregateApplicationBuilder().
-				from(SourceApplication.class).args("--fixedDelay=5000")
-				.via(Processor.class)
-				.to(SinkApplication.class).args("--debug=true").run("--spring.application.name=aggregate-test");
-	}
+public class ProcessorApplication {
 
 }

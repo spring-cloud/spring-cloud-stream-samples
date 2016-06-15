@@ -41,10 +41,9 @@ public class TimeSource {
 	@Autowired
 	private TimeSourceOptionsMetadata options;
 
-	@Bean
-	@InboundChannelAdapter(value = Source.OUTPUT, poller = @Poller(fixedDelay = "${fixedDelay}", maxMessagesPerPoll = "1"))
-	public MessageSource<String> timerMessageSource() {
-		return () -> new GenericMessage<>(new SimpleDateFormat(this.options.getFormat()).format(new Date()));
+	@InboundChannelAdapter(value = Source.OUTPUT)
+	public String timerMessageSource() {
+		return new SimpleDateFormat(this.options.getFormat()).format(new Date());
 	}
 
 }
