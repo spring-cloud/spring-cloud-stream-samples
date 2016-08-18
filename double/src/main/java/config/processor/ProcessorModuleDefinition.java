@@ -27,7 +27,7 @@ import org.springframework.messaging.Message;
 @EnableBinding(Processor.class)
 public class ProcessorModuleDefinition {
 
-	@Transformer
+	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
 	public Message<?> transform(Message<?> inbound) {
 		return inbound;
 	}
