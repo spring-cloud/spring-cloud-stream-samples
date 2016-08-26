@@ -1,0 +1,10 @@
+server:
+  port: 8082
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: transformed
+        input:
+          destination: testtock

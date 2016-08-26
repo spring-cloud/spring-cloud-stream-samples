@@ -10,5 +10,6 @@ spring:
           destination: testtock
         output:
           destination: xformed
+          content-type: application/json
         sample-sink:
           destination: xformed

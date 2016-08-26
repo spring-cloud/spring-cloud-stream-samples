@@ -33,7 +33,7 @@ public class SampleTransformer {
 
 	@StreamListener(Processor.INPUT)
 	@SendTo(Processor.OUTPUT)
-	public Converters.Bar receive(Converters.Bar barMessage) {
+	public Bar receive(Bar barMessage) {
 		System.out.println("******************");
 		System.out.println("At the transformer");
 		System.out.println("******************");

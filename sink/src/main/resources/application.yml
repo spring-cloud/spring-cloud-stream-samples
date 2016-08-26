@@ -5,7 +5,7 @@ spring:
     stream:
       bindings:
         input:
-          destination: testtock
+          destination: transformed
           # uncomment below to have this module consume from a specific partition
           # in the range of 0 to N-1, where N is the upstream module's partitionCount
           #consumerProperties:

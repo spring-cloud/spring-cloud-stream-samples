@@ -24,47 +24,37 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.stream.binder.BinderFactory;
 import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
 import org.springframework.cloud.stream.binder.ExtendedProducerProperties;
-import org.springframework.cloud.stream.binder.ProducerProperties;
+import org.springframework.cloud.stream.binder.kafka.KafkaMessageChannelBinder;
+import org.springframework.cloud.stream.binder.kafka.KafkaProducerProperties;
 import org.springframework.cloud.stream.binder.rabbit.RabbitConsumerProperties;
 import org.springframework.cloud.stream.binder.rabbit.RabbitMessageChannelBinder;
-import org.springframework.cloud.stream.binder.redis.RedisMessageChannelBinder;
-import org.springframework.cloud.stream.test.junit.rabbit.RabbitTestSupport;
-import org.springframework.cloud.stream.test.junit.redis.RedisTestSupport;
+import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.QueueChannel;
+import org.springframework.kafka.test.rule.KafkaEmbedded;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * @author Marius Bogoevici
  * @author Gary Russell
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = MultibinderApplication.class)
-@WebAppConfiguration
 @DirtiesContext
-public class RabbitAndRedisBinderApplicationTests {
+public class RabbitAndKafkaBinderApplicationTests {
 
 	@ClassRule
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	@ClassRule
-	public static RedisTestSupport redisTestSupport = new RedisTestSupport();
-
-	@Autowired
-	private BinderFactory<MessageChannel> binderFactory;
+	public static KafkaEmbedded kafkaEmbedded = new KafkaEmbedded(1, true, "test");
 
 	private final String randomGroup = UUID.randomUUID().toString();
 
@@ -77,25 +67,39 @@ public class RabbitAndRedisBinderApplicationTests {
 	}
 
 	@Test
-	public void contextLoads() {
+	public void contextLoads() throws Exception {
+		// passing connection arguments arguments to the embedded Kafka instance
+		ConfigurableApplicationContext context = SpringApplication.run(MultibinderApplication.class,
+				"--spring.cloud.stream.kafka.binder.brokers=" + kafkaEmbedded.getBrokersAsString(),
+				"--spring.cloud.stream.kafka.binder.zkNodes=" + kafkaEmbedded.getZookeeperConnectionString());
+		context.close();
 	}
 
 	@Test
-	public void messagingWorks() {
+	public void messagingWorks() throws Exception {
+		// passing connection arguments arguments to the embedded Kafka instance
+		ConfigurableApplicationContext context = SpringApplication.run(MultibinderApplication.class,
+				"--spring.cloud.stream.kafka.binder.brokers=" + kafkaEmbedded.getBrokersAsString(),
+				"--spring.cloud.stream.kafka.binder.zkNodes=" + kafkaEmbedded.getZookeeperConnectionString(),
+				"--spring.cloud.stream.bindings.output.producer.requiredGroups=" + this.randomGroup);
 		DirectChannel dataProducer = new DirectChannel();
-		((RedisMessageChannelBinder)binderFactory.getBinder("redis"))
-				.bindProducer("dataIn", dataProducer, new ExtendedProducerProperties<>(new ProducerProperties()));
+		BinderFactory<?> binderFactory = context.getBean(BinderFactory.class);
 
 		QueueChannel dataConsumer = new QueueChannel();
-		((RabbitMessageChannelBinder)binderFactory.getBinder("rabbit")).bindConsumer("dataOut", this.randomGroup,
+
+		((RabbitMessageChannelBinder) binderFactory.getBinder("rabbit")).bindConsumer("dataOut", this.randomGroup,
 				dataConsumer, new ExtendedConsumerProperties<>(new RabbitConsumerProperties()));
+
+		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka"))
+				.bindProducer("dataIn", dataProducer, new ExtendedProducerProperties<>(new KafkaProducerProperties()));
 
 		String testPayload = "testFoo" + this.randomGroup;
 		dataProducer.send(MessageBuilder.withPayload(testPayload).build());
 
-		Message<?> receive = dataConsumer.receive(2000);
+		Message<?> receive = dataConsumer.receive(10000);
 		Assert.assertThat(receive, Matchers.notNullValue());
 		Assert.assertThat(receive.getPayload(), CoreMatchers.equalTo(testPayload));
+		context.close();
 	}
 
 }

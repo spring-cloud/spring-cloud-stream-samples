@@ -29,10 +29,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class DoubleApplication {
 
 	public static void main(String[] args) {
-		new AggregateApplicationBuilder().
-				from(SourceApplication.class).args("--fixedDelay=5000")
+		new AggregateApplicationBuilder(DoubleApplication.class, args)
+				.from(SourceApplication.class).args("--fixedDelay=5000")
 				.via(ProcessorApplication.class)
-				.to(SinkApplication.class).args("--debug=true").run("--spring.application.name=aggregate-test");
+				.to(SinkApplication.class).args("--debug=true").run();
 	}
 
 }

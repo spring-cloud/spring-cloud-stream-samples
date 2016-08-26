@@ -24,7 +24,9 @@ import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.messaging.support.MessageBuilder;
 
 /**
  * @author Ilayaperumal Gopinathan
@@ -40,10 +42,9 @@ public class SampleSource {
 				System.out.println("******************");
 				System.out.println("At the Source");
 				System.out.println("******************");
-				Converters.Foo foo = new Converters.Foo();
-				foo.setValue("hi");
-				System.out.println("Sending value: " + foo.getValue() + " of type " + foo.getClass());
-				return new GenericMessage(foo);
+				String value = "{\"value\":\"hi\"}";
+				System.out.println("Sending value: " + value);
+				return MessageBuilder.withPayload(value).setHeader(MessageHeaders.CONTENT_TYPE, "application/json").build();
 			}
 		};
 	}

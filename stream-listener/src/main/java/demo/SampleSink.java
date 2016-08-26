@@ -29,11 +29,11 @@ public class SampleSink {
 
 	// Sink application definition
 	@StreamListener(Sink.SAMPLE)
-	public void receive(Converters.Bar barMessage) {
+	public void receive(Foo fooMessage) {
 		System.out.println("******************");
 		System.out.println("At the Sink");
 		System.out.println("******************");
-		System.out.println("Received transformed message " + barMessage.getValue() + " of type " + barMessage.getClass());
+		System.out.println("Received transformed message " + fooMessage.getValue() + " of type " + fooMessage.getClass());
 	}
 
 	public interface Sink {

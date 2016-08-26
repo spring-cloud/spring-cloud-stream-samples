@@ -6,7 +6,7 @@ spring:
       bindings:
         input:
           destination: dataIn
-          binder: redis
+          binder: kafka
         output:
           destination: dataOut
           binder: rabbit
