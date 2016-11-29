@@ -20,19 +20,22 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
-import org.springframework.cloud.stream.annotation.rxjava.EnableRxJavaProcessor;
-import org.springframework.cloud.stream.annotation.rxjava.RxJavaProcessor;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.messaging.Processor;
+import org.springframework.messaging.handler.annotation.SendTo;
 
-@EnableRxJavaProcessor
+@EnableBinding(Processor.class)
 public class RxJavaTransformer {
 
 	private static Logger logger = LoggerFactory.getLogger(RxJavaTransformer.class);
 
-	@Bean
-	public RxJavaProcessor<String,String> processor() {
-		return inputStream -> inputStream.map(data -> {
+	@StreamListener(Processor.INPUT)
+	@SendTo(Processor.OUTPUT)
+	public Observable<String> processor(Observable<String> inputStream) {
+		return inputStream.map(data -> {
 			logger.info("Got data = " + data);
 			return data;
 		}).buffer(5).map(data -> String.valueOf(avg(data)));
