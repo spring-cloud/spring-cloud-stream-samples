@@ -1,0 +1,3 @@
+runs on localhost:8080
+
+First run this and then run RecievedPerson which runs on localhost:8090. Must have rabbitmq running.
