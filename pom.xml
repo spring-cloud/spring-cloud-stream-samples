@@ -24,6 +24,7 @@
 		<module>source</module>
 		<module>sink</module>
 		<module>transform</module>
+		<module>SendPerson</module>
 		<module>double</module>
 		<module>multibinder</module>
 		<module>multibinder-differentsystems</module>
