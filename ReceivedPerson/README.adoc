@@ -1,3 +1,7 @@
 Runs on localhost:8090.
 
 Run SendPerson first which you can access at http://localhost:8080, send your name and email in the form, and the message is sent as a Person object to the ReceivedPerson running on http://localhost:8090.
+
+Go to the directory of ReceivedPerson and run with the command mvn clean spring-boot:run
+
+
