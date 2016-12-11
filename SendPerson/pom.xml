@@ -12,10 +12,9 @@
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-stream-samples</artifactId>
+		<version>1.1.0.BUILD-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -25,12 +24,16 @@
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
-			<version>1.0.3.RELEASE</version>
+			<artifactId>spring-cloud-stream</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -82,6 +85,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<classifier>exec</classifier>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

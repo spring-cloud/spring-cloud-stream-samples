@@ -12,10 +12,9 @@
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-stream-samples</artifactId>
+		<version>1.1.0.BUILD-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -29,8 +28,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
-			<version>1.0.3.RELEASE</version>
+			<artifactId>spring-cloud-stream</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
 		</dependency>
 
 
@@ -61,6 +64,18 @@
 			<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
 	</dependencies>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Camden.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
