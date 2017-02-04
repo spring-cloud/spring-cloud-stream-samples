@@ -18,11 +18,16 @@ This sample is a Spring Boot application that uses Spring Cloud Stream to publis
 * SourceApplication - the Spring Boot Main Application
 * TimeSource - the module that will generate the timestamp and post the message to the stream
 * TimeSourceOptionsMetadata - defines the configurations that are available to setup the TimeSource
-    	 * format - how to render the current time, using SimpleDateFormat
-    	 * fixedDelay - time delay between messages
-    	 * initialDelay - delay before the first message
-    	 * timeUnit - the time unit for the fixed and initial delays
-    	 * maxMessages - the maximum messages per poll; -1 for unlimited
+    	 
+	 * format - how to render the current time, using SimpleDateFormat
+    	 
+	 * fixedDelay - time delay between messages
+    	 
+	 * initialDelay - delay before the first message
+    	 
+	 * timeUnit - the time unit for the fixed and initial delays
+    	 
+	 * maxMessages - the maximum messages per poll; -1 for unlimited
 
 ## Building with Maven
 
