@@ -24,6 +24,8 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.expression.Expression;
+import org.springframework.expression.common.LiteralExpression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -51,15 +53,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 public class SourceWithDynamicDestination {
 
-	public static final Expression DEFAULT_EXPRESSION = new FunctionExpression<>(new Function<Message<?>, Object>() {
-
-		@Override
-		public Object apply(Message<?> message) {
-			return message.getPayload();
-		}
-
-	});
-
 	@Autowired
 	private BinderAwareChannelResolver resolver;
 
@@ -85,12 +78,10 @@ public class SourceWithDynamicDestination {
 
 	@Bean
 	@ServiceActivator(inputChannel = "sourceChannel")
-	public AbstractMappingMessageRouter router() {
-		AbstractMappingMessageRouter router;
-		router = new ExpressionEvaluatingRouter(DEFAULT_EXPRESSION);
+	public ExpressionEvaluatingRouter router() {
+		ExpressionEvaluatingRouter router = new ExpressionEvaluatingRouter(new SpelExpressionParser().parseExpression("payload.id"));
 		router.setDefaultOutputChannelName("default-output");
 		router.setChannelResolver(resolver);
 		return router;
 	}
-
 }

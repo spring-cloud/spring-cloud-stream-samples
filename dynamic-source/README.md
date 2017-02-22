@@ -20,6 +20,15 @@ then uses `BinderAwareChannelResolver` to resolve the destination dynamically at
 this source application sends the message `testing` into the Rabbit exchange `testing`. This exchange or topic (in case
 of Kafka if Kafka binder is used) is created dynamically and bound to send the payload.
 
+
+Upon starting the application on the default port 8080, if the following data are sent:
+
+curl -H "Content-Type: application/json" -X POST -d '{"id":"customerId-1","bill-pay":"100"}' http://localhost:8080
+
+curl -H "Content-Type: application/json" -X POST -d '{"id":"customerId-2","bill-pay":"150"}' http://localhost:8080
+
+The destinations 'customerId-1' and 'customerId-2' are created at the broker (for example: exchange in case of Rabbit or topic in case of Kafka with the names 'customerId-1' and 'customerId-2') and the data are published to the appropriate destinations dynamically.
+
 ## Building with Maven
 
 Build the sample by executing:
