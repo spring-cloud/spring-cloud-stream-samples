@@ -17,8 +17,9 @@
 package multibinder;
 
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.messaging.handler.annotation.SendTo;
 
 /**
  * @author Marius Bogoevici
@@ -26,7 +27,8 @@ import org.springframework.integration.annotation.ServiceActivator;
 @EnableBinding(Processor.class)
 public class BridgeTransformer {
 
-	@ServiceActivator(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
+	@StreamListener(Processor.INPUT)
+	@SendTo(Processor.OUTPUT)
 	public Object transform(Object payload) {
 		return payload;
 	}
