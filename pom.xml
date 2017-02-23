@@ -25,6 +25,7 @@
 		<module>sink</module>
 		<module>transform</module>
 		<module>double</module>
+		<module>non-self-contained-aggregate-app</module>
 		<module>multibinder</module>
 		<module>multibinder-differentsystems</module>
 		<module>rxjava-processor</module>
