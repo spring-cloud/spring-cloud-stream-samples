@@ -74,11 +74,11 @@ public class TwoKafkaBindersApplicationTest {
 	}
 
 	@Autowired
-	private BinderFactory<MessageChannel> binderFactory;
+	private BinderFactory binderFactory;
 
 	@Test
 	public void contextLoads() {
-		Binder<MessageChannel, ?, ?> binder1 = binderFactory.getBinder("kafka1");
+		Binder<MessageChannel, ?, ?> binder1 = binderFactory.getBinder("kafka1", MessageChannel.class);
 		KafkaMessageChannelBinder kafka1 = (KafkaMessageChannelBinder) binder1;
 		DirectFieldAccessor directFieldAccessor1 = new DirectFieldAccessor(kafka1);
 		KafkaBinderConfigurationProperties configuration1 =
@@ -86,7 +86,7 @@ public class TwoKafkaBindersApplicationTest {
 		Assert.assertThat(configuration1.getBrokers(), arrayWithSize(1));
 		Assert.assertThat(configuration1.getBrokers()[0], equalTo(kafkaTestSupport1.getBrokersAsString()));
 
-		Binder<MessageChannel, ?, ?> binder2 = binderFactory.getBinder("kafka2");
+		Binder<MessageChannel, ?, ?> binder2 = binderFactory.getBinder("kafka2", MessageChannel.class);
 		KafkaMessageChannelBinder kafka2 = (KafkaMessageChannelBinder) binder2;
 		DirectFieldAccessor directFieldAccessor2 = new DirectFieldAccessor(kafka2);
 		KafkaBinderConfigurationProperties configuration2 =
@@ -98,17 +98,17 @@ public class TwoKafkaBindersApplicationTest {
 	@Test
 	public void messagingWorks() {
 		DirectChannel dataProducer = new DirectChannel();
-		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka1"))
+		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka1", MessageChannel.class))
 				.bindProducer("dataIn", dataProducer, new ExtendedProducerProperties<>(new KafkaProducerProperties()));
 
 		QueueChannel dataConsumer = new QueueChannel();
-		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka2")).bindConsumer("dataOut", UUID.randomUUID().toString(),
+		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka2", MessageChannel.class)).bindConsumer("dataOut", UUID.randomUUID().toString(),
 				dataConsumer, new ExtendedConsumerProperties<>(new KafkaConsumerProperties()));
 
 		String testPayload = "testFoo" + UUID.randomUUID().toString();
 		dataProducer.send(MessageBuilder.withPayload(testPayload).build());
 
-		Message<?> receive = dataConsumer.receive(5000);
+		Message<?> receive = dataConsumer.receive(60_000);
 		Assert.assertThat(receive, Matchers.notNullValue());
 		Assert.assertThat(receive.getPayload(), CoreMatchers.equalTo(testPayload));
 	}

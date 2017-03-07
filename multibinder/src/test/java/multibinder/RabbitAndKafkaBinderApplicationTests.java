@@ -40,6 +40,7 @@ import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.kafka.test.rule.KafkaEmbedded;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -83,20 +84,20 @@ public class RabbitAndKafkaBinderApplicationTests {
 				"--spring.cloud.stream.kafka.binder.zkNodes=" + kafkaEmbedded.getZookeeperConnectionString(),
 				"--spring.cloud.stream.bindings.output.producer.requiredGroups=" + this.randomGroup);
 		DirectChannel dataProducer = new DirectChannel();
-		BinderFactory<?> binderFactory = context.getBean(BinderFactory.class);
+		BinderFactory binderFactory = context.getBean(BinderFactory.class);
 
 		QueueChannel dataConsumer = new QueueChannel();
 
-		((RabbitMessageChannelBinder) binderFactory.getBinder("rabbit")).bindConsumer("dataOut", this.randomGroup,
+		((RabbitMessageChannelBinder) binderFactory.getBinder("rabbit", MessageChannel.class)).bindConsumer("dataOut", this.randomGroup,
 				dataConsumer, new ExtendedConsumerProperties<>(new RabbitConsumerProperties()));
 
-		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka"))
+		((KafkaMessageChannelBinder) binderFactory.getBinder("kafka", MessageChannel.class))
 				.bindProducer("dataIn", dataProducer, new ExtendedProducerProperties<>(new KafkaProducerProperties()));
 
 		String testPayload = "testFoo" + this.randomGroup;
 		dataProducer.send(MessageBuilder.withPayload(testPayload).build());
 
-		Message<?> receive = dataConsumer.receive(10000);
+		Message<?> receive = dataConsumer.receive(60_000);
 		Assert.assertThat(receive, Matchers.notNullValue());
 		Assert.assertThat(receive.getPayload(), CoreMatchers.equalTo(testPayload));
 		context.close();
