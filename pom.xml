@@ -32,6 +32,7 @@
 		<module>multi-io</module>
 		<module>stream-listener</module>
 		<module>reactive-processor-kafka</module>
+		<module>custom-message</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
