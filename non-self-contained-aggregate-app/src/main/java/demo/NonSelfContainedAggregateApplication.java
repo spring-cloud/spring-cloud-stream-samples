@@ -22,6 +22,9 @@ import config.source.SourceApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.aggregate.AggregateApplicationBuilder;
 
+/**
+ * @author Ilayaperumal Gopinathan
+ */
 @SpringBootApplication
 public class NonSelfContainedAggregateApplication {
 
