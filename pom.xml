@@ -17,7 +17,7 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring-cloud-stream.version>Chelsea.RELEASE</spring-cloud-stream.version>
+		<spring-cloud-stream.version>Chelsea.BUILD-SNAPSHOT</spring-cloud-stream.version>
 		<java.version>1.8</java.version>
 	</properties>
 	<modules>

@@ -7,6 +7,7 @@ spring:
         input:
           destination: dataIn
           binder: kafka1
+          group: testGroup
         output:
           destination: dataOut
           binder: kafka2

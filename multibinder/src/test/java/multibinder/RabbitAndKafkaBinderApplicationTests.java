@@ -82,6 +82,7 @@ public class RabbitAndKafkaBinderApplicationTests {
 		ConfigurableApplicationContext context = SpringApplication.run(MultibinderApplication.class,
 				"--spring.cloud.stream.kafka.binder.brokers=" + kafkaEmbedded.getBrokersAsString(),
 				"--spring.cloud.stream.kafka.binder.zkNodes=" + kafkaEmbedded.getZookeeperConnectionString(),
+				"--spring.cloud.stream.bindings.input.group=testGroup",
 				"--spring.cloud.stream.bindings.output.producer.requiredGroups=" + this.randomGroup);
 		DirectChannel dataProducer = new DirectChannel();
 		BinderFactory binderFactory = context.getBean(BinderFactory.class);
