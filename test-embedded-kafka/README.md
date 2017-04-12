@@ -18,6 +18,9 @@ This sample is a Spring Boot application that uses Spring Cloud Stream to receiv
 
 The `spring-kafka-test` dependency added to the `pom.xml` puts the `KafkaEmbedded` JUnit `@Rule` on the class path.
 Refer to the [Spring for Apache Kafka Reference Manual](http://docs.spring.io/spring-kafka/reference/htmlsingle/#testing) for more information about this.
+Notice how the `@BeforeClass` method sets up the Boot and binder properties to locate the servers.
+
+
 The test method starts by using the Spring Boot auto-configured `KafkaTemplate` to send a message to the input destination.
 It then creates a consumer to consume from the output destination; gets the output message and asserts that it's an upper case version of the sent message.
 
