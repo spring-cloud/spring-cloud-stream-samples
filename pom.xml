@@ -33,6 +33,7 @@
 		<module>multi-io</module>
 		<module>stream-listener</module>
 		<module>reactive-processor-kafka</module>
+		<module>test-embedded-kafka</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
