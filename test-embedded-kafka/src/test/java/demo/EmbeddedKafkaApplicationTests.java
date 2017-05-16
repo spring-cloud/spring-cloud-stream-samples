@@ -19,10 +19,8 @@ package demo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
-import java.util.Map;
 
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -31,9 +29,7 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.rule.KafkaEmbedded;
@@ -57,7 +53,7 @@ public class EmbeddedKafkaApplicationTests {
 	private KafkaTemplate<byte[], byte[]> template;
 
 	@Autowired
-	private KafkaProperties properties;
+	private DefaultKafkaConsumerFactory<byte[], byte[]> consumerFactory;
 
 	@Value("${spring.cloud.stream.bindings.input.destination}")
 	private String inputDestination;
@@ -74,10 +70,7 @@ public class EmbeddedKafkaApplicationTests {
 	@Test
 	public void testSendReceive() {
 		template.send(this.inputDestination, "foo".getBytes());
-		Map<String, Object> configs = properties.buildConsumerProperties();
-		configs.put(ConsumerConfig.GROUP_ID_CONFIG, "testEmbeddedKafkaApplication");
-		ConsumerFactory<byte[], byte[]> cf = new DefaultKafkaConsumerFactory<>(configs);
-		Consumer<byte[], byte[]> consumer = cf.createConsumer();
+		Consumer<byte[], byte[]> consumer = this.consumerFactory.createConsumer();
 		consumer.subscribe(Collections.singleton(this.outputDestination));
 		ConsumerRecords<byte[], byte[]> records = consumer.poll(10_000);
 		consumer.commitSync();
