@@ -21,8 +21,8 @@ multiple input/output channels.
 * SampleSource - the app that configures two output channels (output1 and output2).
 * SampleSink - the app that configures two input channels (input1 and input2).
 
-The channels output1 and input1 connect to the same destination (test1) on the broker (Redis) and the channels output2 and
-input2 connect to the same destination (test2) on redis.
+The channels output1 and input1 connect to the same destination (test1) on the broker (Rabbit) and the channels output2 and
+input2 connect to the same destination (test2) on Rabbit.
 For demo purpose, the apps `SampleSource` and `SampleSink` are bundled together. In practice they are separate applications
 unless bundled together by the `AggregateApplicationBuilder`.
 
