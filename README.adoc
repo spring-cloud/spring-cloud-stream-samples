@@ -1,6 +1,6 @@
 == Samples
 
-There are several samples, all running on the RabbitMQ transport (so you need RabbitMQ running locally to test them).
+There are several samples, most running on the RabbitMQ transport (so you need RabbitMQ running locally to test them).
 
 To build the samples do:
 
@@ -8,9 +8,8 @@ To build the samples do:
    ./mvnw clean build
 ```
 
-NOTE: The main set of samples are "vanilla" in the sense that they are not deployable as XD modules by the current generation (1.x) of XD. You can still interact with an XD system using the appropriate naming convention for input and output channel names (`<stream>.<index>` format).
 
-* `double` is a combination of 2 modules defined locally (a source and a sink, so the whole app is self contained).
+* `double` is an example of an aggregate application, the Source and Sink are combined into one single application.
 
 * `dynamic-source` publishes messages to dynamically created destinations.
 
@@ -26,15 +25,14 @@ NOTE: The main set of samples are "vanilla" in the sense that they are not deplo
 
 * `rxjava-processor` shows how to create an RxJava processor application.
 
-* `sink` is a Java config version of the classic "log" module from Spring XD. It has no options (but some could easily be added), and just logs incoming messages at INFO level.
+* `sink` A simple sink that logs the incoming payload. It has no options (but some could easily be added), and just logs incoming messages at INFO level.
 
-* `source` is a Java config version of the classic "time" module from Spring XD. It has a "fixedDelay" option (in milliseconds) for the period between emitting messages.
+* `source` A simple time source example. It has a "fixedDelay" option (in milliseconds) for the period between emitting messages.
 
 * `stream-listener` shows how to use StreamListener support to enable message mapping and automatic type conversion.
 
-* test-embedded-kafka is a sample that shows how to test with an embedded Apache Kafka broker.
+* `test-embedded-kafka` is a sample that shows how to test with an embedded Apache Kafka broker.
 We generally recommend testing with the http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_testing[TestSupportBinder] but if you have a need for testing with an embedded broker, you can use the techniques in this sample.
 
 * `transform` is a simple pass through logging transformer (just logs the incoming message and passes it on).
 
-If you run the source and the sink and point them at the same redis instance (e.g. do nothing to get the one on localhost, or the one they are both bound to as a service on Cloud Foundry) then they will form a "stream" and start talking to each other. All the samples have friendly JMX and Actuator endpoints for inspecting what is going on in the system.
