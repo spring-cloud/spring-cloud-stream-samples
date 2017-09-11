@@ -38,3 +38,5 @@ We generally recommend testing with the http://docs.spring.io/spring-cloud-strea
 
 * `transform` is a simple pass through logging transformer (just logs the incoming message and passes it on).
 
+* `kstream` is a collection of applications that demonstrate the capabilities of the Spring Cloud Stream support for Kafka Streams
+
