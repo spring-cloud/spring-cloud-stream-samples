@@ -1,0 +1,176 @@
+package kstream.word.count.kstreamwordcount;
+
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.TimeWindows;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.binder.kstream.annotations.KStreamProcessor;
+import org.springframework.kafka.support.serializer.JsonSerde;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.util.StringUtils;
+
+@SpringBootApplication
+public class KStreamProductTrackerApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(KStreamProductTrackerApplication.class, args);
+	}
+
+	@EnableBinding(KStreamProcessor.class)
+	@EnableAutoConfiguration
+	@EnableConfigurationProperties(ProductTrackerProperties.class)
+	public static class ProductCountApplication {
+
+		@Autowired
+		ProductTrackerProperties productTrackerProperties;
+
+		@StreamListener("input")
+		@SendTo("output")
+		public KStream<Integer, ProductStatus> process(KStream<Object, Product> input) {
+			return input
+					.filter((key, product) -> productIds().contains(product.getId()))
+					.map((key, value) -> new KeyValue<>(value, value))
+					.groupByKey(new JsonSerde<>(Product.class), new JsonSerde<>(Product.class))
+					.count(configuredTimeWindow(),
+							productTrackerProperties.getStoreName())
+					.toStream()
+					.map((key, value) -> new KeyValue<>(key.key().id, new ProductStatus(key.key().id,
+							value, Instant.ofEpochMilli(key.window().start()).atZone(ZoneId.systemDefault()).toLocalTime(),
+							Instant.ofEpochMilli(key.window().end()).atZone(ZoneId.systemDefault()).toLocalTime())));
+		}
+
+		private Set<Integer> productIds() {
+			return StringUtils.commaDelimitedListToSet(productTrackerProperties.getProductIds())
+				.stream().map(Integer::parseInt).collect(Collectors.toSet());
+		}
+
+		/**
+		 * Constructs a {@link TimeWindows} property.
+		 *
+		 * @return
+		 */
+		private TimeWindows configuredTimeWindow() {
+			return productTrackerProperties.getAdvanceBy() > 0
+					? TimeWindows.of(productTrackerProperties.getWindowLength()).advanceBy(productTrackerProperties.getAdvanceBy())
+					: TimeWindows.of(productTrackerProperties.getWindowLength());
+		}
+	}
+
+	@ConfigurationProperties(prefix = "kstream.product.tracker")
+	static class  ProductTrackerProperties {
+
+		private int windowLength = 30000;
+
+		private int advanceBy = 0;
+
+		private String storeName = "product-counts";
+
+		private String productIds;
+
+		public String getProductIds() {
+			return productIds;
+		}
+
+		public void setProductIds(String productIds) {
+			this.productIds = productIds;
+		}
+
+		int getWindowLength() {
+			return windowLength;
+		}
+
+		public void setWindowLength(int windowLength) {
+			this.windowLength = windowLength;
+		}
+
+		int getAdvanceBy() {
+			return advanceBy;
+		}
+
+		public void setAdvanceBy(int advanceBy) {
+			this.advanceBy = advanceBy;
+		}
+
+		String getStoreName() {
+			return storeName;
+		}
+
+		public void setStoreName(String storeName) {
+			this.storeName = storeName;
+		}
+	}
+
+	static class Product {
+
+		Integer id;
+
+		public Integer getId() {
+			return id;
+		}
+
+		public void setId(Integer id) {
+			this.id = id;
+		}
+	}
+
+	static class ProductStatus {
+		private Integer id;
+		private long count;
+		private LocalTime windowStart;
+		private LocalTime windowEnd;
+
+		public ProductStatus(Integer id, long count, LocalTime windowStart, LocalTime windowEnd) {
+			this.id = id;
+			this.count = count;
+			this.windowStart = windowStart;
+			this.windowEnd = windowEnd;
+		}
+
+		public Integer getId() {
+			return id;
+		}
+
+		public void setId(Integer id) {
+			this.id = id;
+		}
+
+		public long getCount() {
+			return count;
+		}
+
+		public void setCount(long count) {
+			this.count = count;
+		}
+
+		public LocalTime getWindowStart() {
+			return windowStart;
+		}
+
+		public void setWindowStart(LocalTime windowStart) {
+			this.windowStart = windowStart;
+		}
+
+		public LocalTime getWindowEnd() {
+			return windowEnd;
+		}
+
+		public void setWindowEnd(LocalTime windowEnd) {
+			this.windowEnd = windowEnd;
+		}
+	}
+
+}
