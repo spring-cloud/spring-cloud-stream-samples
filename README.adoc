@@ -13,7 +13,7 @@ To build the samples do:
 
 * `dynamic-source` publishes messages to dynamically created destinations.
 
-* `kinesis-produce-consume` An example application using spring-cloud-stream-binder-aws-kinesis. Presents a web endpoint to send Orders, these are placed on a kinesis stream and then consumed by the application from that stream. 
+* `kinesis-produce-consume` An example application using spring-cloud-stream-binder-aws-kinesis. Presents a web endpoint to send Orders, these are placed on a Kinesis stream and then consumed by the application from that stream. 
 
 * `multi-io` shows how to use configure multiple input/output channels inside a single application.
 
