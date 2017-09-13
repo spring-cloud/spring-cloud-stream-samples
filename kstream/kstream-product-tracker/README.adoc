@@ -27,7 +27,7 @@ Go to the root of the repository and do:
 
 `./mvnw clean package`
 
-`java -jar target/kstream-product-tracker-0.0.1-SNAPSHOT.jar --kstream.product.tracker.productIds=123,124,125 --kstream.product.tracker.windowLength=60000 --kstream.product.tracker.advanceBy=30000 --spring.cloud.stream.bindings.input.destination=products`
+`java -jar target/kstream-product-tracker-0.0.1-SNAPSHOT.jar --kstream.product.tracker.productIds=123,124,125 --spring.cloud.stream.kstream.timeWindow.length=60000 --spring.cloud.stream.kstream.timeWindow.advanceBy=30000 --spring.cloud.stream.bindings.input.destination=products`
 
 The above command will track products with ID's 123,124 and 125 every 30 seconds with the counts from the last minute.
 In other words, every 30 seconds a new 1 minute window is started.

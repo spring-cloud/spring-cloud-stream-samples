@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package kstream.word.count.kstreamwordcount;
 
 import java.util.Arrays;
@@ -12,8 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.kstream.annotations.KStreamProcessor;
@@ -28,11 +42,10 @@ public class KStreamWordCountApplication {
 
 	@EnableBinding(KStreamProcessor.class)
 	@EnableAutoConfiguration
-	@EnableConfigurationProperties(WordCountProcessorProperties.class)
 	public static class WordCountProcessorApplication {
 
 		@Autowired
-		private WordCountProcessorProperties processorProperties;
+		private TimeWindows timeWindows;
 
 		@StreamListener("input")
 		@SendTo("output")
@@ -42,55 +55,11 @@ public class KStreamWordCountApplication {
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
 					.map((key, value) -> new KeyValue<>(value, value))
 					.groupByKey(Serdes.String(), Serdes.String())
-					.count(configuredTimeWindow(), processorProperties.getStoreName())
+					.count(timeWindows, "WordCounts")
 					.toStream()
 					.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
 		}
 
-		/**
-		 * Constructs a {@link TimeWindows} property.
-		 *
-		 * @return
-		 */
-		private TimeWindows configuredTimeWindow() {
-			return processorProperties.getAdvanceBy() > 0
-					? TimeWindows.of(processorProperties.getWindowLength()).advanceBy(processorProperties.getAdvanceBy())
-					: TimeWindows.of(processorProperties.getWindowLength());
-		}
-	}
-
-	@ConfigurationProperties(prefix = "kstream.word.count")
-	static class  WordCountProcessorProperties {
-
-		private int windowLength = 5000;
-
-		private int advanceBy = 0;
-
-		private String storeName = "WordCounts";
-
-		int getWindowLength() {
-			return windowLength;
-		}
-
-		public void setWindowLength(int windowLength) {
-			this.windowLength = windowLength;
-		}
-
-		int getAdvanceBy() {
-			return advanceBy;
-		}
-
-		public void setAdvanceBy(int advanceBy) {
-			this.advanceBy = advanceBy;
-		}
-
-		String getStoreName() {
-			return storeName;
-		}
-
-		public void setStoreName(String storeName) {
-			this.storeName = storeName;
-		}
 	}
 
 	static class WordCount {

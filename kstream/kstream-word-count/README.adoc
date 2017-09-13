@@ -25,7 +25,7 @@ Assuming that you are running kafka on a docker container on mac osx. Change the
 
 Go to the root of the repository and do: `./mvnw clean package`
 
-`java -jar target/kstream-word-count-0.0.1-SNAPSHOT.jar`
+`java -jar target/kstream-word-count-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kstream.timeWindow.length=5000`
 
 * By default we use the docker container IP (mac osx specific) in the `application.yml` for Kafka broker and zookeeper.
 Change it in `application.yml` (which requires a rebuild) or pass them as runtime arguments as below.
@@ -35,13 +35,9 @@ Change it in `application.yml` (which requires a rebuild) or pass them as runtim
 
 Enter some text in the console producer and watch the output in the console consumer.
 
-The default time window is configured for 5 seconds and you can change that using the following property.
-
-`kstream.word.count.windowLength` (value is expressed in milliseconds)
-
-In order to switch to a hopping window, you can use the `kstream.word.count.advanceBy` (value in milliseconds).
+In order to switch to a hopping window, you can use the `spring.cloud.stream.kstream.timeWindow.advanceBy` (value in milliseconds).
 This will create an overlapped hopping windows depending on the value you provide.
 
 Here is an example with 2 overlapping windows (window length of 10 seconds and a hop (advance) by 5 seconds:
 
-`java -jar target/kstream-word-count-0.0.1-SNAPSHOT.jar --kstream.word.count.windowLength=10000 --kstream.word.count.advanceBy=5000`
+`java -jar target/kstream-word-count-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kstream.timeWindow.length=10000 --spring.cloud.stream.kstream.timeWindow.advanceBy=5000`

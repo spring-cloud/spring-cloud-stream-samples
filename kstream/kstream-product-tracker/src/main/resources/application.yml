@@ -6,7 +6,6 @@ spring.cloud.stream.kstream:
     value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
   bindings.output.producer:
     keySerde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
-    valueSerde: org.apache.kafka.common.serialization.Serdes$StringSerde
 spring.cloud.stream.bindings.output:
   destination: product-counts
   producer:
