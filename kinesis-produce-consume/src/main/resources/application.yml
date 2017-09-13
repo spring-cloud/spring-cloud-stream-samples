@@ -1,5 +1,4 @@
-conf: 
- name: localtest
+originator: KinesisProducer
 server:
  port: 64398
 management:
@@ -18,6 +17,8 @@ spring:
         ordersOut: 
           destination: test_stream
           content-type: application/json
+          producer: 
+            partitionKeyExpression: "1" 
         ordersIn:
           destination: test_stream
           content-type: application/json

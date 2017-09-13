@@ -30,11 +30,22 @@ Build the sample by executing:
 
 ## Running the Sample
 
-To start the source module execute the following:
+This sample can be used to demonstrate passing data between applications over a Kinesis stream.
 
-	kinesis-produce-consume>$ java -jar target/spring-cloud-stream-sample-kinesis-0.0.1.BUILD-SNAPSHOT.jar
+Start the Producer using:
 
-To use the sample POST a message
+`kinesis-produce-consume>$ java -jar target/spring-cloud-stream-sample-kinesis-0.0.1.BUILD-SNAPSHOT.jar --originator=KinesisProducer --server.port=64398`
+
+
+Start the Consumer using:
+
+`kinesis-produce-consume>$ java -jar target/spring-cloud-stream-sample-kinesis-0.0.1.BUILD-SNAPSHOT.jar --originator=KinesisConsumer --server.port=64399`
+
+The originator is a key added to messages to tell the receiving application who sent the message. If the receiver sent the message nothing is done, if the receiver did not send the message then it is saved to an in memory database.
+
+
+
+To use the sample POST a message to the Producer
 
 `curl -X POST
 http://localhost:64398/
@@ -43,6 +54,7 @@ http://localhost:64398/
 -H 'content-type: application/json'
 -d '{"name":"pen"}'`
 
+Note: Match the authorization with the password in application.properties
 
 Observe the logs and the AWS Kinesis Stream to see the produce and consume of that message.
 
@@ -54,4 +66,21 @@ Observe the logs and the AWS Kinesis Stream to see the produce and consume of th
 
 
 
+Then run a GET request against the Consumer
+
+`curl -X GET \
+  http://localhost:64399/orders \
+  -H 'authorization: Basic xxxxxxxxxxxxxxxxxxxxxx \
+  -H 'cache-control: no-cache' \
+`
+
+
+The returned Order should match the Order that was POSTed to the Producer.
+
+`[
+    {
+        "id": "c2d15e39-bbfa-4966-bd55-6a114045f18c",
+        "name": "pencil"
+    }
+]`
  

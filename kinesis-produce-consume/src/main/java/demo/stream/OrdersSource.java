@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 
 
@@ -43,8 +44,7 @@ public class OrdersSource {
 
 	public void sendOrder(Event event) {
 
-		orderOut.ordersOut().send(MessageBuilder.withPayload(event).setHeader("contentType", "application/json")
-				.setHeader("aws_partitionKey", "100").build());
+		orderOut.ordersOut().send(new GenericMessage<>(event));
 
 		logger.info("Event sent: " + event.toString());
 

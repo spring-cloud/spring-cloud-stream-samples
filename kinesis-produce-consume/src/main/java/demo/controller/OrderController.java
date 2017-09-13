@@ -17,6 +17,7 @@
 package demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,6 +46,9 @@ public class OrderController {
 	@Autowired
 	private OrdersSource orderSource;
 
+	@Value("${originator}")
+    private String originator;
+	
 	@RequestMapping(value = "/orders", method = RequestMethod.GET, produces = { "application/json" })
 	@ResponseStatus(HttpStatus.OK)
 	public Iterable<Order> getOrder() {
@@ -59,8 +63,8 @@ public class OrderController {
 
 		orders.save(input);
 
-		// place order on queue
-		orderSource.sendOrder(new Event(input, "ORDER", "KinesisProducer"));
+		// place order on Kinesis Stream
+		orderSource.sendOrder(new Event(input, "ORDER", originator));
 
 		return new ResponseEntity<Order>(input, HttpStatus.OK);
 	}

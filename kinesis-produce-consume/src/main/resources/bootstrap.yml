@@ -1,5 +1,6 @@
 spring:
   application:
-    name: KinesisProducer
+    name: KinesisProducerConsumer
+
 
      
