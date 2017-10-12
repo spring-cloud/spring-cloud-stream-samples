@@ -35,6 +35,7 @@
 		<module>test-embedded-kafka</module>
 		<module>kinesis-produce-consume</module>
 		<module>kstream</module>
+		<module>testing</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
