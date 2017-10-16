@@ -24,6 +24,9 @@ import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.messaging.handler.annotation.SendTo;
 
 /**
+ * The Spring Cloud Stream Processor application,
+ * which convert incoming String to its upper case representation.
+ *
  * @author Artem Bilan
  *
  */

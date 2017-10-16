@@ -29,6 +29,9 @@ import org.springframework.integration.core.MessageSource;
 import org.springframework.messaging.support.GenericMessage;
 
 /**
+ * The Spring Cloud Stream Source application,
+ * which generates each 100 milliseconds "foo" or "bar" string in round-robin manner.
+ *
  * @author Artem Bilan
  *
  */

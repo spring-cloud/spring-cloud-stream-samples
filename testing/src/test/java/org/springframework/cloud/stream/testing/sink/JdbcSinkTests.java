@@ -18,22 +18,35 @@ package org.springframework.cloud.stream.testing.sink;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.integration.channel.AbstractMessageChannel;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * The Spring Boot-base test-case to demonstrate how can we test Spring Cloud Stream applications
+ * with available testing tools.
+ *
  * @author Artem Bilan
  *
  */
@@ -48,15 +61,51 @@ public class JdbcSinkTests {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	@SpyBean(name = "jdbcHandler")
+	private MessageHandler jdbcMessageHandler;
+
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testMessages() {
-		this.channels.input().send(new GenericMessage<>("foo"));
-		this.channels.input().send(new GenericMessage<>("bar"));
+		AbstractMessageChannel input = (AbstractMessageChannel) this.channels.input();
+
+		final AtomicReference<Message<?>> messageAtomicReference = new AtomicReference<>();
+
+		ChannelInterceptorAdapter assertionInterceptor = new ChannelInterceptorAdapter() {
+
+			@Override
+			public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
+				messageAtomicReference.set(message);
+				super.afterSendCompletion(message, channel, sent, ex);
+			}
+
+		};
+
+		input.addInterceptor(assertionInterceptor);
+
+		input.send(new GenericMessage<>("foo"));
+
+		input.removeInterceptor(assertionInterceptor);
+
+		input.send(new GenericMessage<>("bar"));
 
 		List<Map<String, Object>> data = this.jdbcTemplate.queryForList("SELECT * FROM foobar");
+
 		assertThat(data.size()).isEqualTo(2);
 		assertThat(data.get(0).get("value")).isEqualTo("foo");
 		assertThat(data.get(1).get("value")).isEqualTo("bar");
+
+		Message<?> message1 = messageAtomicReference.get();
+		assertThat(message1).isNotNull();
+		assertThat(message1).hasFieldOrPropertyWithValue("payload", "foo");
+
+		ArgumentCaptor<Message<?>> messageArgumentCaptor =
+				(ArgumentCaptor<Message<?>>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Message.class);
+
+		verify(this.jdbcMessageHandler, times(2)).handleMessage(messageArgumentCaptor.capture());
+
+		Message<?> message = messageArgumentCaptor.getValue();
+		assertThat(message).hasFieldOrPropertyWithValue("payload", "bar");
 	}
 
 }

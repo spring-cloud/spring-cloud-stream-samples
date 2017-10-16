@@ -13,7 +13,7 @@ To build the samples do:
 
 * `dynamic-source` publishes messages to dynamically created destinations.
 
-* `kinesis-produce-consume` An example application using spring-cloud-stream-binder-aws-kinesis. Presents a web endpoint to send Orders, these are placed on a Kinesis stream and then consumed by the application from that stream. 
+* `kinesis-produce-consume` An example application using spring-cloud-stream-binder-aws-kinesis. Presents a web endpoint to send Orders, these are placed on a Kinesis stream and then consumed by the application from that stream.
 
 * `multi-io` shows how to use configure multiple input/output channels inside a single application.
 
@@ -39,4 +39,6 @@ We generally recommend testing with the http://docs.spring.io/spring-cloud-strea
 * `transform` is a simple pass through logging transformer (just logs the incoming message and passes it on).
 
 * `kstream` is a collection of applications that demonstrate the capabilities of the Spring Cloud Stream support for Kafka Streams
+
+* `testing` is a bunch of applications and tests for them to demonstrate the capabilities of testing for the the Spring Cloud Stream applications.
 

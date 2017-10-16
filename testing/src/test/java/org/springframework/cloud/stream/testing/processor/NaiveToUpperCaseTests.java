@@ -21,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
+ * The simple test-case to demonstrate how it is easy to apply unit testing assertion
+ * for te Spring Cloud Stream applications.
+ *
  * @author Artem Bilan
  *
  */

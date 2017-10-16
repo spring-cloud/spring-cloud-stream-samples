@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.stream.testing.processor.integration;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Iterator;
@@ -40,6 +39,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * A Spring Boot integration test for the Spring Cloud Stream Processor application
+ * based on the Embedded Kafka.
+ *
  * @author Artem Bilan
  *
  */
