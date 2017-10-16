@@ -28,6 +28,9 @@ import org.springframework.integration.jdbc.JdbcMessageHandler;
 import org.springframework.messaging.MessageHandler;
 
 /**
+ * The Spring Cloud Stream Sink application,
+ * which insert payloads of incoming messages to the FOOBAR table in the RDBMS.
+ *
  * @author Artem Bilan
  *
  */
@@ -37,7 +40,7 @@ public class JdbcSink {
 
 	@Bean
 	@ServiceActivator(inputChannel = Sink.INPUT)
-	public MessageHandler logHandler(DataSource dataSource) {
+	public MessageHandler jdbcHandler(DataSource dataSource) {
 		return new JdbcMessageHandler(dataSource, "INSERT INTO foobar (value) VALUES (:payload)");
 	}
 

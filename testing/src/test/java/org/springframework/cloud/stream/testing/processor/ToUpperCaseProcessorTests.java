@@ -16,17 +16,19 @@
 
 package org.springframework.cloud.stream.testing.processor;
 
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesMessageThat;
 import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
+import static org.springframework.integration.test.matcher.PayloadAndHeaderMatcher.sameExceptIgnorableHeaders;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,12 +37,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * The Spring Boot-base test-case to demonstrate how can we test Spring Cloud Stream applications
+ * with available testing tools.
+ *
  * @author Artem Bilan
  *
  */
@@ -59,11 +66,14 @@ public class ToUpperCaseProcessorTests {
 	private ToUpperCaseProcessor toUpperCaseProcessor;
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testMessages() {
-		this.channels.input().send(new GenericMessage<>("foo"));
-		this.channels.input().send(new GenericMessage<>("bar"));
-		this.channels.input().send(new GenericMessage<>("foo meets bar"));
-		this.channels.input().send(new GenericMessage<>("nothing but the best test"));
+		SubscribableChannel input = this.channels.input();
+
+		input.send(new GenericMessage<>("foo"));
+		input.send(new GenericMessage<>("bar"));
+		input.send(new GenericMessage<>("foo meets bar"));
+		input.send(new GenericMessage<>("nothing but the best test"));
 
 		BlockingQueue<Message<?>> messages = this.collector.forChannel(channels.output());
 
@@ -72,7 +82,24 @@ public class ToUpperCaseProcessorTests {
 		assertThat(messages, receivesPayloadThat(is("FOO MEETS BAR")));
 		assertThat(messages, receivesPayloadThat(not("nothing but the best test")));
 
-		verify(this.toUpperCaseProcessor, times(4)).transform(anyString());
+		Message<String> testMessage =
+				MessageBuilder.withPayload("headers")
+						.setHeader("foo", "bar")
+						.build();
+
+		input.send(testMessage);
+
+		Message<String> expected =
+				MessageBuilder.withPayload("HEADERS")
+						.copyHeaders(testMessage.getHeaders())
+						.build();
+
+		Matcher<Message<Object>> sameExceptIgnorableHeaders =
+				(Matcher<Message<Object>>) (Matcher<?>) sameExceptIgnorableHeaders(expected);
+
+		assertThat(messages, receivesMessageThat(sameExceptIgnorableHeaders));
+
+		verify(this.toUpperCaseProcessor, times(5)).transform(anyString());
 	}
 
 }

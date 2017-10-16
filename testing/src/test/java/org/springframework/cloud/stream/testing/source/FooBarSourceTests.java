@@ -18,9 +18,7 @@ package org.springframework.cloud.stream.testing.source;
 
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 
 import java.util.concurrent.BlockingQueue;
@@ -37,6 +35,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * The Spring Boot-base test-case to demonstrate how can we test Spring Cloud Stream applications
+ * with available testing tools.
+ *
  * @author Artem Bilan
  *
  */
