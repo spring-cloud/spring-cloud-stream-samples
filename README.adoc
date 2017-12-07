@@ -5,7 +5,7 @@ There are several samples, most running on the RabbitMQ transport (so you need R
 To build the samples do:
 
 ```
-   ./mvnw clean build
+   ./mvnw clean install
 ```
 
 
