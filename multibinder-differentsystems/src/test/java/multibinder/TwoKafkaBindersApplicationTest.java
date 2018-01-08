@@ -16,17 +16,10 @@
 
 package multibinder;
 
-import java.util.UUID;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +41,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -55,6 +50,7 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest(classes = MultibinderApplication.class)
 @WebAppConfiguration
 @DirtiesContext
+@Ignore
 public class TwoKafkaBindersApplicationTest {
 
 	@ClassRule
