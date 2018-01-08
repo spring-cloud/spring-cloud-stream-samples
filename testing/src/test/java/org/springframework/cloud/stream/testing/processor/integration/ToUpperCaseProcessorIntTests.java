@@ -16,18 +16,14 @@
 
 package org.springframework.cloud.stream.testing.processor.integration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Iterator;
-
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.testing.processor.ToUpperCaseProcessor;
@@ -37,6 +33,10 @@ import org.springframework.kafka.test.rule.KafkaEmbedded;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Iterator;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A Spring Boot integration test for the Spring Cloud Stream Processor application
@@ -58,6 +58,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 		classes = ToUpperCaseProcessor.class,
 		webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DirtiesContext
+@Ignore
 public class ToUpperCaseProcessorIntTests {
 
 	@ClassRule
