@@ -33,7 +33,6 @@
 		<module>stream-listener</module>
 		<module>reactive-processor-kafka</module>
 		<module>test-embedded-kafka</module>
-		<module>kinesis-produce-consume</module>
 		<module>kstream</module>
 		<module>testing</module>
 	</modules>
