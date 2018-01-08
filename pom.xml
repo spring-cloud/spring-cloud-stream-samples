@@ -18,6 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring-cloud-stream.version>Ditmars.BUILD-SNAPSHOT</spring-cloud-stream.version>
 		<java.version>1.8</java.version>
+		<spring-kafka.version>1.1.6.RELEASE</spring-kafka.version>
 	</properties>
 	<modules>
 		<module>source</module>
@@ -59,6 +60,12 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-sample-transform</artifactId>
 				<version>1.2.0.BUILD-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.kafka</groupId>
+				<artifactId>spring-kafka-test</artifactId>
+				<scope>test</scope>
+				<version>${spring-kafka.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
