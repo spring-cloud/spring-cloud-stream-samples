@@ -1,0 +1,33 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+This example is a Spring Cloud Stream adaptation of this Kafka Streams sample: https://github.com/confluentinc/kafka-streams-examples/blob/4.0.0-post/src/test/java/io/confluent/examples/streams/StreamToTableJoinIntegrationTest.java
+
+The application uses two inputs - one KStream for user-clicks and a KTable for user-regions.
+Then it joins the information from stream to table to find out total clicks per region.
+
+==== Starting Kafka in a docker container
+
+* Skip steps 1-3 if you already have a non-Docker Kafka environment.
+
+1. Go to the docker directory in this repo and invoke the command `docker-compose up -d`.
+2. Ensure that in the docker directory and then invoke the script `start-kafka-shell.sh`
+3. cd $KAFKA_HOME
+4. Start the console consumer: +
+Assuming that you are running kafka on a docker container on mac osx. Change the zookeeper IP address accordingly otherwise. +
+`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic output-topic --key-deserializer org.apache.kafka.common.serialization.StringDeserializer --value-deserializer org.apache.kafka.common.serialization.LongDeserializer --property print.key=true --property key.separator="-"`
+
+=== Running the app:
+
+Go to the root of the repository and do: `./mvnw clean package`
+
+`java -jar target/kafka-streams-table-join-0.0.1-SNAPSHOT.jar`
+
+* By default we use the docker container IP (mac osx specific) in the `application.yml` for Kafka broker and zookeeper.
+Change it in `application.yml` (which requires a rebuild) or pass them as runtime arguments as below.
+
+`spring.cloud.stream.kstream.binder.brokers=<Broker IP Address>` +
+`spring.cloud.stream.kstream.binder.zkNodes=<Zookeeper IP Address>`
+
+Run the stand-alone `Producers` application to generate some data and watch the output on the console producer.

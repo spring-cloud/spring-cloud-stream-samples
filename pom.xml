@@ -37,6 +37,7 @@
 		<module>kinesis-produce-consume</module>
 		<module>kstream</module>
 		<module>testing</module>
+		<module>kafka-streams</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

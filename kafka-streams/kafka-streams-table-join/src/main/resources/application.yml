@@ -1,0 +1,34 @@
+spring.cloud.stream.bindings.input:
+  destination: user-clicks3
+  consumer:
+    useNativeDecoding: true
+    headerMode: raw
+spring.cloud.stream.bindings.inputX:
+  destination: user-regions
+  consumer:
+    useNativeDecoding: true
+    headerMode: raw
+spring.cloud.stream.bindings.output:
+  destination: output-topic
+  producer:
+    useNativeEncoding: true
+    headerMode: raw
+spring.cloud.stream.kafka.streams.bindings.input:
+  consumer:
+    keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    valueSerde: org.apache.kafka.common.serialization.Serdes$LongSerde
+spring.cloud.stream.kafka.streams.bindings.inputX:
+  consumer:
+    keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    valueSerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+spring.cloud.stream.kafka.streams.bindings.output:
+  producer:
+    keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    valueSerde: org.apache.kafka.common.serialization.Serdes$LongSerde
+spring.cloud.stream.kafka.streams.binder:
+  brokers: localhost #192.168.99.100
+  zkNodes: localhost #192.168.99.100
+  configuration:
+    default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    commit.interval.ms: 1000
