@@ -1,0 +1,25 @@
+spring.cloud.stream.bindings.output.contentType: application/json
+spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
+spring.cloud.stream.kafka.streams.binder.configuration:
+  default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+  default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+  application.id: default
+spring.cloud.stream.bindings.output:
+  destination: counts
+  producer:
+    headerMode: raw
+    #useNativeEncoding: true
+spring.cloud.stream.bindings.input:
+  contentType: foo/bar
+  destination: words
+  group: group1
+  consumer:
+    headerMode: raw
+    useNativeDecoding: false
+spring.cloud.stream.kafka.streams.bindings.input.consumer.dlqName: words-count-dlq
+spring.cloud.stream.kafka.streams.binder:
+  brokers: localhost #192.168.99.100
+  zkNodes: localhost #192.168.99.100
+  serdeError: sendToDlq
+
+
