@@ -5,6 +5,12 @@
     <artifactId>spring-cloud-stream-kafka-stream-samples</artifactId>
     <packaging>pom</packaging>
 
+    <parent>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-stream-samples</artifactId>
+        <version>1.2.0.BUILD-SNAPSHOT</version>
+    </parent>
+
     <name>spring-cloud-stream-kafka-stream-samples</name>
     <description>Parent Project for Kafka Streams Samples</description>
 
@@ -13,5 +19,7 @@
         <module>kafka-streams-branching-sample</module>
         <module>kafka-streams-dlq-sample</module>
         <module>kafka-streams-table-join</module>
+        <module>kafka-streams-interactive-query</module>
+	<module>kafka-streams-message-channel</module>
     </modules>
 </project>

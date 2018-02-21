@@ -1,0 +1,8 @@
+{"namespace": "kafka.streams.interactive.query.avro",
+ "type": "record",
+ "name": "PlayEvent",
+ "fields": [
+     {"name": "song_id",   "type": "long"},
+     {"name": "duration", "type": "long"}
+ ]
+}

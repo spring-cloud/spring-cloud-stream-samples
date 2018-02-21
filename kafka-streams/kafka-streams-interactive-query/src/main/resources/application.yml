@@ -1,0 +1,25 @@
+spring.cloud.stream.bindings.input:
+  destination: play-events
+  consumer:
+    useNativeDecoding: true
+    headerMode: raw
+spring.cloud.stream.bindings.inputX:
+  destination: song-feed
+  consumer:
+    useNativeDecoding: true
+    headerMode: raw
+spring.cloud.stream.kafka.streams.bindings.input:
+  consumer:
+    keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+spring.cloud.stream.kafka.streams.bindings.inputX:
+  consumer:
+    keySerde: org.apache.kafka.common.serialization.Serdes$LongSerde
+    valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+    materializedAs: all-songs
+spring.cloud.stream.kafka.streams.binder:
+  brokers: localhost #192.168.99.100
+  zkNodes: localhost #192.168.99.100
+  configuration:
+    schema.registry.url: http://localhost:8081
+    commit.interval.ms: 1000
