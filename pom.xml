@@ -29,14 +29,13 @@
 		<module>non-self-contained-aggregate-app</module>
 		<module>multibinder</module>
 		<module>multibinder-differentsystems</module>
-		<module>rxjava-processor</module>
 		<module>multi-io</module>
 		<module>stream-listener</module>
 		<module>reactive-processor-kafka</module>
 		<module>test-embedded-kafka</module>
 		<module>kinesis-produce-consume</module>
-		<module>kstream</module>
 		<module>testing</module>
+		<module>kafka-streams</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

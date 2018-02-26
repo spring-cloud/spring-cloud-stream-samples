@@ -16,10 +16,13 @@
 
     <modules>
         <module>kafka-streams-word-count</module>
-        <module>kafka-streams-branching-sample</module>
+        <module>kafka-streams-branching</module>
         <module>kafka-streams-dlq-sample</module>
         <module>kafka-streams-table-join</module>
-        <module>kafka-streams-interactive-query</module>
-	<module>kafka-streams-message-channel</module>
+        <module>kafka-streams-interactive-query-basic</module>
+        <module>kafka-streams-interactive-query-advanced</module>
+	    <module>kafka-streams-message-channel</module>
+        <module>kafka-streams-product-tracker</module>
+        <module>kafka-streams-aggregate</module>
     </modules>
 </project>
