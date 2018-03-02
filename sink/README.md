@@ -1,7 +1,17 @@
 Spring Cloud Stream Sink Sample
-=============================
+==================================
 
-In this *Spring Cloud Stream* sample, messages are received from a stream and the payload of each is logged to the console.
+## What is this app?
+
+This is a Spring Boot application that is a Spring Cloud Stream sample sink app that inserts data into a database through JDBC.
+This application specifically uses MySQL (MariaDB flavor) to insert the data.
+In reality, you probably want to use the out of the box variant of JDBC sink from https://github.com/spring-cloud-stream-app-starters/jdbc which is more advanced.
+Refer to the documentation of Spring Cloud Stream app starters for the latest links for generated apps for specific binders.
+
+## What is the default binder used in this app?
+
+The default binder used in this app is Kafka.
+If you need to change it to Rabbitmq, change the appropriate dependency in the maven pom.xml
 
 ## Requirements
 
@@ -9,24 +19,36 @@ To run this sample, you will need to have installed:
 
 * Java 8 or Above
 
-This example requires Redis to be running on localhost.
+## Running the application
 
-## Code Tour
+The following instructions assume that you are running Kafka and MySql as Docker images.
 
-This sample is a Spring Boot application that uses Spring Cloud Stream to receive messages and write each payload to the console. The sink module has 2 primary components:
+* Go to the root of the repository
+* `cd kafka-docker`
+* `docker-compose up -d`
 
-* SinkApplication - the Spring Boot Main Application
-* LogSink - the module that receives the data from the stream and writes it out to the console
+* Open another terminal and go to the root of the samples repository
+* `cd mysql-docker`
+* `docker-compose up -d`
+* Ensure that you have the `mysql` CLI tool installed and then use this command:
+`mysql -u root -p  -h 127.0.0.1 -P 3306 sample_mysql_db`
 
-## Building with Maven
+`sample_mysql_db` is the name of the database created by the mysql that is running in the docker container.
 
-Build the sample by executing:
+* Open another terminal and go the root of this sample app (`source`)
+* `./mvnw clean package`
 
-	sink>$ mvn clean package
+When you start the app, it will create a table in the database.
+See the method annotated with`PostConstruct` in the application for more details.
 
-## Running the Sample
+* `java -jar target/sample-jdbc-sink-0.0.1-SNAPSHOT.jar`
 
-To start the sink module execute the following:
+The application has a convenient test source that sends to the same destination on the broker where the sink consumes data from.
+This test source will send some test records every second.
+Alternatively, you can connect to the topic using a Kafka console producer and send data in the format - `{"id":1,"name":"Bob","tag":"1}`.
 
-	sink>$ java -jar target/spring-cloud-stream-sample-sink-1.0.0.BUILD-SNAPSHOT-exec.jar
+* Now go to your MySQL CLI:
 
+`select * from test;`
+
+Repeat the query a few times and you will see additional records each time.

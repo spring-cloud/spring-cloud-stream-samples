@@ -16,15 +16,9 @@
 
 package multibinder;
 
-import java.util.UUID;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
-
+import org.junit.*;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.stream.binder.BinderFactory;
@@ -44,11 +38,14 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.UUID;
+
 /**
  * @author Marius Bogoevici
  * @author Gary Russell
  */
 @DirtiesContext
+@Ignore
 public class RabbitAndKafkaBinderApplicationTests {
 
 	@ClassRule

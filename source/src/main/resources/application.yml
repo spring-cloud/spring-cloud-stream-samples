@@ -1,25 +1,11 @@
-server:
-  port: 8080
-fixedDelay: 5000
 spring:
-  cloud:
-    stream:
-      bindings:
-        output:
-          destination: testtock
-          contentType: text/plain
-        # uncomment below to use the last digit of the seconds as a partition key
-        # hashcode(key) % N is then applied with N being the partitionCount value
-        # thus, even seconds should go to the 0 queue, odd seconds to the 1 queue
-        #producerProperties:
-        #  partitionKeyExpression: payload.charAt(payload.length()-1)
-        #  partitionCount: 2
-
----
-spring:
-  profiles: extended
-  cloud:
-    stream:
-      bindings:
-        output:
-          destination: xformed
+  datasource:
+    url: jdbc:mariadb://localhost:3306/sample_mysql_db
+    username: root
+    password: pwd
+    driver-class-name: org.mariadb.jdbc.Driver
+jdbc:
+  query: select id, name, tag from test order by id
+  triggerDelay: 5
+spring.cloud.stream.bindings.output.destination: test-data
+spring.cloud.stream.bindings.input.destination: test-data
