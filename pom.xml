@@ -21,14 +21,14 @@
         <java.version>1.8</java.version>
 	</properties>
 	<modules>
-		<module>source</module>
-		<module>sink</module>
+		<module>jdbc-sink</module>
+		<module>jdbc-source</module>
 		<module>dynamic-source</module>
 		<module>transform</module>
 		<module>double</module>
 		<module>non-self-contained-aggregate-app</module>
 		<!--<module>multibinder</module>-->
-		<!--<module>multibinder-differentsystems</module>-->
+		<module>multibinder-differentsystems</module>
 		<module>multi-io</module>
 		<module>stream-listener</module>
 		<module>reactive-processor-kafka</module>
