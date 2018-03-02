@@ -35,19 +35,16 @@ Refer to the `application.yml` for the defaults used for the following propertie
 
 The following instructions assume that you are running Kafka and MySql as Docker images.
 
-* Go to the root of the repository
-* `cd kafka-docker`
+* Go to the application root
 * `docker-compose up -d`
 
-* Open another terminal and go to the root of the samples repository
-* `cd mysql-docker`
-* `docker-compose up -d`
+* Open another terminal
 * Ensure that you have the `mysql` CLI tool installed and then use this command:
 `mysql -u root -p  -h 127.0.0.1 -P 3306 sample_mysql_db`
 
 `sample_mysql_db` is the name of the database created by the mysql that is running in the docker container.
 
-* Open another terminal and go the root of this sample app (`source`)
+* Go back to the other terminal (root of this sample app `source`)
 * `./mvnw clean package`
 
 When you start the app, it will insert some test data into the database.

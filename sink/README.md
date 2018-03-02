@@ -23,19 +23,16 @@ To run this sample, you will need to have installed:
 
 The following instructions assume that you are running Kafka and MySql as Docker images.
 
-* Go to the root of the repository
-* `cd kafka-docker`
+* Go to the application root
 * `docker-compose up -d`
 
-* Open another terminal and go to the root of the samples repository
-* `cd mysql-docker`
-* `docker-compose up -d`
+* Open another terminal
 * Ensure that you have the `mysql` CLI tool installed and then use this command:
 `mysql -u root -p  -h 127.0.0.1 -P 3306 sample_mysql_db`
 
 `sample_mysql_db` is the name of the database created by the mysql that is running in the docker container.
 
-* Open another terminal and go the root of this sample app (`source`)
+* Go back to the other terminal (root of this sample app `sink`)
 * `./mvnw clean package`
 
 When you start the app, it will create a table in the database.
@@ -46,6 +43,7 @@ See the method annotated with`PostConstruct` in the application for more details
 The application has a convenient test source that sends to the same destination on the broker where the sink consumes data from.
 This test source will send some test records every second.
 Alternatively, you can connect to the topic using a Kafka console producer and send data in the format - `{"id":1,"name":"Bob","tag":"1}`.
+If you go with this kafka console producer approach, make sure you comment out the test source in the sample and rebuild.
 
 * Now go to your MySQL CLI:
 
