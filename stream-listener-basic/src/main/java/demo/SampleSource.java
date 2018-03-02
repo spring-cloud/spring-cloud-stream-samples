@@ -24,8 +24,6 @@ import org.springframework.integration.annotation.Poller;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.messaging.support.MessageBuilder;
 
 /**
@@ -44,7 +42,7 @@ public class SampleSource {
 				System.out.println("******************");
 				String value = "{\"value\":\"hi\"}";
 				System.out.println("Sending value: " + value);
-				return MessageBuilder.withPayload(value).setHeader(MessageHeaders.CONTENT_TYPE, "application/json").build();
+				return MessageBuilder.withPayload(value).build();
 			}
 		};
 	}

@@ -23,6 +23,7 @@
 	<modules>
 		<module>jdbc-sink</module>
 		<module>jdbc-source</module>
+		<module>stream-listener-basic</module>
 		<module>dynamic-source</module>
 		<module>transform</module>
 		<module>double</module>
@@ -30,7 +31,6 @@
 		<!--<module>multibinder</module>-->
 		<module>multibinder-differentsystems</module>
 		<module>multi-io</module>
-		<module>stream-listener</module>
 		<module>reactive-processor-kafka</module>
 		<module>test-embedded-kafka</module>
 		<module>kinesis-produce-consume</module>

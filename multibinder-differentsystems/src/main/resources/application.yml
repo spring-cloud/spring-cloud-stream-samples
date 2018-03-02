@@ -8,9 +8,9 @@ spring:
           destination: dataIn
           binder: kafka1
           group: testGroup
-        output:
-          destination: dataOut
-          binder: kafka2
+#        output:
+#          destination: dataOut
+#          binder: kafka2
       binders:
         kafka1:
          type: kafka
@@ -22,13 +22,13 @@ spring:
                   binder:
                     brokers: ${kafkaBroker1}
                     zkNodes: ${zk1}
-        kafka2:
-         type: kafka
-         environment:
-           spring:
-             cloud:
-               stream:
-                 kafka:
-                   binder:
-                     brokers: ${kafkaBroker2}
-                     zkNodes: ${zk2}
+#        kafka2:
+#         type: kafka
+#         environment:
+#           spring:
+#             cloud:
+#               stream:
+#                 kafka:
+#                   binder:
+#                     brokers: ${kafkaBroker2}
+#                     zkNodes: ${zk2}

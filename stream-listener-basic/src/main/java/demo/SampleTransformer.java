@@ -17,29 +17,29 @@
 package demo;
 
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.SubscribableChannel;
+import org.springframework.cloud.stream.messaging.Processor;
+import org.springframework.messaging.handler.annotation.SendTo;
 
 /**
  * @author Ilayaperumal Gopinathan
  */
-@EnableBinding(SampleSink.Sink.class)
-public class SampleSink {
+@EnableBinding(Processor.class)
+public class SampleTransformer {
 
-	// Sink application definition
-	@StreamListener(Sink.SAMPLE)
-	public void receive(Foo fooMessage) {
+	private static final String TRANSFORMATION_VALUE = "HI";
+
+	// Transformer application definition
+
+	@StreamListener(Processor.INPUT)
+	@SendTo(Processor.OUTPUT)
+	public Bar receive(Bar bar) {
 		System.out.println("******************");
-		System.out.println("At the Sink");
+		System.out.println("At the transformer");
 		System.out.println("******************");
-		System.out.println("Received transformed message " + fooMessage.getValue() + " of type " + fooMessage.getClass());
-	}
-
-	public interface Sink {
-		String SAMPLE = "sample-sink";
-
-		@Input(SAMPLE)
-		SubscribableChannel sampleSink();
+		System.out.println("Received value "+ bar.getValue() + " of type " + bar.getClass());
+		System.out.println("Transforming the value to " + TRANSFORMATION_VALUE + " and with the type " + bar.getClass());
+		bar.setValue(TRANSFORMATION_VALUE);
+		return bar;
 	}
 }
