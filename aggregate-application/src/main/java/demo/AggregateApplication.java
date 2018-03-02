@@ -19,18 +19,15 @@ package demo;
 import config.processor.ProcessorApplication;
 import config.sink.SinkApplication;
 import config.source.SourceApplication;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.aggregate.AggregateApplicationBuilder;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class DoubleApplication {
+public class AggregateApplication {
 
 	public static void main(String[] args) {
-		new AggregateApplicationBuilder(DoubleApplication.class, args)
-				.from(SourceApplication.class).args("--fixedDelay=5000")
+		new AggregateApplicationBuilder(AggregateApplication.class, args)
+				.from(SourceApplication.class).args("--fixedDelay=1000")
 				.via(ProcessorApplication.class)
 				.to(SinkApplication.class).args("--debug=true").run();
 	}

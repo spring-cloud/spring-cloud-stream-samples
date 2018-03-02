@@ -1,0 +1,43 @@
+Spring Cloud Stream Aggregate Application Sample
+================================================
+
+This is a basic example of a Spring Cloud Stream aggregate application.
+This sample follows the chain of source -> processor -> sink.
+Since the final component is a sink, we can run this aggregate sample without using a middleware, i.e. the entire chain is done in memory using the channels.
+Alternatively, we can stop the application at a processor and send the outbound to a middleware through a binder.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Code Tour
+
+* SourceAppConfiguration - Configuration for the source
+* ProcessorAppConfiguraion - Configuration for the processor
+* SinkAppConfiguration - Configuration for the sink
+* SourceApplication - Spring Boot app for the source
+* ProcessorApplication - Spring Boot app for the processor
+* SinkApplication - Spring Boot app for the sink
+* AggregateApplication - The main aggregate application
+
+## Running the application
+
+* Go to the application root
+
+* `./mvnw clean package`
+
+* `java -jar target/aggregate-application-0.0.1-SNAPSHOT.jar`
+
+Source application sends a message every second which will initiate the processor and then the sink (all in memory through the aggregate app).
+You will see output similar to the following printed on the console every second.
+
+```
+2018-03-02 18:29:06.546  INFO 29080 --- [ask-scheduler-1] config.sink.SinkModuleDefinition         : Received: 2018-03-02 18:29:06
+2018-03-02 18:29:07.552  INFO 29080 --- [ask-scheduler-2] config.sink.SinkModuleDefinition         : Received: 2018-03-02 18:29:07
+2018-03-02 18:29:08.558  INFO 29080 --- [ask-scheduler-1] config.sink.SinkModuleDefinition         : Received: 2018-03-02 18:29:08
+2018-03-02 18:29:09.564  INFO 29080 --- [ask-scheduler-3] config.sink.SinkModuleDefinition         : Received: 2018-03-02 18:29:09
+2018-03-02 18:29:10.569  INFO 29080 --- [ask-scheduler-2] config.sink.SinkModuleDefinition         : Received: 2018-03-02 18:29:10
+2018-03-02 18:29:11.570  INFO 29080 --- [ask-scheduler-4] config.sink.SinkModuleDefinition         : Received: 2018-03-02 18:29:11
+```

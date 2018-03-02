@@ -27,9 +27,9 @@ import org.springframework.integration.annotation.ServiceActivator;
  * @author Marius Bogoevici
  */
 @EnableBinding(Sink.class)
-public class SinkModuleDefinition {
+public class SinkAppConfiguration {
 
-	private static Logger logger = LoggerFactory.getLogger(SinkModuleDefinition.class);
+	private static Logger logger = LoggerFactory.getLogger(SinkAppConfiguration.class);
 
 	@ServiceActivator(inputChannel=Sink.INPUT)
 	public void loggerSink(Object payload) {

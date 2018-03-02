@@ -23,7 +23,7 @@ This sample is a Spring Boot application that bundles multiple application toget
 Please note that the applications (SampleSource, SampleTransformer and SampleSink) are bundled inside the single application for the demo purpose only.
 In practice, these applications run on their own.
 If at all they need to be bundled together, the best practice is to use `AggregateApplicationBuilder`.
-Refer the sample `double` for more info on aggregate application.
+Refer the sample `aggregate-application` for more info on aggregate application.
 
 ## Running the application
 
