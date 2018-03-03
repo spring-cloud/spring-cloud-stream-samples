@@ -24,10 +24,10 @@
 		<module>jdbc-sink</module>
 		<module>jdbc-source</module>
 		<module>streamlistener-basic</module>
-		<module>aggregate-application</module>
+		<module>self-contained-aggregate-application</module>
+		<module>non-self-contained-aggregate-app</module>
 		<module>dynamic-source</module>
 		<module>transform</module>
-		<module>non-self-contained-aggregate-app</module>
 		<!--<module>multibinder</module>-->
 		<module>multibinder-differentsystems</module>
 		<module>multi-io</module>

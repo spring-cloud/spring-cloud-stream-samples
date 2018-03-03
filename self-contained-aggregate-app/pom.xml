@@ -2,13 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-
 	<groupId>spring.cloud.stream.samples</groupId>
-	<artifactId>aggregate-application</artifactId>
+	<artifactId>self-contained-aggregate-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>aggregate-application</name>
+	<name>self-contained-aggregate-app</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
@@ -91,6 +90,4 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
-
 </project>

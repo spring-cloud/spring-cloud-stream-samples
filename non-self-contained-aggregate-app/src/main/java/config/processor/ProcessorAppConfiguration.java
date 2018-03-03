@@ -25,10 +25,11 @@ import org.springframework.messaging.Message;
  * @author Marius Bogoevici
  */
 @EnableBinding(Processor.class)
-public class ProcessorModuleDefinition {
+public class ProcessorAppConfiguration {
 
 	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
 	public Message<?> transform(Message<?> inbound) {
 		return inbound;
 	}
+
 }

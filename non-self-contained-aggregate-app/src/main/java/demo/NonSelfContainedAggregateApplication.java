@@ -18,7 +18,6 @@ package demo;
 
 import config.processor.ProcessorApplication;
 import config.source.SourceApplication;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.aggregate.AggregateApplicationBuilder;
 
@@ -30,8 +29,7 @@ public class NonSelfContainedAggregateApplication {
 
 	public static void main(String[] args) {
 		new AggregateApplicationBuilder(NonSelfContainedAggregateApplication.class)
-				.from(SourceApplication.class).args("--fixedDelay=5000")
+				.from(SourceApplication.class).args("--fixedDelay=1000")
 				.via(ProcessorApplication.class).namespace("a").run("--spring.cloud.stream.bindings.output.destination=processor-output");
 	}
-
 }

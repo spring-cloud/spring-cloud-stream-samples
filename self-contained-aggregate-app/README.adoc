@@ -1,10 +1,9 @@
 Spring Cloud Stream Aggregate Application Sample
 ================================================
 
-This is a basic example of a Spring Cloud Stream aggregate application.
+This is a basic example of a Spring Cloud Stream aggregate application that is self contained.
 This sample follows the chain of source -> processor -> sink.
-Since the final component is a sink, we can run this aggregate sample without using a middleware, i.e. the entire chain is done in memory using the channels.
-Alternatively, we can stop the application at a processor and send the outbound to a middleware through a binder.
+Since the final component is a sink, we can run this aggregate sample without using a middleware, i.e. the entire chain is done in memory using the channels and thus self contained.
 
 ## Requirements
 
@@ -28,7 +27,7 @@ To run this sample, you will need to have installed:
 
 * `./mvnw clean package`
 
-* `java -jar target/aggregate-application-0.0.1-SNAPSHOT.jar`
+* `java -jar target/self-contained-aggregate-app-0.0.1-SNAPSHOT.jar`
 
 Source application sends a message every second which will initiate the processor and then the sink (all in memory through the aggregate app).
 You will see output similar to the following printed on the console every second.
