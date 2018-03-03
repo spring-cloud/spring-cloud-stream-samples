@@ -16,25 +16,17 @@
 
 package demo;
 
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.context.annotation.Bean;
-import org.springframework.expression.Expression;
-import org.springframework.expression.common.LiteralExpression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.dsl.support.Function;
-import org.springframework.integration.dsl.support.FunctionExpression;
-import org.springframework.integration.router.AbstractMappingMessageRouter;
 import org.springframework.integration.router.ExpressionEvaluatingRouter;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -43,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.Collections;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
