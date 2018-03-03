@@ -20,10 +20,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TransformApplication {
+public class UppercaseTransformerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TransformApplication.class, args);
+		SpringApplication.run(UppercaseTransformerApplication.class, args);
 	}
 
 }

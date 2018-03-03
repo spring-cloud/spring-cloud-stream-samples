@@ -6,5 +6,9 @@ spring:
       bindings:
         output:
           destination: transformed
+        test-sink:
+          destination: transformed
         input:
+          destination: testtock
+        test-source:
           destination: testtock

@@ -24,18 +24,18 @@
 		<module>jdbc-sink</module>
 		<module>jdbc-source</module>
 		<module>streamlistener-basic</module>
-		<module>self-contained-aggregate-application</module>
+		<module>self-contained-aggregate-app</module>
 		<module>non-self-contained-aggregate-app</module>
-		<module>dynamic-source</module>
-		<module>transform</module>
+		<module>uppercase-transformer</module>
+		<module>reactive-processor</module>
+		<module>kafka-streams</module>
 		<!--<module>multibinder</module>-->
+		<module>dynamic-source</module>
 		<module>multibinder-differentsystems</module>
 		<module>multi-io</module>
-		<module>reactive-processor-kafka</module>
 		<module>test-embedded-kafka</module>
 		<module>kinesis-produce-consume</module>
 		<module>testing</module>
-		<module>kafka-streams</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

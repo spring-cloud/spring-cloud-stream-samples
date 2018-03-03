@@ -1,10 +1,12 @@
-server:
-  port: 8082
 spring:
   cloud:
     stream:
       bindings:
         output:
           destination: xformed
+        test-sink:
+          destination: xformed
         input:
+          destination: testtock
+        test-source:
           destination: testtock

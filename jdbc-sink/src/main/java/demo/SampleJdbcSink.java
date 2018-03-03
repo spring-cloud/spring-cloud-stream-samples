@@ -85,7 +85,7 @@ public class SampleJdbcSink {
 		}
 	}
 
-	//Following sink is used as test consumer. It logs the data received through the consumer.
+	//Following source is used as test producer.
 	@EnableBinding(Source.class)
 	static class TestSource {
 

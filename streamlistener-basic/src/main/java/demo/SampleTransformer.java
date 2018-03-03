@@ -29,8 +29,6 @@ public class SampleTransformer {
 
 	private static final String TRANSFORMATION_VALUE = "HI";
 
-	// Transformer application definition
-
 	@StreamListener(Processor.INPUT)
 	@SendTo(Processor.OUTPUT)
 	public Bar receive(Bar bar) {
