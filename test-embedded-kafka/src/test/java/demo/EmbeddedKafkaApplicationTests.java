@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,24 @@
 package demo;
 
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.rule.KafkaEmbedded;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,41 +43,47 @@ import static org.assertj.core.api.Assertions.assertThat;
  * kafka binder.
  *
  * @author Gary Russell
+ * @author Soby Chacko
  *
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class EmbeddedKafkaApplicationTests {
 
+	private static final String INPUT_TOPIC = "testEmbeddedIn";
+	private static final String OUTPUT_TOPIC = "testEmbeddedOut";
+	private static final String GROUP_NAME = "embeddedKafkaApplication";
+
 	@ClassRule
-	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1);
-
-	@Autowired
-	private KafkaTemplate<byte[], byte[]> template;
-
-	@Autowired
-	private DefaultKafkaConsumerFactory<byte[], byte[]> consumerFactory;
-
-	@Value("${spring.cloud.stream.bindings.input.destination}")
-	private String inputDestination;
-
-	@Value("${spring.cloud.stream.bindings.output.destination}")
-	private String outputDestination;
+	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, OUTPUT_TOPIC);
 
 	@BeforeClass
 	public static void setup() {
-		System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getBrokersAsString());
+		System.setProperty("spring.cloud.stream.kafka.binder.brokers", embeddedKafka.getBrokersAsString());
 		System.setProperty("spring.cloud.stream.kafka.binder.zkNodes", embeddedKafka.getZookeeperConnectionString());
 	}
 
 	@Test
 	public void testSendReceive() {
-		template.send(this.inputDestination, "foo".getBytes());
-		Consumer<byte[], byte[]> consumer = this.consumerFactory.createConsumer();
-		consumer.subscribe(Collections.singleton(this.outputDestination));
+		Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
+		senderProps.put("key.serializer", ByteArraySerializer.class);
+		senderProps.put("value.serializer", ByteArraySerializer.class);
+		DefaultKafkaProducerFactory<byte[], byte[]> pf = new DefaultKafkaProducerFactory<>(senderProps);
+		KafkaTemplate<byte[], byte[]> template = new KafkaTemplate<>(pf, true);
+		template.setDefaultTopic(INPUT_TOPIC);
+		template.sendDefault("foo".getBytes());
+
+		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(GROUP_NAME, "false", embeddedKafka);
+		consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+		consumerProps.put("key.deserializer", ByteArrayDeserializer.class);
+		consumerProps.put("value.deserializer", ByteArrayDeserializer.class);
+		DefaultKafkaConsumerFactory<byte[], byte[]> cf = new DefaultKafkaConsumerFactory<>(consumerProps);
+
+		Consumer<byte[], byte[]> consumer = cf.createConsumer();
+		consumer.subscribe(Collections.singleton(OUTPUT_TOPIC));
 		ConsumerRecords<byte[], byte[]> records = consumer.poll(10_000);
 		consumer.commitSync();
+
 		assertThat(records.count()).isEqualTo(1);
 		assertThat(new String(records.iterator().next().value())).isEqualTo("FOO");
 	}

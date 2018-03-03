@@ -1,5 +1,5 @@
 Spring Cloud Stream Testing with Embedded Kafka Broker Sample
-=============================
+==============================================================
 
 In this *Spring Cloud Stream* sample, an embedded kafka broker is used for testing.
 
@@ -20,18 +20,15 @@ The `spring-kafka-test` dependency added to the `pom.xml` puts the `KafkaEmbedde
 Refer to the [Spring for Apache Kafka Reference Manual](http://docs.spring.io/spring-kafka/reference/htmlsingle/#testing) for more information about this.
 Notice how the `@BeforeClass` method sets up the Boot and binder properties to locate the servers.
 
-
-The test method starts by using the Spring Boot auto-configured `KafkaTemplate` to send a message to the input destination.
+See the test method for the details on interacting with Embedded Kafka.
+The test method starts by sending a message to the input destination.
 It then creates a consumer to consume from the output destination; gets the output message and asserts that it's an upper case version of the sent message.
-
-See the `application.properties` file for the properties that are required for this test case and application.
-In particular, `raw` header mode is used.
 
 ## Building with Maven
 
 Build the sample and run the test by executing:
 
-	source>$ mvn clean package
+`./mvnw clean package`
 
 or run the test in your favorite IDE.
 
