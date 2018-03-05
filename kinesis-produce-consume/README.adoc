@@ -1,7 +1,9 @@
 Spring Cloud Stream Kinesis Sample
 =============================
 
-In this *Spring Cloud Stream* sample, a Controller exists which can receive POST requests containing Order objects. These Orders are added to a Kinesis Stream. The sample application consumes the Orders from the stream.
+In this *Spring Cloud Stream* sample, a Controller exists which can receive POST requests containing Order objects.
+These Orders are added to a Kinesis Stream.
+The sample application consumes the Orders from the stream.
 
 ## Requirements
 
@@ -9,11 +11,13 @@ To run this sample, you will need to have installed:
 
 * Java 8 or Above
 
-This example requires and AWS account, it will create a Kinesis stream which will be chargeable. The AWS credentials will be obtained using the default credential provider chain. 
+This example requires and AWS account, it will create a Kinesis stream which will be chargeable.
+The AWS credentials will be obtained using the default credential provider chain.
 
 ## Code Tour
 
-This sample is a Spring Boot application that uses Spring Cloud Stream to produce and consume data to a Kinesis Stream. The sample has the following components:
+This sample is a Spring Boot application that uses Spring Cloud Stream to produce and consume data to a Kinesis Stream.
+The sample has the following components:
 
 * KinesisApplication - The Spring Boot Main Application
 * OrderController - The Controller exposing POST and GET endpoints 
@@ -41,7 +45,8 @@ Start the Consumer using:
 
 `kinesis-produce-consume>$ java -jar target/spring-cloud-stream-sample-kinesis-0.0.1.BUILD-SNAPSHOT.jar --originator=KinesisConsumer --server.port=64399`
 
-The originator is a key added to messages to tell the receiving application who sent the message. If the receiver sent the message nothing is done, if the receiver did not send the message then it is saved to an in memory database.
+The originator is a key added to messages to tell the receiving application who sent the message. 
+If the consumer sent the message nothing is done, if the producer sent the message, then it is saved to an in memory database.
 
 
 

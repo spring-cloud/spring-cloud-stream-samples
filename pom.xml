@@ -32,9 +32,9 @@
 		<module>multi-io</module>
 		<module>dynamic-destination-source</module>
 		<module>test-embedded-kafka</module>
+		<module>kinesis-produce-consume</module>
 		<!--<module>multibinder</module>-->
 		<module>multibinder-differentsystems</module>
-		<module>kinesis-produce-consume</module>
 		<module>testing</module>
 	</modules>
 	<dependencyManagement>
