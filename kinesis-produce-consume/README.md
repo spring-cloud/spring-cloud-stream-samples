@@ -41,7 +41,8 @@ Start the Consumer using:
 
 `kinesis-produce-consume>$ java -jar target/spring-cloud-stream-sample-kinesis-0.0.1.BUILD-SNAPSHOT.jar --originator=KinesisConsumer --server.port=64399`
 
-The originator is a key added to messages to tell the receiving application who sent the message. If the receiver sent the message nothing is done, if the receiver did not send the message then it is saved to an in memory database.
+The originator is a key added to messages to tell the receiving application who sent the message. 
+If the consumer sent the message nothing is done, if the producer sent the message, then it is saved to an in memory database.
 
 
 
