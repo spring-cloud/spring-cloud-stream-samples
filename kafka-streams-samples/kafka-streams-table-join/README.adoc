@@ -1,0 +1,22 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+This example is a Spring Cloud Stream adaptation of this Kafka Streams sample: https://github.com/confluentinc/kafka-streams-examples/blob/4.0.0-post/src/test/java/io/confluent/examples/streams/StreamToTableJoinIntegrationTest.java
+
+The application uses two inputs - one KStream for user-clicks and a KTable for user-regions.
+Then it joins the information from stream to table to find out total clicks per region.
+
+=== Running the app:
+
+Go to the root of the repository.
+
+`docker-compose up -d`
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-table-join-0.0.1-SNAPSHOT.jar`
+
+`docker exec -it kafka-join /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092 --topic output-topic --key-deserializer org.apache.kafka.common.serialization.StringDeserializer --value-deserializer org.apache.kafka.common.serialization.LongDeserializer --property print.key=true --property key.separator="-"`
+
+Run the stand-alone `Producers` application to generate some data and watch the output on the console consumer above.

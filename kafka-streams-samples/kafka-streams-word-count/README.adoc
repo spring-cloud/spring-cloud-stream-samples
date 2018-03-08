@@ -1,0 +1,41 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+The example is based on the word count application from the https://github.com/confluentinc/examples/blob/3.2.x/kafka-streams/src/main/java/io/confluent/examples/streams/WordCountLambdaExample.java[reference documentation].
+It uses a single input and a single output.
+In essence, the application receives text messages from an input topic and computes word occurrence counts in a configurable time window and report that in an output topic.
+This sample uses lambda expressions and thus requires Java 8+.
+
+=== Running the app:
+
+Go to the root of the repository.
+
+`docker-compose up -d`
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-word-count-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kafka.streams.timeWindow.length=60000`
+
+Assuming you are running the dockerized Kafka cluster as above.
+
+Issue the following commands:
+
+`docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic words`
+
+On another terminal:
+
+`docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092 --topic counts`
+
+Enter some text in the console producer and watch the output in the console consumer.
+
+Time window can be changed using the following property.
+
+`spring.cloud.stream.kafka.streams.timeWindow.length` (value is expressed in milliseconds)
+
+In order to switch to a hopping window, you can use the `spring.cloud.stream.kstream.timeWindow.advnceBy` (value in milliseconds).
+This will create an overlapped hopping windows depending on the value you provide.
+
+Here is an example with 2 overlapping windows (window length of 10 seconds and a hop (advance) by 5 seconds:
+
+`java -jar target/kafka-streams-word-count-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kafka.streams.timeWindow.length=10000 --spring.cloud.stream.kafka.streams.timeWindow.advnceBy=5000`

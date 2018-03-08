@@ -1,0 +1,26 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+This example is a Spring Cloud Stream adaptation of this Kafka Streams sample: https://github.com/confluentinc/kafka-streams-examples/tree/4.0.0-post/src/main/java/io/confluent/examples/streams/interactivequeries/kafkamusic
+
+This sample demonstrates the concept of interactive queries in kafka streams.
+There is a REST service provided as part of the application that can be used to query the store interactively.
+
+=== Running the app:
+
+1. `docker-compose up -d`
+
+2. Start the confluent schema registry: The following command is based on the confluent platform.
+
+`./bin/schema-registry-start ./etc/schema-registry/schema-registry.properties`
+
+3. Go to the root of the repository and do: `./mvnw clean package`
+
+4. `java -jar target/kafka-streams-interactive-query-0.0.1-SNAPSHOT.jar`
+
+5. Run the stand-alone `Producers` application to generate data and start the processing.
+Keep it running for a while.
+
+6. Go to the URL: http://localhost:8080/charts/top-five?genre=Punk
+keep refreshing the URL and you will see the song play count information changes.

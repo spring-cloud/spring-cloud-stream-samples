@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: dataIn
+          binder: kafka
+        output:
+          destination: dataOut
+          binder: rabbit
+        #Test sink binding (used for testing)
+        output1:
+          destination: dataIn
+          binder: kafka
+        #Test sink binding (used for testing)
+        input1:
+          destination: dataOut
+          binder: rabbit
+

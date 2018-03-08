@@ -1,0 +1,52 @@
+Spring Cloud Stream Uppercase Transformer Sample
+================================================
+
+This is a Spring Cloud Stream transformer sample in which an incoming text is converted into its uppercase variant.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Running the application
+
+The following instructions assume that you are running Kafka as a Docker image.
+
+* Go to the application root
+* `docker-compose up -d`
+
+* `./mvnw clean package`
+
+* `java -jar target/uppercase-transformer-0.0.1-SNAPSHOT.jar`
+
+The main application is the uppercase transformer which is a processor.
+The application also provides a source and sink for testing.
+Test source will generate some text every second and the test sink will verify that the processor has converted the text into its uppercase.
+
+You will see output similar to the following on the console.
+
+```
+Data received: BAR
+Data received: FOO
+Data received: BAR
+Data received: FOO
+Data received: BAR
+Data received: FOO
+Data received: BAR
+Data received: FOO
+Data received: BAR
+```
+* `docker-compose down`
+
+## Running the application using Rabbit binder
+
+All the instructions above apply here also, but instead of running the default `docker-compose.yml`, use the command below to start a Rabbitmq cluser.
+
+* `docker-compose -f docker-compose-rabbit.yml up -d`
+
+* `./mvnw clean package -P rabbit-binder`
+
+* `java -jar target/uppercase-transformer-0.0.1-SNAPSHOT.jar`
+
+Once you are done testing: `docker-compose -f docker-compose-rabbit.yml down`

@@ -1,0 +1,20 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams aggregation support.
+
+The application simply aggregates a string for a particular key.
+
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`docker-compose up -d`
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-aggregate-0.0.1-SNAPSHOT.jar`
+
+Run the stand-alone `Producers` application a few times to to generate some data.
+
+Then go to the URL: http://localhost:8080/events
+

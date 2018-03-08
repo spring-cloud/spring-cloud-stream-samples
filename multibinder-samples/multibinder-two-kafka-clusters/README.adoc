@@ -1,0 +1,38 @@
+== Spring Cloud Stream Multibinder Application with Different Systems
+
+This example shows how to run a Spring Cloud Stream application with the same binder type configured for two separate Kafka clusters.
+
+
+## Running the application
+
+The following instructions assume that you are running Kafka as a Docker image.
+
+* Go to the application root
+* `docker-compose up -d`
+
+This brings up two Kafka clusters in docker containers.
+Local ports mapped for kafka are 9092 and 9093 (Zookeeper local parts mapped are 2181 and 2182).
+
+* `./mvnw clean package`
+
+The sample comes with a convenient test producer and consumer to see the processor in action.
+After running the program, watch your console, every second some data is sent to Kafka cluster 1 and it is received through Kafka cluster 2.
+
+To run the example, command line parameters for the Zookeeper ensembles and Kafka clusters must be provided, as in the following example:
+```
+java -jar target/multibinder-differentsystems-0.0.1-SNAPSHOT.jar --kafkaBroker1=localhost:9092 --zk1=localhost:2181 --kafkaBroker2=localhost:9093 --zk2=localhost:2182
+```
+
+Alternatively, the default values of `localhost:9092` and `localhost:2181` can be provided for both clusters.
+
+Assuming you are running two dockerized Kafka clusters as above.
+
+Issue the following commands:
+
+`docker exec -it kafka-multibinder-1 /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic dataIn`
+
+On another terminal:
+
+`docker exec -it kafka-multibinder-2 /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9093 --topic dataOut`
+
+Enter some text on the first one and the same text appears on the second one.

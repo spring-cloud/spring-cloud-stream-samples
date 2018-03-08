@@ -1,0 +1,35 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+The example is based on a contrived use case of tracking products by interactively querying their status.
+The program accepts product ID's and track their counts hitherto by interactively querying the underlying store. \
+This sample uses lambda expressions and thus requires Java 8+.
+
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`docker-compose up -d`
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-interactive-query-basic-0.0.1-SNAPSHOT.jar --app.product.tracker.productIds=123,124,125`
+
+The above command will track products with ID's 123,124 and 125 and print their counts seen so far every 30 seconds.
+
+Issue the following commands:
+
+`docker exec -it kafka-iq-basic /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic products`
+
+Enter the following in the console producer (one line at a time) and watch the output on the console (or IDE) where the application is running.
+
+```
+{"id":"123"}
+{"id":"124"}
+{"id":"125"}
+{"id":"123"}
+{"id":"123"}
+{"id":"123"}
+```
+

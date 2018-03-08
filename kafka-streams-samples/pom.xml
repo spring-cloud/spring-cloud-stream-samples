@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>spring.cloud.stream.samples</groupId>
+    <artifactId>kafka-streams-samples</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>kafka-streams-samples</name>
+    <description>Collection of Spring Cloud Stream Kafka Streams samples</description>
+
+    <modules>
+        <module>kafka-streams-word-count</module>
+        <module>kafka-streams-branching</module>
+        <module>kafka-streams-dlq-sample</module>
+        <module>kafka-streams-table-join</module>
+        <module>kafka-streams-interactive-query-basic</module>
+        <module>kafka-streams-interactive-query-advanced</module>
+	    <module>kafka-streams-message-channel</module>
+        <module>kafka-streams-product-tracker</module>
+        <module>kafka-streams-aggregate</module>
+    </modules>
+</project>

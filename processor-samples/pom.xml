@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>spring.cloud.stream.samples</groupId>
+    <artifactId>processor-samples</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>processor-samples</name>
+    <description>Collection of Spring Cloud Stream Processor Samples</description>
+
+    <modules>
+        <module>streamlistener-basic</module>
+        <module>uppercase-transformer</module>
+        <module>reactive-processor</module>
+        <module>sensor-average-reactive</module>
+    </modules>
+</project>

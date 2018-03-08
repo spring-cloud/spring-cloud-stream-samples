@@ -1,44 +1,69 @@
-== Samples
+== Spring Cloud Stream Sample Applications
 
-There are several samples, most running on the RabbitMQ transport (so you need RabbitMQ running locally to test them).
+This repository contains a collection of applications written using Spring Cloud Stream. All the applications are self contained.
+They can be run against either Kafka or RabbitMQ middleware technologies.
+You have the option of running the samples against local or Docker containerized versions of Kafka and Rabbit.
+For convenience, `docker-compose.yml` files are provided as part of each application wherever it is applicable.
+For this reason, Docker Compose is required and it’s recommended to use the https://docs.docker.com/compose/install/[latest version].
+These compose files bring up the middleware (kafka or Rabbit) and other necessary components for running each app.
+If you bring up Kafka or RabbitMQ in Docker containers, please make sure that you bring them down while in the same sample directory.
+You can read the README that is part of each sample and follow along the instructions to run them.
 
-To build the samples do:
+You can build the entire samples by going to the root of the repository and then do: `./mvnw clean package`
+However, the recommended approach to build them is to pick the sample that you are interested in and go to that particular app and follow the instructions there in the README for that app. 
 
-```
-   ./mvnw clean build
-```
+=== Following is the list of various sample applications provided
 
+==== Source samples
 
-* `double` is an example of an aggregate application, the Source and Sink are combined into one single application.
+* Sample JDBC source using MySQL - MariaDB variant - (Kafka and Rabbit)
 
-* `dynamic-source` publishes messages to dynamically created destinations.
+* Source with dynamic destinations (Kafka and Rabbit)
 
-* `kinesis-produce-consume` An example application using spring-cloud-stream-binder-aws-kinesis. Presents a web endpoint to send Orders, these are placed on a Kinesis stream and then consumed by the application from that stream.
+==== Sink samples
 
-* `multi-io` shows how to use configure multiple input/output channels inside a single application.
+* Simple JDBC sink using MariaDB (Kafka and Rabbit)
 
-* `multibinder-differentsystems` shows how an application could use same binder implementation but different configurations for its channels. In this case, a processor's input/output channels connect to same binder implementation but with two separate broker configurations.
+==== Processor samples
 
-* `multibinder` shows how an application could use multiple binders. In this case, the processor's input/output channels connect to different brokers using their own binder configurations.
+* Basic StreamListener sample (Kafka and Rabbit)
+* Transformer sample (Kafka and Rabbit)
+* Reactive processor sample (Kafka and Rabbit)
 
-* `non-self-contained-aggregate-app` shows how to write a non self-contained aggregate application.
+==== Multi IO sample
 
-* `reactive-processor-kafka` shows how to create a reactive Apache Kafka processor application.
+* Sample with multiple input/output bindings (Kafka and Rabbit)
 
-* `rxjava-processor` shows how to create an RxJava processor application.
+==== Multi Binder samples
 
-* `sink` A simple sink that logs the incoming payload. It has no options (but some could easily be added), and just logs incoming messages at INFO level.
+* Multi binder - Input with Kafka and output with Rabbit
+* Multi binder - Same binder type but different clusters (Kafka only, but can be extended for Rabbit as well)
 
-* `source` A simple time source example. It has a "fixedDelay" option (in milliseconds) for the period between emitting messages.
+==== Kinesis
 
-* `stream-listener` shows how to use StreamListener support to enable message mapping and automatic type conversion.
+* Kinesis produce consume sample
 
-* `test-embedded-kafka` is a sample that shows how to test with an embedded Apache Kafka broker.
-We generally recommend testing with the http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_testing[TestSupportBinder] but if you have a need for testing with an embedded broker, you can use the techniques in this sample.
+==== Kafka Streams samples
 
-* `transform` is a simple pass through logging transformer (just logs the incoming message and passes it on).
+A collection of various applications in stream processing using Spring Cloud Stream support for Kafka Streams binding.
 
-* `kstream` is a collection of applications that demonstrate the capabilities of the Spring Cloud Stream support for Kafka Streams
+* Kafka Streams word count
+* Kafka Streams branching
+* Kafka Streams DLQ
+* Kafka Streams aggregation
+* Kafka Streams Interactive query basic
+* Kafka Streams Interactive query advanced
+* Kafka Streams product tracker
+* Kafka Streams KTable join
+* Kafka Streams and normal Kafka binder together
 
-* `testing` is a bunch of applications and tests for them to demonstrate the capabilities of testing for the the Spring Cloud Stream applications.
+==== Testing samples
 
+* Sample with embedded Kafka
+* General testing patterns in Spring Cloud Stream
+
+==== Samples Acceptance Tests
+
+This module is strictly used as an end to end acceptance test framework for the samples in this repo.
+By default, the tests are not run as part of a normal build.
+Please see the README in the acceptance test module for more details.
