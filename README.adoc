@@ -29,6 +29,7 @@ However, the recommended approach to build them is to pick the sample that you a
 * Basic StreamListener sample (Kafka and Rabbit)
 * Transformer sample (Kafka and Rabbit)
 * Reactive processor sample (Kafka and Rabbit)
+* Sensor average calculation using reactive patterns (Kafka and Rabbit)
 
 ==== Multi IO sample
 
