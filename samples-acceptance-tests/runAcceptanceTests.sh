@@ -125,23 +125,26 @@ popd
 
 #Main script starting
 
-echo "Starting Kafka broker as a Docker container..."
-
-docker-compose up -d
+echo "Prepare artifacts for testing"
 
 prepare_jdbc_source_with_kafka_and_rabbit_binders
 prepare_jdbc_sink_with_kafka_and_rabbit_binders
 prepare_dynamic_source_with_kafka_and_rabbit_binders
 prepare_multi_binder_with_kafka_rabbit
 prepare_multi_binder_with_two_kafka_clusters
-prepare_kafka_streams_word_count
 prepare_streamlistener_basic_with_kafka_rabbit_binders
 prepare_reactive_processor_with_kafka_rabbit_binders
 prepare_sensor_average_reactive_with_kafka_rabbit_binders
+prepare_kafka_streams_word_count
+
+echo "Starting components in docker containers..."
+
+docker-compose up -d
 
 echo "Running tests"
 
 ./mvnw clean package -Dmaven.test.skip=false
+BUILD_RETURN_VALUE=$?
 
 docker-compose down
 
@@ -163,4 +166,4 @@ rm /tmp/reactive-processor-rabbit-sample.jar
 rm /tmp/sensor-average-reactive-kafka-sample.jar
 rm /tmp/sensor-average-reactive-rabbit-sample.jar
 
-rm /tmp/foobar.log
+exit $BUILD_RETURN_VALUE

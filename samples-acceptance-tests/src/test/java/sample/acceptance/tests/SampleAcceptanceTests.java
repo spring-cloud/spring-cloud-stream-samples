@@ -16,6 +16,7 @@
 
 package sample.acceptance.tests;
 
+import org.assertj.core.util.Files;
 import org.junit.After;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -23,10 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.fail;
@@ -45,12 +47,6 @@ public class SampleAcceptanceTests {
 
 	private Process process;
 
-	private Process startTheApp(String[] cmds) throws Exception {
-		ProcessBuilder pb = new ProcessBuilder(cmds);
-		process = pb.start();
-		return process;
-	}
-
 	@After
 	public void stopTheApp() {
 		if (process != null) {
@@ -58,62 +54,56 @@ public class SampleAcceptanceTests {
 		}
 	}
 
-	private void waitForExpectedMessagesToAppearInTheLogs(String app, String... textToSearch) {
-		boolean foundAssertionStrings = waitForLogEntry(app, textToSearch);
-		if (!foundAssertionStrings) {
-			fail("Did not find the text looking for after waiting for 30 seconds");
-		}
-	}
-
-	private void waitForAppToStartFully(String app, String message) {
-		boolean started = waitForLogEntry(app, message);
-		if (!started) {
-			fail("process didn't start in 30 seconds");
-		}
-	}
-
 	@Test
 	public void testJdbcSourceSampleKafka() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/jdbc-source-kafka-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("JDBC Source", "Started SampleJdbcSource in");
-		waitForExpectedMessagesToAppearInTheLogs("JDBC Source",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/jdbc-source-kafka-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("JDBC Source", file,"Started SampleJdbcSource in");
+
+		waitForLogEntryInFile("JDBC Source", file,
 				"Data received...[{id=1, name=Bob, tag=null}, {id=2, name=Jane, tag=null}, {id=3, name=John, tag=null}]");
 	}
 
 	@Test
 	public void testJdbcSourceSampleRabbit() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/jdbc-source-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("JDBC Source", "Started SampleJdbcSource in");
-		waitForExpectedMessagesToAppearInTheLogs("JDBC Source",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/jdbc-source-rabbit-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("JDBC Source", file,"Started SampleJdbcSource in");
+
+		waitForLogEntryInFile("JDBC Source", file,
 				"Data received...[{id=1, name=Bob, tag=null}, {id=2, name=Jane, tag=null}, {id=3, name=John, tag=null}]");
 	}
 
 	@Test
 	public void testJdbcSinkSampleKafka() throws Exception {
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/jdbc-sink-kafka-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
 
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/jdbc-sink-kafka-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("JDBC Sink", "Started SampleJdbcSink in");
+		waitForLogEntryInFile("JDBC Sink", file,"Started SampleJdbcSink in");
 
 		verifyJdbcSink();
 	}
 
 	@Test
 	public void testJdbcSinkSampleRabbit() throws Exception {
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/jdbc-sink-rabbit-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
 
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/jdbc-sink-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("JDBC Sink", "Started SampleJdbcSink in");
+		waitForLogEntryInFile("JDBC Sink", file,"Started SampleJdbcSink in");
 
 		verifyJdbcSink();
 	}
@@ -148,72 +138,104 @@ public class SampleAcceptanceTests {
 
 	@Test
 	public void testDynamicSourceSampleKafka() throws Exception {
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/dynamic-destination-source-kafka-sample.jar", "--management.endpoints.web.exposure.include=*");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
 
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/dynamic-destination-source-kafka-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		verifyDynamicSourceApp();
-	}
+		waitForLogEntryInFile("Dynamic Source", file,"Started SourceApplication in");
 
-	@Test
-	public void testDynamicSourceSampleRabbit() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/dynamic-destination-source-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		verifyDynamicSourceApp();
-	}
-
-	private void verifyDynamicSourceApp() {
-		waitForAppToStartFully("Dynamic Source", "Started SourceApplication in");
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.postForObject(
 				"http://localhost:8080",
 				"{\"id\":\"customerId-1\",\"bill-pay\":\"100\"}", String.class);
 
-		waitForExpectedMessagesToAppearInTheLogs("Dynamic Source",
+		waitForLogEntryInFile("Dynamic Source", file,
 				"Data received from customer-1...{\"id\":\"customerId-1\",\"bill-pay\":\"100\"}");
 
 		restTemplate.postForObject(
 				"http://localhost:8080",
 				"{\"id\":\"customerId-2\",\"bill-pay2\":\"200\"}", String.class);
 
-		waitForExpectedMessagesToAppearInTheLogs("Dynamic Source",
+		waitForLogEntryInFile("Dynamic Source", file,
 				"Data received from customer-2...{\"id\":\"customerId-2\",\"bill-pay2\":\"200\"}");
+
+		Files.delete(file);
+	}
+
+	@Test
+	public void testDynamicSourceSampleRabbit() throws Exception {
+
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/dynamic-destination-source-rabbit-sample.jar", "--management.endpoints.web.exposure.include=*");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Dynamic Source", file,"Started SourceApplication in");
+
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.postForObject(
+				"http://localhost:8080",
+				"{\"id\":\"customerId-1\",\"bill-pay\":\"100\"}", String.class);
+
+		waitForLogEntryInFile("Dynamic Source", file,
+				"Data received from customer-1...{\"id\":\"customerId-1\",\"bill-pay\":\"100\"}");
+
+		restTemplate.postForObject(
+				"http://localhost:8080",
+				"{\"id\":\"customerId-2\",\"bill-pay2\":\"200\"}", String.class);
+
+		waitForLogEntryInFile("Dynamic Source", file,
+				"Data received from customer-2...{\"id\":\"customerId-2\",\"bill-pay2\":\"200\"}");
+
+		Files.delete(file);
 	}
 
 	@Test
 	public void testMultiBinderKafkaInputRabbitOutput() throws Exception {
-		startTheApp(new String[]{"java", "-jar", "/tmp/multibinder-kafka-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"});
 
-		waitForAppToStartFully("Multibinder", "Started MultibinderApplication in");
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/multibinder-kafka-rabbit-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
 
-		waitForExpectedMessagesToAppearInTheLogs("Multibinder", "Data received...bar", "Data received...foo");
+		waitForLogEntryInFile("Multibinder", file,"Started MultibinderApplication in");
+
+		waitForLogEntryInFile("Multibinder", file, "Data received...bar", "Data received...foo");
 	}
 
 	@Test
 	public void testMultiBinderTwoKafkaClusters() throws Exception {
 
-		startTheApp(new String[]{"java", "-jar", "/tmp/multibinder-two-kafka-clusters-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/multibinder-two-kafka-clusters-sample.jar",
 				"--kafkaBroker1=localhost:9092", "--zk1=localhost:2181",
-				"--kafkaBroker2=localhost:9093", "--zk2=localhost:2182"});
+				"--kafkaBroker2=localhost:9093", "--zk2=localhost:2182");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
 
-		waitForAppToStartFully("Multibinder 2 Kafka Clusters", "Started MultibinderApplication in");
+		waitForLogEntryInFile("Multibinder 2 Kafka Clusters", file,"Started MultibinderApplication in");
 
-		waitForExpectedMessagesToAppearInTheLogs("Multibinder 2 Kafka Clusters", "Data received...bar", "Data received...foo");
+		waitForLogEntryInFile("Multibinder 2 Kafka Clusters", file, "Data received...bar", "Data received...foo");
+
+		Files.delete(file);
 	}
 
 	@Test
 	public void testStreamListenerBasicSampleKafka() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/streamlistener-basic-kafka-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("Streamlistener basic", "Started TypeConversionApplication in");
-		waitForExpectedMessagesToAppearInTheLogs("Streamlistener basic",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/streamlistener-basic-kafka-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Streamlistener basic", file,"Started TypeConversionApplication in");
+
+		waitForLogEntryInFile("Streamlistener basic", file,
 				"At the Source", "Sending value: {\"value\":\"hi\"}", "At the transformer",
 				"Received value hi of type class demo.Bar",
 				"Transforming the value to HI and with the type class demo.Bar",
@@ -223,12 +245,15 @@ public class SampleAcceptanceTests {
 
 	@Test
 	public void testStreamListenerBasicSampleRabbit() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/streamlistener-basic-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("Streamlistener basic", "Started TypeConversionApplication in");
-		waitForExpectedMessagesToAppearInTheLogs("Streamlistener basic",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/streamlistener-basic-rabbit-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Streamlistener basic", file,"Started TypeConversionApplication in");
+
+		waitForLogEntryInFile("Streamlistener basic", file,
 				"At the Source", "Sending value: {\"value\":\"hi\"}", "At the transformer",
 				"Received value hi of type class demo.Bar",
 				"Transforming the value to HI and with the type class demo.Bar",
@@ -238,75 +263,95 @@ public class SampleAcceptanceTests {
 
 	@Test
 	public void testReactiveProcessorSampleKafka() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/reactive-processor-kafka-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("Reactive processor", "Started ReactiveProcessorApplication in");
-		waitForExpectedMessagesToAppearInTheLogs("Reactive processor",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/reactive-processor-kafka-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Reactive processor", file,"Started ReactiveProcessorApplication in");
+
+		waitForLogEntryInFile("Reactive processor", file,
 				"Data received: foobarfoobarfoo",
 				"Data received: barfoobarfoobar");
 	}
 
 	@Test
 	public void testReactiveProcessorSampleRabbit() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/reactive-processor-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("Reactive processor", "Started ReactiveProcessorApplication in");
-		waitForExpectedMessagesToAppearInTheLogs("Reactive processor",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/reactive-processor-rabbit-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Reactive processor", file,"Started ReactiveProcessorApplication in");
+
+		waitForLogEntryInFile("Reactive processor", file,
 				"Data received: foobarfoobarfoo",
 				"Data received: barfoobarfoobar");
 	}
 
 	@Test
 	public void testSensorAverageReactiveSampleKafka() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/sensor-average-reactive-kafka-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("Sensor average", "Started SensorAverageProcessorApplication in");
-		waitForExpectedMessagesToAppearInTheLogs("Sensor average",
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/sensor-average-reactive-kafka-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Sensor average", file,"Started SensorAverageProcessorApplication in");
+
+		waitForLogEntryInFile("Sensor average", file,
 				"Data received: {\"id\":100100,\"average\":",
 				"Data received: {\"id\":100200,\"average\":", "Data received: {\"id\":100300,\"average\":");
 	}
 
 	@Test
 	public void testSensorAverageReactiveSampleRabbit() throws Exception {
-		process = startTheApp(new String[]{
-				"java", "-jar", "/tmp/sensor-average-reactive-rabbit-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*"
-		});
-		waitForAppToStartFully("Sensor average", "Started SensorAverageProcessorApplication in");
-		waitForExpectedMessagesToAppearInTheLogs("Sensor average",
+
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/sensor-average-reactive-rabbit-sample.jar");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
+
+		waitForLogEntryInFile("Sensor average", file,"Started SensorAverageProcessorApplication in");
+
+		waitForLogEntryInFile("Sensor average", file,
 				"Data received: {\"id\":100100,\"average\":",
 				"Data received: {\"id\":100200,\"average\":", "Data received: {\"id\":100300,\"average\":");
+
+		Files.delete(file);
 	}
 
 	@Test
 	public void testKafkaStreamsWordCount() throws Exception {
-		startTheApp(new String[]{"java", "-jar", "/tmp/kafka-streams-word-count-sample.jar", "--logging.file=/tmp/foobar.log",
-				"--management.endpoints.web.exposure.include=*",
-				"--spring.cloud.stream.kafka.streams.timeWindow.length=60000"});
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/kafka-streams-word-count-sample.jar",
+				"--spring.cloud.stream.kafka.streams.timeWindow.length=60000");
+		File file = Files.newTemporaryFile();
+		logger.info("Output is redirected to " + file.getAbsolutePath());
+		pb.redirectOutput(file);
+		process = pb.start();
 
-		waitForAppToStartFully("Kafka Streams WordCount", "Started KafkaStreamsWordCountApplication in");
+		waitForLogEntryInFile("Kafka Streams WordCount", file,"Started KafkaStreamsWordCountApplication in");
 
-		waitForExpectedMessagesToAppearInTheLogs("Kafka Streams WordCount",
-				"Data received...{\"word\":\"foo\",\"count\":1,",
-				"Data received...{\"word\":\"bar\",\"count\":1,",
-				"Data received...{\"word\":\"foobar\",\"count\":1,",
-				"Data received...{\"word\":\"baz\",\"count\":1,",
-				"Data received...{\"word\":\"fox\",\"count\":1,");
+		waitForLogEntryInFile("Kafka Streams WordCount", file,
+				"Data received...{\"word\":\"foo\",\"count\":",
+				"Data received...{\"word\":\"bar\",\"count\":",
+				"Data received...{\"word\":\"foobar\",\"count\":",
+				"Data received...{\"word\":\"baz\",\"count\":",
+				"Data received...{\"word\":\"fox\",\"count\":");
+
+		Files.delete(file);
 	}
 
-	boolean waitForLogEntry(String app, String... entries) {
+	boolean waitForLogEntryInFile(String app, File f, String... entries) {
 		logger.info("Looking for '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
-		long timeout = System.currentTimeMillis() + (30 * 1000);
+		long timeout = System.currentTimeMillis() + (60 * 1000);
 		boolean exists = false;
 		while (!exists && System.currentTimeMillis() < timeout) {
 			try {
-				Thread.sleep(7 * 1000);
+				Thread.sleep(2 * 1000);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				throw new IllegalStateException(e.getMessage(), e);
@@ -314,7 +359,8 @@ public class SampleAcceptanceTests {
 			if (!exists) {
 				logger.info("Polling to get log file. Remaining poll time = "
 						+ (timeout - System.currentTimeMillis() + " ms."));
-				String log = getLog("http://localhost:8080/actuator");
+				String log = Files.contentOf(f, StandardCharsets.UTF_8);
+
 				if (log != null) {
 					if (Stream.of(entries).allMatch(s -> log.contains(s))) {
 						exists = true;
@@ -328,25 +374,6 @@ public class SampleAcceptanceTests {
 			logger.error("ERROR: Couldn't find all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
 		}
 		return exists;
-	}
-
-	String getLog(String url) {
-		RestTemplate restTemplate = new RestTemplate();
-		String logFileUrl = String.format("%s/logfile", url);
-		String log = null;
-		try {
-			log = restTemplate.getForObject(logFileUrl, String.class);
-			if (log == null) {
-				logger.info("Unable to retrieve logfile from '" + logFileUrl);
-			} else {
-				logger.info("Retrieved logfile from '" + logFileUrl);
-			}
-		} catch (HttpClientErrorException e) {
-			logger.info("Failed to access logfile from '" + logFileUrl + "' due to : " + e.getMessage());
-		} catch (Exception e) {
-			logger.warn("Error while trying to access logfile from '" + logFileUrl + "' due to : " + e);
-		}
-		return log;
 	}
 
 }
