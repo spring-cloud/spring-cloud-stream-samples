@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 public class SampleJdbcSource {
 
 	public static void main(String... args){
+
 		SpringApplication.run(SampleJdbcSource.class, args);
 	}
 

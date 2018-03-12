@@ -9,3 +9,5 @@ jdbc:
   triggerDelay: 5
 spring.cloud.stream.bindings.output.destination: test-data
 spring.cloud.stream.bindings.input.destination: test-data
+
+spring.cloud.stream.default.producer.partitionKeyExpression: '#{0}'

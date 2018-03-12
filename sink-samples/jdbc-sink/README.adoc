@@ -38,7 +38,7 @@ The following instructions assume that you are running Kafka and MySql as Docker
 When you start the app, it will create a table in the database.
 See the method annotated with`PostConstruct` in the application for more details.
 
-* `java -jar target/sample-jdbc-sink-0.0.1-SNAPSHOT.jar`
+* `java -jar target/jdbc-sink-0.0.1-SNAPSHOT.jar`
 
 The application has a convenient test source that sends to the same destination on the broker where the sink consumes data from.
 This test source will send some test records every second.
