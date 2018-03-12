@@ -10,4 +10,6 @@ jdbc:
 spring.cloud.stream.bindings.output.destination: test-data
 spring.cloud.stream.bindings.input.destination: test-data
 
-spring.cloud.stream.default.producer.partitionKeyExpression: '#{0}'
+#always use partition 0, but using a complex SpeL below to test the fix for this issue:
+#https://github.com/spring-cloud/spring-cloud-stream/issues/1297
+spring.cloud.stream.default.producer.partitionkeyexpression: "payload != null ? 0 : 1"
