@@ -123,6 +123,26 @@ popd
 
 }
 
+function prepare_schema_registry_vanilla_with_kafka_rabbit_binders() {
+pushd ../schema-registry-samples/schema-registry-vanilla
+./mvnw clean package -DskipTests
+
+cp registry/target/registry-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-registry-kafka.jar
+cp consumer/target/consumer-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-consumer-kafka.jar
+cp producer1/target/producer1-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-producer1-kafka.jar
+cp producer2/target/producer2-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-producer2-kafka.jar
+
+./mvnw clean package -P rabbit-binder -DskipTests
+
+cp registry/target/registry-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-registry-rabbit.jar
+cp consumer/target/consumer-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-consumer-rabbit.jar
+cp producer1/target/producer1-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-producer1-rabbit.jar
+cp producer2/target/producer2-*-SNAPSHOT.jar /tmp/schema-registry-vanilla-producer2-rabbit.jar
+
+popd
+
+}
+
 #Main script starting
 
 echo "Prepare artifacts for testing"
@@ -136,6 +156,8 @@ prepare_streamlistener_basic_with_kafka_rabbit_binders
 prepare_reactive_processor_with_kafka_rabbit_binders
 prepare_sensor_average_reactive_with_kafka_rabbit_binders
 prepare_kafka_streams_word_count
+
+prepare_schema_registry_vanilla_with_kafka_rabbit_binders
 
 echo "Starting components in docker containers..."
 
@@ -165,5 +187,14 @@ rm /tmp/reactive-processor-kafka-sample.jar
 rm /tmp/reactive-processor-rabbit-sample.jar
 rm /tmp/sensor-average-reactive-kafka-sample.jar
 rm /tmp/sensor-average-reactive-rabbit-sample.jar
+
+rm /tmp/schema-registry-vanilla-registry-kafka.jar
+rm /tmp/schema-registry-vanilla-consumer-kafka.jar
+rm /tmp/schema-registry-vanilla-producer1-kafka.jar
+rm /tmp/schema-registry-vanilla-producer2-kafka.jar
+rm /tmp/schema-registry-vanilla-registry-rabbit.jar
+rm /tmp/schema-registry-vanilla-consumer-rabbit.jar
+rm /tmp/schema-registry-vanilla-producer1-rabbit.jar
+rm /tmp/schema-registry-vanilla-producer2-rabbit.jar
 
 exit $BUILD_RETURN_VALUE

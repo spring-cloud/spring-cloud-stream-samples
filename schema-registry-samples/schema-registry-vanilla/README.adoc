@@ -1,0 +1,97 @@
+== Spring Cloud Stream and Schema Evolution in Action!
+
+This repo includes four Spring Boot applications to demonstrate Schema Evolution using Spring Cloud Stream. A Schema Registry
+(`registry`), Producer V1 (`producer1`), Producer V2 (`producer2`), and Consumer (`consumer`) are included in this project.
+
+=== Requirement
+As a developer, I'd like to design my consumer to be resilient to differing payload schemas.
+
+=== Assumptions
+There are a lot of online literature on Schema Evolution, so we are going to skip defining them here. For this demonstration,
+however, we will simply assume there are two producers producing events with different payload schemas. A consumer that
+consumes both the payload versions will be designed to adapt to evolving schemas.
+
+=== Running the application
+
+Make sure you are in the directory `schema-registry-vanilla`
+
+Choose a middleware
+
+For kafka: `docker-compose up -d`
+For Rabbitmq: `docker-compose -f docker-compose-rabbit.yml up -d`
+
+If you are using Kafka binder: `./mvnw clean package`
+If you are using RabbitMQ binder: `./mvnw clean package -P rabbit-binder`
+
+- Start the Schema Registry server
+[source,bash]
+----
+java -jar registry/target/registry-0.0.1-SNAPSHOT.jar
+----
+- Start `consumer` on another terminal session
+[source,bash]
+----
+java -jar consumer/target/consumer-0.0.1-SNAPSHOT.jar
+----
+- Start `producer1` on another terminal session
+[source,bash]
+----
+java -jar producer1/target/producer1-0.0.1-SNAPSHOT.jar
+----
+- Start `producer2` on another terminal session
+[source,bash]
+----
+java -jar producer2/target/producer2-0.0.1-SNAPSHOT.jar
+----
+
+=== Sample Data
+Both the producers in the demonstration are _also_ REST controllers. We will hit the `/messages` endpoint on each producer
+to POST sample data.
+
+_Example:_
+[source,bash]
+----
+curl -X POST http://localhost:9009/messages
+curl -X POST http://localhost:9010/messages
+curl -X POST http://localhost:9009/messages
+curl -X POST http://localhost:9009/messages
+curl -X POST http://localhost:9010/messages
+----
+
+=== Output
+The consumer should log the results.
+
+[source,bash,options=nowrap,subs=attributes]
+----
+{"id": "d135efc3-72f8-4612-9497-184cae508e31-v1", "internalTemperature": 34.36362, "externalTemperature": 0.0, "acceleration": 9.656547, "velocity": 33.29733}
+{"id": "fd2467ce-ae09-4fd4-9cde-d9ff33fac89b-v2", "internalTemperature": 34.840473, "externalTemperature": 0.0, "acceleration": 9.709609, "velocity": 23.046476}
+{"id": "4ac70c32-9ffe-4c90-914a-fa28024f5faa-v1", "internalTemperature": 23.74807, "externalTemperature": 0.0, "acceleration": 7.5003176, "velocity": 15.848035}
+{"id": "3ecaae18-3144-4570-800a-223ca3198001-v1", "internalTemperature": 28.410656, "externalTemperature": 0.0, "acceleration": 1.752817, "velocity": 69.82016}
+{"id": "149637a9-c7a6-4ab8-b7aa-021c72d9ebd7-v2", "internalTemperature": 2.2332578, "externalTemperature": 0.0, "acceleration": 6.251889, "velocity": 65.84996}
+----
+
+NOTE: Refer to the payload suffix in the `id` field. Each of them are appended with `-v1` or `-v2` indicating they are from
+`producer1` and `producer2` respectively.
+
+=== What just happened?
+The schema evolved on the `temperature` field. That field is now split into `internalTemperature` and `externalTemperature`,
+as two separate fields. The `producer1` produces payload only with `temperature` and on the other hand, `producer2` produces
+payload with `internalTemperature` and `externalTemperature` fields in it.
+
+The `consumer` is coded against a base schema that include the split fields.
+
+The `consumer` app can happily deserialize the payload with `internalTemperature` and `externalTemperature` fields. However, when
+a `producer1` payload arrives (which includes `temperature` field), the schema evolution and compatibility check are automatically
+applied.
+
+Because each payload also includes the payload version in the header, Spring Cloud Stream with the help of Schema
+Registry server and Avro, the schema evolution occurs behind the scenes. The automatic mapping of `temperature` to
+`internalTemperature` field is applied, since that's the field where the `aliases` is defined in the link:https://github.com/sabbyanandan/schema/blob/master/consumer/src/main/resources/avro/sensor.avsc#L7[new schema].
+
+=== Cleanup
+
+Once you are done with running the samples, stop the docker containers
+
+`docker-compose down`
+
+of `docker-compose -f docker-compose-rabbit.yml down` if you are using the Rabbit binder.

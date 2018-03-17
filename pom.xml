@@ -26,6 +26,7 @@
 		<module>multi-io-samples</module>
 		<module>kinesis-samples</module>
 		<module>multibinder-samples</module>
+		<module>schema-registry-samples</module>
 		<module>testing-samples</module>
 		<module>samples-acceptance-tests</module>
 	</modules>

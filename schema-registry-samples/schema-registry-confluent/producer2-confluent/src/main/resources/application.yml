@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          contentType: application/*+avro
+          destination: sensor-topic
+      schemaRegistryClient:
+        endpoint: http://localhost:8081
+      schema:
+        avro:
+          schema-locations: classpath:avro/sensor.avsc
+server.port: 9010

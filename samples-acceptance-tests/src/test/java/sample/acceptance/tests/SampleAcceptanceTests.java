@@ -23,13 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.fail;
 
@@ -41,7 +38,7 @@ import static org.junit.Assert.fail;
  *
  * @author Soby Chacko
  */
-public class SampleAcceptanceTests {
+public class SampleAcceptanceTests extends AbstractSampleTests {
 
 	private static final Logger logger = LoggerFactory.getLogger(SampleAcceptanceTests.class);
 
@@ -106,34 +103,6 @@ public class SampleAcceptanceTests {
 		waitForLogEntryInFile("JDBC Sink", file,"Started SampleJdbcSink in");
 
 		verifyJdbcSink();
-	}
-
-	private void verifyJdbcSink() {
-		JdbcTemplate db;
-		DataSource dataSource = new SingleConnectionDataSource("jdbc:mariadb://localhost:3306/sample_mysql_db",
-				"root", "pwd", false);
-
-		db = new JdbcTemplate(dataSource);
-
-		long timeout = System.currentTimeMillis() + (30 * 1000);
-		boolean exists = false;
-		while (!exists && System.currentTimeMillis() < timeout) {
-			try {
-				Thread.sleep(5 * 1000);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				throw new IllegalStateException(e.getMessage(), e);
-			}
-
-			Integer count = db.queryForObject("select count(*) from test", Integer.class);
-
-			if (count > 0) {
-				exists = true;
-			}
-		}
-		if (!exists) {
-			fail("No records found in database!");
-		}
 	}
 
 	@Test
@@ -345,35 +314,31 @@ public class SampleAcceptanceTests {
 		Files.delete(file);
 	}
 
-	boolean waitForLogEntryInFile(String app, File f, String... entries) {
-		logger.info("Looking for '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
-		long timeout = System.currentTimeMillis() + (60 * 1000);
+	private void verifyJdbcSink() {
+		JdbcTemplate db;
+		DataSource dataSource = new SingleConnectionDataSource("jdbc:mariadb://localhost:3306/sample_mysql_db",
+				"root", "pwd", false);
+
+		db = new JdbcTemplate(dataSource);
+
+		long timeout = System.currentTimeMillis() + (30 * 1000);
 		boolean exists = false;
 		while (!exists && System.currentTimeMillis() < timeout) {
 			try {
-				Thread.sleep(2 * 1000);
+				Thread.sleep(5 * 1000);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				throw new IllegalStateException(e.getMessage(), e);
 			}
-			if (!exists) {
-				logger.info("Polling to get log file. Remaining poll time = "
-						+ (timeout - System.currentTimeMillis() + " ms."));
-				String log = Files.contentOf(f, StandardCharsets.UTF_8);
 
-				if (log != null) {
-					if (Stream.of(entries).allMatch(s -> log.contains(s))) {
-						exists = true;
-					}
-				}
+			Integer count = db.queryForObject("select count(*) from test", Integer.class);
+
+			if (count > 0) {
+				exists = true;
 			}
 		}
-		if (exists) {
-			logger.info("Matched all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for app " + app);
-		} else {
-			logger.error("ERROR: Couldn't find all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
+		if (!exists) {
+			fail("No records found in database!");
 		}
-		return exists;
 	}
-
 }
