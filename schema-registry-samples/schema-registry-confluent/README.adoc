@@ -25,6 +25,11 @@ Build the project: `./mvnw clean package`
 ----
 <ROOT_OF_CONFLUENT_PLATFORM_INSTALLATION>/bin/schema-registry-start ./etc/schema-registry/schema-registry.properties
 ----
+
+In order to run this sample, you need to set compatibility to `NONE` on Confluent schema registry server.
+
+`curl -X PUT http://127.0.0.1:8081/config -d '{"compatibility": "NONE"}' -H "Content-Type:application/json"`
+
 - Start `consumer` on another terminal session
 [source,bash]
 ----
