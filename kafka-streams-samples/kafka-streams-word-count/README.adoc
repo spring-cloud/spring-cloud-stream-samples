@@ -6,6 +6,7 @@ The example is based on the word count application from the https://github.com/c
 It uses a single input and a single output.
 In essence, the application receives text messages from an input topic and computes word occurrence counts in a configurable time window and report that in an output topic.
 This sample uses lambda expressions and thus requires Java 8+.
+The sample uses a default timewindow of 30 seconds.
 
 === Running the app:
 
@@ -15,7 +16,7 @@ Go to the root of the repository.
 
 `./mvnw clean package`
 
-`java -jar target/kafka-streams-word-count-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kafka.streams.timeWindow.length=60000`
+`java -jar target/kafka-streams-word-count-0.0.1-SNAPSHOT.jar`
 
 Assuming you are running the dockerized Kafka cluster as above.
 
@@ -29,13 +30,4 @@ On another terminal:
 
 Enter some text in the console producer and watch the output in the console consumer.
 
-Time window can be changed using the following property.
-
-`spring.cloud.stream.kafka.streams.timeWindow.length` (value is expressed in milliseconds)
-
-In order to switch to a hopping window, you can use the `spring.cloud.stream.kstream.timeWindow.advnceBy` (value in milliseconds).
-This will create an overlapped hopping windows depending on the value you provide.
-
-Here is an example with 2 overlapping windows (window length of 10 seconds and a hop (advance) by 5 seconds:
-
-`java -jar target/kafka-streams-word-count-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kafka.streams.timeWindow.length=10000 --spring.cloud.stream.kafka.streams.timeWindow.advnceBy=5000`
+Once you are done, stop the Kafka cluster: `docker-compose down`
