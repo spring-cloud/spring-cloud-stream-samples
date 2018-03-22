@@ -33,7 +33,6 @@ import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
@@ -62,7 +61,6 @@ public class KafkaStreamsInteractiveQuerySample {
 	}
 
 	@EnableBinding(KStreamProcessorX.class)
-	@EnableAutoConfiguration
 	public static class KStreamMusicSampleApplication {
 
 		private static final Long MIN_CHARTABLE_DURATION = 30 * 1000L;

@@ -23,7 +23,6 @@ import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,7 +47,6 @@ public class KafkaStreamsInteractiveQueryApplication {
 	}
 
 	@EnableBinding(KafkaStreamsProcessor.class)
-	@EnableAutoConfiguration
 	@EnableConfigurationProperties(ProductTrackerProperties.class)
 	@EnableScheduling
 	public static class InteractiveProductCountApplication {

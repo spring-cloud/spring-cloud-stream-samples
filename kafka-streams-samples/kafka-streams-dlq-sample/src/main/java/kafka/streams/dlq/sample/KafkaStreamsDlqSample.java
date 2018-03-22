@@ -22,7 +22,6 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -40,7 +39,6 @@ public class KafkaStreamsDlqSample {
 	}
 
 	@EnableBinding(KafkaStreamsProcessor.class)
-	@EnableAutoConfiguration
 	public static class WordCountProcessorApplication {
 
 		@Autowired

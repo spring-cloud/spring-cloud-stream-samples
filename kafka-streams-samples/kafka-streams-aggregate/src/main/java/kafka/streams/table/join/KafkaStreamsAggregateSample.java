@@ -28,7 +28,6 @@ import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
@@ -49,7 +48,6 @@ public class KafkaStreamsAggregateSample {
 	}
 
 	@EnableBinding(KafkaStreamsProcessorX.class)
-	@EnableAutoConfiguration
 	public static class KafkaStreamsAggregateSampleApplication {
 
 		@StreamListener("input")
