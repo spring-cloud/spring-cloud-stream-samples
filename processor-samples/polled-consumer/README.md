@@ -33,3 +33,23 @@ Build the sample and run the test by executing:
 
 or run the test in your favorite IDE.
 
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`docker-compose up -d`
+
+`./mvnw clean package`
+
+`java -jar target/polled-consumer-0.0.1-SNAPSHOT.jar`
+
+Then send/receive messages to/from the topics.
+
+For example, with the kafka command-line tools:
+
+`$ kafka-console-producer --broker-list localhost:9092 --topic polledConsumerIn`
+
+and
+
+`$ kafka-console-consumer --bootstrap-server localhost:9092 --topic polledConsumerOut --from-beginning`
+

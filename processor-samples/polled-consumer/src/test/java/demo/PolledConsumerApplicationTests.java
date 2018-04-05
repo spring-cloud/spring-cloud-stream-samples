@@ -66,7 +66,7 @@ public class PolledConsumerApplicationTests {
 	}
 
 	@Test
-	public void testSendReceive() {
+	public void testSendReceive() throws Exception {
 		Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
 		senderProps.put("key.serializer", ByteArraySerializer.class);
 		senderProps.put("value.serializer", ByteArraySerializer.class);
@@ -88,6 +88,10 @@ public class PolledConsumerApplicationTests {
 
 		assertThat(records.count()).isEqualTo(1);
 		assertThat(new String(records.iterator().next().value())).isEqualTo("FOO");
+		consumer.close();
+		pf.destroy();
+
+		PolledConsumerApplication.exec.shutdownNow();
 	}
 
 }

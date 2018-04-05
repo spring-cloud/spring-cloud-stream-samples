@@ -42,6 +42,8 @@ import org.springframework.messaging.support.MessageBuilder;
 @EnableBinding(PolledConsumerApplication.PolledProcessor.class)
 public class PolledConsumerApplication {
 
+	public static final ExecutorService exec = Executors.newSingleThreadExecutor();
+
 	public static void main(String[] args) {
 		SpringApplication.run(PolledConsumerApplication.class, args);
 	}
@@ -49,27 +51,31 @@ public class PolledConsumerApplication {
 	@Bean
 	public ApplicationRunner runner(PollableMessageSource input, MessageChannel output) {
 		return args -> {
-			ExecutorService exec = Executors.newSingleThreadExecutor();
+			System.out.println("Send some messages to topic polledConsumerIn and receive from polledConsumerOut");
+			System.out.println("Messages will be processed one per second");
 			exec.execute(() -> {
 				boolean result = false;
-				while (!result) {
+				while (true) {
 					// this is where we poll for a message, process it, and send a new one
 					result = input.poll(m -> {
-						output.send(MessageBuilder.withPayload(((String) m.getPayload()).toUpperCase())
+						String payload = (String) m.getPayload();
+						System.out.println("Received: " + payload);
+						output.send(MessageBuilder.withPayload(payload.toUpperCase())
 							.copyHeaders(m.getHeaders())
 							.build());
 					}, new ParameterizedTypeReference<String>() { });
 
-					if (!result) {
-						try {
-							Thread.sleep(1_000);
-						}
-						catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						}
+					try {
+						Thread.sleep(1_000);
+					}
+					catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+					if (result) {
+						System.out.println("Success");
 					}
 				}
-				System.out.println("Success: " + result);
 			});
 		};
 	}
