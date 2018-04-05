@@ -9,9 +9,10 @@
     <description>Collection of Spring Cloud Stream Processor Samples</description>
 
     <modules>
-        <module>streamlistener-basic</module>
-        <module>uppercase-transformer</module>
+        <module>polled-consumer</module>
         <module>reactive-processor</module>
         <module>sensor-average-reactive</module>
+        <module>streamlistener-basic</module>
+        <module>uppercase-transformer</module>
     </modules>
 </project>
