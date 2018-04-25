@@ -19,7 +19,7 @@ services:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper
   rabbitmq:
     image: rabbitmq:management
-    container_name: rabbit
+    container_name: rabbit-multibinder
     ports:
       - 5672:5672
       - 15672:15672
