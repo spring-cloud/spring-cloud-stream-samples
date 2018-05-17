@@ -21,13 +21,13 @@ import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import kafka.streams.interactive.query.avro.PlayEvent;
 import kafka.streams.interactive.query.avro.Song;
 import kafka.streams.interactive.query.avro.SongPlayCount;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.Serializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.common.serialization.*;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
@@ -37,10 +37,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.kafka.streams.QueryableStoreRegistry;
+import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryServices;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.util.*;
@@ -54,7 +55,7 @@ public class KafkaStreamsInteractiveQuerySample {
 	static final String ALL_SONGS = "all-songs";
 
 	@Autowired
-	private QueryableStoreRegistry queryableStoreRegistry;
+	private InteractiveQueryServices interactiveQueryServices;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaStreamsInteractiveQuerySample.class, args);
@@ -169,16 +170,45 @@ public class KafkaStreamsInteractiveQuerySample {
 	@RestController
 	public class FooController {
 
+		private final Log logger = LogFactory.getLog(getClass());
+
+		@RequestMapping("/song/idx")
+		public SongBean song(@RequestParam(value="id") Long id) {
+			final ReadOnlyKeyValueStore<Long, Song> songStore =
+					interactiveQueryServices.getQueryableStore(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
+
+			final Song song = songStore.get(id);
+			if (song == null) {
+				throw new IllegalArgumentException("hi");
+			}
+			return new SongBean(song.getArtist(), song.getAlbum(), song.getName());
+		}
+
 		@RequestMapping("/charts/top-five")
-		public List<SongPlayCountBean> greeting(@RequestParam(value="genre") String genre) {
-			return topFiveSongs(KafkaStreamsInteractiveQuerySample.TOP_FIVE_KEY, KafkaStreamsInteractiveQuerySample.TOP_FIVE_SONGS_STORE);
+		@SuppressWarnings("unchecked")
+		public List<SongPlayCountBean> topFive(@RequestParam(value="genre") String genre) {
+
+			HostInfo hostInfo = interactiveQueryServices.getHostInfo(KafkaStreamsInteractiveQuerySample.TOP_FIVE_SONGS_STORE,
+					KafkaStreamsInteractiveQuerySample.TOP_FIVE_KEY, new StringSerializer());
+
+			if (interactiveQueryServices.getCurrentHostInfo().equals(hostInfo)) {
+				logger.info("Top Five songs request served from same host: " + hostInfo);
+				return topFiveSongs(KafkaStreamsInteractiveQuerySample.TOP_FIVE_KEY, KafkaStreamsInteractiveQuerySample.TOP_FIVE_SONGS_STORE);
+			}
+			else {
+				//find the store from the proper instance.
+				logger.info("Top Five songs request served from different host: " + hostInfo);
+				RestTemplate restTemplate = new RestTemplate();
+				return restTemplate.postForObject(
+						String.format("http://%s:%d/%s", hostInfo.host(),
+								hostInfo.port(), "charts/top-five?genre=Punk"), "punk", List.class);
+			}
 		}
 
 		private List<SongPlayCountBean> topFiveSongs(final String key,
 													 final String storeName) {
-
 			final ReadOnlyKeyValueStore<String, TopFiveSongs> topFiveStore =
-					queryableStoreRegistry.getQueryableStoreType(storeName, QueryableStoreTypes.<String, TopFiveSongs>keyValueStore());
+					interactiveQueryServices.getQueryableStore(storeName, QueryableStoreTypes.<String, TopFiveSongs>keyValueStore());
 
 			// Get the value from the store
 			final TopFiveSongs value = topFiveStore.get(key);
@@ -187,12 +217,31 @@ public class KafkaStreamsInteractiveQuerySample {
 			}
 			final List<SongPlayCountBean> results = new ArrayList<>();
 			value.forEach(songPlayCount -> {
-				final ReadOnlyKeyValueStore<Long, Song> songStore =
-						queryableStoreRegistry.getQueryableStoreType(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
 
-				final Song song = songStore.get(songPlayCount.getSongId());
-				results.add(new SongPlayCountBean(song.getArtist(),song.getAlbum(), song.getName(),
-						songPlayCount.getPlays()));
+				HostInfo hostInfo = interactiveQueryServices.getHostInfo(KafkaStreamsInteractiveQuerySample.ALL_SONGS,
+						songPlayCount.getSongId(), new LongSerializer());
+
+				if (interactiveQueryServices.getCurrentHostInfo().equals(hostInfo)) {
+					logger.info("Song info request served from same host: " + hostInfo);
+
+					final ReadOnlyKeyValueStore<Long, Song> songStore =
+							interactiveQueryServices.getQueryableStore(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
+
+					final Song song = songStore.get(songPlayCount.getSongId());
+					results.add(new SongPlayCountBean(song.getArtist(),song.getAlbum(), song.getName(),
+							songPlayCount.getPlays()));
+				}
+				else {
+					logger.info("Song info request served from different host: " + hostInfo);
+					RestTemplate restTemplate = new RestTemplate();
+					SongBean song = restTemplate.postForObject(
+							String.format("http://%s:%d/%s", hostInfo.host(),
+									hostInfo.port(), "song/idx?id=" + songPlayCount.getSongId()),  "id", SongBean.class);
+					results.add(new SongPlayCountBean(song.getArtist(),song.getAlbum(), song.getName(),
+							songPlayCount.getPlays()));
+				}
+
+
 			});
 			return results;
 		}

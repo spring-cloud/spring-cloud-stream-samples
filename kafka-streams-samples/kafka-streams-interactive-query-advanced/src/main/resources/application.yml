@@ -23,3 +23,6 @@ spring.cloud.stream.kafka.streams.binder:
   configuration:
     schema.registry.url: http://localhost:8081
     commit.interval.ms: 1000
+spring.cloud.stream.kafka.streams.binder.autoAddPartitions: true
+spring.cloud.stream.kafka.streams.binder.minPartitionCount: 4
+spring.cloud.stream.kafka.streams.binder.configuration.application.server: localhost:8080
