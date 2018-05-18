@@ -28,7 +28,9 @@
 		<module>multibinder-samples</module>
 		<module>schema-registry-samples</module>
 		<module>testing-samples</module>
+		<module>partitioning-samples</module>
 		<module>samples-acceptance-tests</module>
+		<module>cf-acceptance-tests</module>
 	</modules>
 
 	<properties>

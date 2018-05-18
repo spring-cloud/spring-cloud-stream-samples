@@ -143,6 +143,22 @@ popd
 
 }
 
+function prepare_partitioning_with_kafka_rabbit_binders() {
+pushd ../partitioning-samples
+./mvnw clean package -DskipTests
+
+cp partitioning-producer/target/partitioning-producer-*-SNAPSHOT.jar /tmp/partitioning-producer-kafka.jar
+cp partitioning-consumer-kafka/target/partitioning-consumer-kafka-*-SNAPSHOT.jar /tmp/partitioning-consumer-kafka.jar
+
+./mvnw clean package -DskipTests -P rabbit-binder -pl :partitioning-producer
+
+cp partitioning-producer/target/partitioning-producer-*-SNAPSHOT.jar /tmp/partitioning-producer-rabbit.jar
+cp partitioning-consumer-rabbit/target/partitioning-consumer-rabbit-*-SNAPSHOT.jar /tmp/partitioning-consumer-rabbit.jar
+
+popd
+
+}
+
 #Main script starting
 
 echo "Prepare artifacts for testing"
@@ -158,6 +174,8 @@ prepare_sensor_average_reactive_with_kafka_rabbit_binders
 prepare_kafka_streams_word_count
 
 prepare_schema_registry_vanilla_with_kafka_rabbit_binders
+
+prepare_partitioning_with_kafka_rabbit_binders
 
 echo "Starting components in docker containers..."
 
@@ -196,5 +214,11 @@ rm /tmp/schema-registry-vanilla-registry-rabbit.jar
 rm /tmp/schema-registry-vanilla-consumer-rabbit.jar
 rm /tmp/schema-registry-vanilla-producer1-rabbit.jar
 rm /tmp/schema-registry-vanilla-producer2-rabbit.jar
+
+rm /tmp/partitioning-producer-kafka.jar
+rm /tmp/partitioning-consumer-kafka.jar
+
+rm /tmp/partitioning-producer-rabbit.jar
+rm /tmp/partitioning-consumer-rabbit.jar
 
 exit $BUILD_RETURN_VALUE

@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: partitioned.destination
+          group: myGroup
+          consumer:
+            partitioned: true
+            instance-index: 0

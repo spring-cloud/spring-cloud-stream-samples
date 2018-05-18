@@ -69,7 +69,7 @@ public class UppercaseTransformer {
 
 		@StreamListener("test-sink")
 		public void receive(String payload) {
-			System.out.println("Data received: " + payload);
+			logger.info("Data received: " + payload);
 		}
 	}
 
