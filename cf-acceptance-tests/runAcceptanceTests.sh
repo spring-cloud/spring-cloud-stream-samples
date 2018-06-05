@@ -1,6 +1,13 @@
 
 #!/bin/bash
 
+# First argument is CF URL ($1)
+# Second argument is CF User ($2)
+# Third argument is CF Passwrod ($3)
+# Fourth argument is CF Org ($4)
+# Fifth argument is CF Space ($5)
+# Optional sixth argument to skip ssl validation: skip-ssl-validation (No double hiphens (--) in the front)
+
 pushd () {
     command pushd "$@" > /dev/null
 }
@@ -17,9 +24,12 @@ function prepare_uppercase_transformer_with_rabbit_binder() {
 
     popd
 
-    cf login -a $1 --$2 -u $3 -p $4 -o $5 -s $6
-
-    #cf login -a $CF_E2E_TEST_SPRING_CLOUD_STREAM_URL --$CF_E2E_TEST_SPRING_CLOUD_STREAM_SKIP_SSL -u $CF_E2E_TEST_SPRING_CLOUD_STREAM_USER -p $CF_E2E_TEST_SPRING_CLOUD_STREAM_PASSWORD -o $CF_E2E_TEST_SPRING_CLOUD_STREAM_ORG -s $CF_E2E_TEST_SPRING_CLOUD_STREAM_SPACE
+    if [ $6 == "skip-ssl-validation" ]
+    then
+        cf login -a $1 --skip-ssl-validation -u $2 -p $3 -o $4 -s $5
+    else
+        cf login -a $1 -u $2 -p $3 -o $4 -s $5
+    fi
 
     cf push -f ./manifests/uppercase-processor-manifest.yml
 
@@ -39,9 +49,12 @@ function prepare_partitioning_test_with_rabbit_binder() {
 
     popd
 
-    cf login -a $1 --$2 -u $3 -p $4 -o $5 -s $6
-
-   # cf login -a $CF_E2E_TEST_SPRING_CLOUD_STREAM_URL --$CF_E2E_TEST_SPRING_CLOUD_STREAM_SKIP_SSL -u $CF_E2E_TEST_SPRING_CLOUD_STREAM_USER -p $CF_E2E_TEST_SPRING_CLOUD_STREAM_PASSWORD -o $CF_E2E_TEST_SPRING_CLOUD_STREAM_ORG -s $CF_E2E_TEST_SPRING_CLOUD_STREAM_SPACE
+    if [ $6 == "skip-ssl-validation" ]
+    then
+        cf login -a $1 --skip-ssl-validation -u $2 -p $3 -o $4 -s $5
+    else
+        cf login -a $1 -u $2 -p $3 -o $4 -s $5
+    fi
 
     cf push -f ./manifests/partitioning-producer-manifest.yml
 
@@ -96,6 +109,8 @@ function prepare_partitioning_test_with_rabbit_binder() {
 
 #Main script starting
 
+SECONDS=0
+
 echo "Prepare artifacts for testing"
 
 prepare_uppercase_transformer_with_rabbit_binder $1 $2 $3 $4 $5 $6
@@ -142,5 +157,10 @@ rm /tmp/part-consumer1-route.txt
 rm /tmp/part-consumer2-route.txt
 rm /tmp/part-consumer3-route.txt
 rm /tmp/part-consumer4-route.txt
+
+duration=$SECONDS
+bold=$(tput bold)
+
+echo "${bold}CUMULATIVE BUILD TIME ACROSS ALL TESTS: Build took $(($duration / 60)) minutes and $(($duration % 60)) seconds to complete."
 
 exit $BUILD_RETURN_VALUE
