@@ -17,7 +17,9 @@ function prepare_uppercase_transformer_with_rabbit_binder() {
 
     popd
 
-    cf login -a $CF_E2E_TEST_SPRING_CLOUD_STREAM_URL --$CF_E2E_TEST_SPRING_CLOUD_STREAM_SKIP_SSL -u $CF_E2E_TEST_SPRING_CLOUD_STREAM_USER -p $CF_E2E_TEST_SPRING_CLOUD_STREAM_PASSWORD -o $CF_E2E_TEST_SPRING_CLOUD_STREAM_ORG -s $CF_E2E_TEST_SPRING_CLOUD_STREAM_SPACE
+    cf login -a $1 --$2 -u $3 -p $4 -o $5 -s $6
+
+    #cf login -a $CF_E2E_TEST_SPRING_CLOUD_STREAM_URL --$CF_E2E_TEST_SPRING_CLOUD_STREAM_SKIP_SSL -u $CF_E2E_TEST_SPRING_CLOUD_STREAM_USER -p $CF_E2E_TEST_SPRING_CLOUD_STREAM_PASSWORD -o $CF_E2E_TEST_SPRING_CLOUD_STREAM_ORG -s $CF_E2E_TEST_SPRING_CLOUD_STREAM_SPACE
 
     cf push -f ./manifests/uppercase-processor-manifest.yml
 
@@ -37,7 +39,9 @@ function prepare_partitioning_test_with_rabbit_binder() {
 
     popd
 
-    cf login -a $CF_E2E_TEST_SPRING_CLOUD_STREAM_URL --$CF_E2E_TEST_SPRING_CLOUD_STREAM_SKIP_SSL -u $CF_E2E_TEST_SPRING_CLOUD_STREAM_USER -p $CF_E2E_TEST_SPRING_CLOUD_STREAM_PASSWORD -o $CF_E2E_TEST_SPRING_CLOUD_STREAM_ORG -s $CF_E2E_TEST_SPRING_CLOUD_STREAM_SPACE
+    cf login -a $1 --$2 -u $3 -p $4 -o $5 -s $6
+
+   # cf login -a $CF_E2E_TEST_SPRING_CLOUD_STREAM_URL --$CF_E2E_TEST_SPRING_CLOUD_STREAM_SKIP_SSL -u $CF_E2E_TEST_SPRING_CLOUD_STREAM_USER -p $CF_E2E_TEST_SPRING_CLOUD_STREAM_PASSWORD -o $CF_E2E_TEST_SPRING_CLOUD_STREAM_ORG -s $CF_E2E_TEST_SPRING_CLOUD_STREAM_SPACE
 
     cf push -f ./manifests/partitioning-producer-manifest.yml
 
@@ -94,7 +98,7 @@ function prepare_partitioning_test_with_rabbit_binder() {
 
 echo "Prepare artifacts for testing"
 
-prepare_uppercase_transformer_with_rabbit_binder
+prepare_uppercase_transformer_with_rabbit_binder $1 $2 $3 $4 $5 $6
 
 ./mvnw clean package -Dtest=SimpleProcessorTests -Dmaven.test.skip=false -Duppercase.processor.route=$FULL_UPPERCASE_ROUTE
 BUILD_RETURN_VALUE=$?
@@ -115,7 +119,7 @@ fi
 
 echo "Prepare artifacts for testing"
 
-prepare_partitioning_test_with_rabbit_binder
+prepare_partitioning_test_with_rabbit_binder $1 $2 $3 $4 $5 $6
 
 ./mvnw clean package -Dtest=PartitionAcceptanceTests -Dmaven.test.skip=false -Duppercase.processor.route=$FULL_UPPERCASE_ROUTE -Dpartitioning.producer.route=$FULL_PARTITIONING_PRODUCER_ROUTE  -Dpartitioning.consumer1.route=$FULL_PARTITIONING_CONSUMER1_ROUTE -Dpartitioning.consumer2.route=$FULL_PARTITIONING_CONSUMER2_ROUTE -Dpartitioning.consumer3.route=$FULL_PARTITIONING_CONSUMER3_ROUTE -Dpartitioning.consumer4.route=$FULL_PARTITIONING_CONSUMER4_ROUTE
 
