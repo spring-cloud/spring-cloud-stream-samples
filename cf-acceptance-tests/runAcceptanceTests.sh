@@ -159,8 +159,7 @@ rm /tmp/part-consumer3-route.txt
 rm /tmp/part-consumer4-route.txt
 
 duration=$SECONDS
-bold=$(tput bold)
 
-echo "${bold}CUMULATIVE BUILD TIME ACROSS ALL TESTS: Build took $(($duration / 60)) minutes and $(($duration % 60)) seconds to complete."
+echo "Cumulative Build Time Across All Tests: Build took $(($duration / 60)) minutes and $(($duration % 60)) seconds to complete."
 
 exit $BUILD_RETURN_VALUE
