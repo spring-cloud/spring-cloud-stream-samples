@@ -16,6 +16,36 @@ popd () {
     command popd "$@" > /dev/null
 }
 
+function prepare_ticktock_with_rabbit_binder() {
+
+    wget -O /tmp/ticktock-time-source.jar http://repo.spring.io/release/org/springframework/cloud/stream/app/time-source-rabbit/1.3.1.RELEASE/time-source-rabbit-1.3.1.RELEASE.jar
+
+    wget -O /tmp/ticktock-log-sink.jar http://repo.spring.io/release/org/springframework/cloud/stream/app/log-sink-rabbit/1.3.1.RELEASE/log-sink-rabbit-1.3.1.RELEASE.jar
+
+    if [ $6 == "skip-ssl-validation" ]
+    then
+        cf login -a $1 --skip-ssl-validation -u $2 -p $3 -o $4 -s $5
+    else
+        cf login -a $1 -u $2 -p $3 -o $4 -s $5
+    fi
+
+    cf push -f ./manifests/time-source-manifest.yml
+
+    cf app ticktock-time-source > /tmp/ticktock-time-source-route.txt
+
+    TICKTOCK_TIME_SOURCE_ROUTE=`grep routes /tmp/ticktock-time-source-route.txt | awk '{ print $2 }'`
+
+    FULL_TICKTOCK_TIME_SOURCE_ROUTE=http://$TICKTOCK_TIME_SOURCE_ROUTE
+
+    cf push -f ./manifests/log-sink-manifest.yml
+
+    cf app ticktock-log-sink > /tmp/ticktock-log-sink-route.txt
+
+    TICKTOCK_LOG_SINK_ROUTE=`grep routes /tmp/ticktock-log-sink-route.txt | awk '{ print $2 }'`
+
+    FULL_TICKTOCK_LOG_SINK_ROUTE=http://$TICKTOCK_LOG_SINK_ROUTE
+}
+
 function prepare_uppercase_transformer_with_rabbit_binder() {
 
     pushd ../processor-samples/uppercase-transformer
@@ -38,7 +68,6 @@ function prepare_uppercase_transformer_with_rabbit_binder() {
     UPPERCASE_PROCESSOR_ROUTE=`grep routes /tmp/uppercase-route.txt | awk '{ print $2 }'`
 
     FULL_UPPERCASE_ROUTE=http://$UPPERCASE_PROCESSOR_ROUTE
-
 }
 
 function prepare_partitioning_test_with_rabbit_binder() {
@@ -103,15 +132,41 @@ function prepare_partitioning_test_with_rabbit_binder() {
     PARTITIONING_CONSUMER4_ROUTE=`grep routes /tmp/part-consumer4-route.txt | awk '{ print $2 }'`
 
     FULL_PARTITIONING_CONSUMER4_ROUTE=http://$PARTITIONING_CONSUMER4_ROUTE
-
 }
-
 
 #Main script starting
 
 SECONDS=0
 
-echo "Prepare artifacts for testing"
+echo "Prepare artifacts for ticktock testing"
+
+prepare_ticktock_with_rabbit_binder $1 $2 $3 $4 $5 $6
+
+./mvnw clean package -Dtest=TickTockAcceptanceTests -Dmaven.test.skip=false -Dtime.source.route=$FULL_TICKTOCK_TIME_SOURCE_ROUTE -Dlog.sink.route=$FULL_TICKTOCK_LOG_SINK_ROUTE
+BUILD_RETURN_VALUE=$?
+
+cf stop ticktock-time-source
+cf stop ticktock-log-sink
+
+cf delete ticktock-time-source -f
+cf delete ticktock-log-sink -f
+
+cf logout
+
+rm /tmp/ticktock-time-source-route.txt
+rm /tmp/ticktock-log-sink-route.txt
+
+if [ "$BUILD_RETURN_VALUE" != 0 ]
+then
+    echo "Early exit due to test failure in ticktock tests"
+    duration=$SECONDS
+
+    echo "Total time: Build took $(($duration / 60)) minutes and $(($duration % 60)) seconds to complete."
+
+    exit $BUILD_RETURN_VALUE
+fi
+
+echo "Prepare artifacts for uppercase transformer testing"
 
 prepare_uppercase_transformer_with_rabbit_binder $1 $2 $3 $4 $5 $6
 
@@ -128,15 +183,20 @@ rm /tmp/uppercase-route.txt
 
 if [ "$BUILD_RETURN_VALUE" != 0 ]
 then
-    echo "Early exit due to test failure"
+    echo "Early exit due to test failure in uppercase transformer"
+    duration=$SECONDS
+
+    echo "Total time: Build took $(($duration / 60)) minutes and $(($duration % 60)) seconds to complete."
+
     exit $BUILD_RETURN_VALUE
 fi
 
-echo "Prepare artifacts for testing"
+echo "Prepare artifacts for partitions testing"
 
 prepare_partitioning_test_with_rabbit_binder $1 $2 $3 $4 $5 $6
 
 ./mvnw clean package -Dtest=PartitionAcceptanceTests -Dmaven.test.skip=false -Duppercase.processor.route=$FULL_UPPERCASE_ROUTE -Dpartitioning.producer.route=$FULL_PARTITIONING_PRODUCER_ROUTE  -Dpartitioning.consumer1.route=$FULL_PARTITIONING_CONSUMER1_ROUTE -Dpartitioning.consumer2.route=$FULL_PARTITIONING_CONSUMER2_ROUTE -Dpartitioning.consumer3.route=$FULL_PARTITIONING_CONSUMER3_ROUTE -Dpartitioning.consumer4.route=$FULL_PARTITIONING_CONSUMER4_ROUTE
+BUILD_RETURN_VALUE=$?
 
 cf stop partitioning-producer
 cf stop partitioning-consumer1

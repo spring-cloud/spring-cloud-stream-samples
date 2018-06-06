@@ -81,7 +81,7 @@ public class PartitionAcceptanceTests extends AbstractSampleTests {
 		ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 		Future<?> submit = executorService.submit(() -> {
-			boolean found = waitForLogEntryInFileWithoutFailing(consumer1Msg, consumerRoute, entries);
+			boolean found = waitForLogEntry(consumer1Msg, consumerRoute, entries);
 			if (!found) {
 				fail("Could not find the test data in the logs");
 			}

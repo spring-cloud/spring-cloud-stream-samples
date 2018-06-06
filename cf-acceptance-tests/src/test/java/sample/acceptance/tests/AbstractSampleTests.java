@@ -32,34 +32,12 @@ abstract class AbstractSampleTests {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractSampleTests.class);
 
+	boolean waitForLogEntry(boolean noBoot2, String app, String route, String... entries) {
+		return waitForLogEntryInResource(noBoot2, app, route, entries);
+	}
+
 	boolean waitForLogEntry(String app, String route, String... entries) {
-		logger.info("Looking for '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app + " - " + route);
-		long timeout = System.currentTimeMillis() + (30 * 1000);
-		boolean exists = false;
-		while (!exists && System.currentTimeMillis() < timeout) {
-			try {
-				Thread.sleep(7 * 1000);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				throw new IllegalStateException(e.getMessage(), e);
-			}
-			if (!exists) {
-				logger.info("Polling to get log file. Remaining poll time = "
-						+ (timeout - System.currentTimeMillis() + " ms."));
-				String log = getLog(route + "/actuator");
-				if (log != null) {
-					if (Stream.of(entries).allMatch(s -> log.contains(s))) {
-						exists = true;
-					}
-				}
-			}
-		}
-		if (exists) {
-			logger.info("Matched all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for app " + app);
-		} else {
-			logger.error("ERROR: Couldn't find all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
-		}
-		return exists;
+		return waitForLogEntryInResource(false, app, route, entries);
 	}
 
 	private String getLog(String url) {
@@ -81,30 +59,30 @@ abstract class AbstractSampleTests {
 		return log;
 	}
 
-
-	protected boolean waitForLogEntryInFileWithoutFailing(String app, String route, String... entries) {
-		logger.info("Looking for '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
-		long timeout = System.currentTimeMillis() + (60 * 1000);
+	private boolean waitForLogEntryInResource(boolean noBoot2, String app, String route, String... entries) {
+		logger.info("Looking for '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app + " - " + route);
+		long timeout = System.currentTimeMillis() + (30 * 1000);
 		boolean exists = false;
 		while (!exists && System.currentTimeMillis() < timeout) {
 			try {
-				Thread.sleep(2 * 1000);
+				Thread.sleep(7 * 1000);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				throw new IllegalStateException(e.getMessage(), e);
 			}
 			logger.info("Polling to get log file. Remaining poll time = "
 					+ (timeout - System.currentTimeMillis() + " ms."));
-			String log = getLog(route + "/actuator");
-
+			String log = noBoot2 ? getLog(route) : getLog(route + "/actuator");
 			if (log != null) {
-				if (Stream.of(entries).allMatch(log::contains)) {
+				if (Stream.of(entries).allMatch(s -> log.contains(s))) {
 					exists = true;
 				}
 			}
 		}
 		if (exists) {
 			logger.info("Matched all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for app " + app);
+		} else {
+			logger.error("ERROR: Couldn't find all '" + StringUtils.arrayToCommaDelimitedString(entries) + "' in logfile for " + app);
 		}
 		return exists;
 	}
