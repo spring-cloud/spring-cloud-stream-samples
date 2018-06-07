@@ -1,7 +1,7 @@
 Spring Cloud Stream Partitioning Sample
 ========================================
 
-This is a collection of applications that is used for partitioning demo.
+This is a collection of applications that demonstrates how partitioning works in Spring Cloud Stream.
 
 ## Quick introduction
 
@@ -10,6 +10,7 @@ There is a configuration in the producer's application.yml file for `partition-k
 We use 4 partitions for this demo.
 
 There is a common producer module called partitioning-producer and then there is a consumer for kafka and rabbit - partitioning-consumer-kafka and partitioning-consumer-rabbit respectively.
+Follow the instructions below to run the demo for Kafka or RabbitMQ.
 
 ## Running the sample for Kafka
 
@@ -24,34 +25,6 @@ The following instructions assume that you are running Kafka as a Docker image.
 * `java -jar target/partitioning-consumer-kafka-0.0.1-SNAPSHOT.jar --server.port=9008`
 
 On another termimal start another instance of the consumer.
-
-* `java -jar target/partitioning-consumer-kafka-0.0.1-SNAPSHOT.jar --server.port=9009`
-
-* cd ../partitioning-producer
-
-* `./mvnw clean package`
-
-* `java -jar target/partitioning-producer-0.0.1-SNAPSHOT.jar --server.port=9010`
-
-Producer sends messages randomly that has string length of 1, 2, 3, or 4.
-Watch the consumer console logs and verify that the correct partitions are receiving the messages.
-The log message has the payload and partition information in it.
-
-## Running the sample for Kafka
-
-The following instructions assume that you are running Kafka as a Docker image.
-
-Make sure that you are at the root directory of partitioning samples (partitioning-samples)
-
-* `docker-compose up -d`
-
-* cd partitioning-consumer-kafka
-
-* `./mvnw clean package`
-
-* `java -jar target/partitioning-consumer-kafka-0.0.1-SNAPSHOT.jar --server.port=9008`
-
-On another terminal start another instance of the consumer.
 
 * `java -jar target/partitioning-consumer-kafka-0.0.1-SNAPSHOT.jar --server.port=9009`
 
