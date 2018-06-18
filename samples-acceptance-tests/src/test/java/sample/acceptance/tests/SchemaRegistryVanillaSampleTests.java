@@ -1,7 +1,6 @@
 package sample.acceptance.tests;
 
 import org.assertj.core.util.Files;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,6 @@ public class SchemaRegistryVanillaSampleTests extends AbstractSampleTests {
 	}
 
 	@Test
-	@Ignore
 	public void testSchemaRegistryVanillaRabbit() throws Exception {
 		runAgainstMiddleware("/tmp/schema-registry-vanilla-registry-rabbit.jar",
 				"/tmp/schema-registry-vanilla-consumer-rabbit.jar",
