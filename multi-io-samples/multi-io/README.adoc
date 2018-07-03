@@ -9,8 +9,6 @@ To run this sample, you will need to have installed:
 
 * Java 8 or Above
 
-This example requires Redis to be running on localhost.
-
 ## Code Tour
 
 This sample is a Spring Boot application that bundles multiple application together to showcase how to configure multiple input/output channels.
