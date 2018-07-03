@@ -37,7 +37,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryServices;
+import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +55,7 @@ public class KafkaStreamsInteractiveQuerySample {
 	static final String ALL_SONGS = "all-songs";
 
 	@Autowired
-	private InteractiveQueryServices interactiveQueryServices;
+	private InteractiveQueryService interactiveQueryService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaStreamsInteractiveQuerySample.class, args);
@@ -175,7 +175,7 @@ public class KafkaStreamsInteractiveQuerySample {
 		@RequestMapping("/song/idx")
 		public SongBean song(@RequestParam(value="id") Long id) {
 			final ReadOnlyKeyValueStore<Long, Song> songStore =
-					interactiveQueryServices.getQueryableStore(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
+					interactiveQueryService.getQueryableStore(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
 
 			final Song song = songStore.get(id);
 			if (song == null) {
@@ -188,10 +188,10 @@ public class KafkaStreamsInteractiveQuerySample {
 		@SuppressWarnings("unchecked")
 		public List<SongPlayCountBean> topFive(@RequestParam(value="genre") String genre) {
 
-			HostInfo hostInfo = interactiveQueryServices.getHostInfo(KafkaStreamsInteractiveQuerySample.TOP_FIVE_SONGS_STORE,
+			HostInfo hostInfo = interactiveQueryService.getHostInfo(KafkaStreamsInteractiveQuerySample.TOP_FIVE_SONGS_STORE,
 					KafkaStreamsInteractiveQuerySample.TOP_FIVE_KEY, new StringSerializer());
 
-			if (interactiveQueryServices.getCurrentHostInfo().equals(hostInfo)) {
+			if (interactiveQueryService.getCurrentHostInfo().equals(hostInfo)) {
 				logger.info("Top Five songs request served from same host: " + hostInfo);
 				return topFiveSongs(KafkaStreamsInteractiveQuerySample.TOP_FIVE_KEY, KafkaStreamsInteractiveQuerySample.TOP_FIVE_SONGS_STORE);
 			}
@@ -208,7 +208,7 @@ public class KafkaStreamsInteractiveQuerySample {
 		private List<SongPlayCountBean> topFiveSongs(final String key,
 													 final String storeName) {
 			final ReadOnlyKeyValueStore<String, TopFiveSongs> topFiveStore =
-					interactiveQueryServices.getQueryableStore(storeName, QueryableStoreTypes.<String, TopFiveSongs>keyValueStore());
+					interactiveQueryService.getQueryableStore(storeName, QueryableStoreTypes.<String, TopFiveSongs>keyValueStore());
 
 			// Get the value from the store
 			final TopFiveSongs value = topFiveStore.get(key);
@@ -218,14 +218,14 @@ public class KafkaStreamsInteractiveQuerySample {
 			final List<SongPlayCountBean> results = new ArrayList<>();
 			value.forEach(songPlayCount -> {
 
-				HostInfo hostInfo = interactiveQueryServices.getHostInfo(KafkaStreamsInteractiveQuerySample.ALL_SONGS,
+				HostInfo hostInfo = interactiveQueryService.getHostInfo(KafkaStreamsInteractiveQuerySample.ALL_SONGS,
 						songPlayCount.getSongId(), new LongSerializer());
 
-				if (interactiveQueryServices.getCurrentHostInfo().equals(hostInfo)) {
+				if (interactiveQueryService.getCurrentHostInfo().equals(hostInfo)) {
 					logger.info("Song info request served from same host: " + hostInfo);
 
 					final ReadOnlyKeyValueStore<Long, Song> songStore =
-							interactiveQueryServices.getQueryableStore(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
+							interactiveQueryService.getQueryableStore(KafkaStreamsInteractiveQuerySample.ALL_SONGS, QueryableStoreTypes.<Long, Song>keyValueStore());
 
 					final Song song = songStore.get(songPlayCount.getSongId());
 					results.add(new SongPlayCountBean(song.getArtist(),song.getAlbum(), song.getName(),
