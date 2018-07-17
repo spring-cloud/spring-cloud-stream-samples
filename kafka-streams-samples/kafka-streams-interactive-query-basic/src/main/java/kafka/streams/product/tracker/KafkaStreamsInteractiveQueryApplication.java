@@ -73,10 +73,10 @@ public class KafkaStreamsInteractiveQueryApplication {
 			return input
 					.filter((key, product) -> productIds().contains(product.getId()))
 					.map((key, value) -> new KeyValue<>(value.id, value))
-					.groupByKey(Serialized.with(new Serdes.IntegerSerde(), new JsonSerde<>(Product.class)))
+					.groupByKey(Serialized.with(Serdes.Integer(), new JsonSerde<>(Product.class)))
 					.count(Materialized.<Integer, Long, KeyValueStore<Bytes, byte[]>>as(STORE_NAME)
-						.withKeySerde(new Serdes.IntegerSerde())
-						.withValueSerde(new Serdes.LongSerde()))
+						.withKeySerde(Serdes.Integer())
+						.withValueSerde(Serdes.Long()))
 					.toStream();
 		}
 
