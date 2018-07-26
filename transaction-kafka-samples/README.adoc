@@ -1,0 +1,23 @@
+== Spring Cloud Stream Sample Transactional Application
+
+This sample is showing how you can get a transactional producer using Kafka.
+
+The flow is as follows
+
+1. POST request with /<name> to :9997
+2. transaction-http-source put on kafka topic person-event
+3. transaction-spring-data-processor
+a. listen to topic person-event
+b. create new person entity and save to maria db
+c. create a new person saved event and put on topic person-command
+d. all this as a single transaction
+4. transaction-logger-sink litsen to person-command and log out
+
+In order to test the example name is a uniq field. Sending the same name twice should not be allowed
+Example using httpie
+```
+http :9997 name=TonyStark
+```
+
+With transactional on this message will now NOT be removed from the incomming queue if the write to the database fails.
+
