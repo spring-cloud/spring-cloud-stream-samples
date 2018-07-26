@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: person-event
+      kafka:
+          binder:
+              configuration:
+                isolation.level: read_committed
+
+server.port: 9999
