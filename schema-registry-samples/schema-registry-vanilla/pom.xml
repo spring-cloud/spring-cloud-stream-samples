@@ -9,10 +9,11 @@
     <description>Schema Registry Vanilla Sample</description>
 
     <modules>
-        <module>schema-registry-vanilla-producer1</module>
-        <module>schema-registry-vanilla-producer2</module>
-        <module>schema-registry-vanilla-consumer</module>
-        <module>schema-registry-vanilla-server</module>
+        <module>producer1</module>
+        <module>producer2</module>
+        <module>consumer</module>
+        <module>registry</module>
+        <module>kafka-streams-consumer</module>
     </modules>
 
 </project>

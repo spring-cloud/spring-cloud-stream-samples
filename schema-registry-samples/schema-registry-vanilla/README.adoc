@@ -33,6 +33,11 @@ java -jar registry/target/registry-0.0.1-SNAPSHOT.jar
 ----
 java -jar consumer/target/consumer-0.0.1-SNAPSHOT.jar
 ----
+- If you want to see how a Spring Cloud Stream application with Kafka Streams work with the schema registry, start the Kafka Streams consumer application.
+This step only works, if you are using Kafka as the middleware.
+----
+java -jar kafka-streams-consumer/target/kafka-streams-consumer-0.0.1-SNAPSHOT.jar
+----
 - Start `producer1` on another terminal session
 [source,bash]
 ----
@@ -72,6 +77,17 @@ The consumer should log the results.
 
 NOTE: Refer to the payload suffix in the `id` field. Each of them are appended with `-v1` or `-v2` indicating they are from
 `producer1` and `producer2` respectively.
+
+If you are running the Kafka Streams consumer application, similar to the above, you will see the counts from both versions of the sensors.
+This is done by querying the state store where these counts are stored by the Kafka Streams application.
+Here is an example of a sample output from the Kafka Streams consumer application.
+
+----
+2018-10-30 19:01:08.700  INFO 61681 --- [   scheduling-1] ication$$EnhancerBySpringCGLIB$$e0950bfd : Count for v1 is=56
+2018-10-30 19:01:08.700  INFO 61681 --- [   scheduling-1] ication$$EnhancerBySpringCGLIB$$e0950bfd : Count for v2 is=57
+2018-10-30 19:01:38.703  INFO 61681 --- [   scheduling-1] ication$$EnhancerBySpringCGLIB$$e0950bfd : Count for v1 is=56
+2018-10-30 19:01:38.703  INFO 61681 --- [   scheduling-1] ication$$EnhancerBySpringCGLIB$$e0950bfd : Count for v2 is=57
+----
 
 === What just happened?
 The schema evolved on the `temperature` field. That field is now split into `internalTemperature` and `externalTemperature`,
