@@ -16,6 +16,7 @@
 package sample.processor;
 
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.transaction.Transactional;
 
@@ -38,6 +39,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class ProcessorApplication {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    private AtomicBoolean shouldFail= new AtomicBoolean(false);
     private PersonRepository repository;
 
     public ProcessorApplication(PersonRepository repository) {
@@ -56,7 +59,16 @@ public class ProcessorApplication {
         logger.info("Received event={}", data);
         Person person = new Person();
         person.setName(data.getName());
+
+        if(shouldFail.get()) {
+            shouldFail.set(false);
+            throw new RuntimeException("Simulated netowrk error");
+        } else {
+            //We fail every other request as a test
+            shouldFail.set(true);
+        }
         logger.info("Saving person={}", person);
+
         Person savedPerson = repository.save(person);
 
         PersonEvent event = new PersonEvent();
