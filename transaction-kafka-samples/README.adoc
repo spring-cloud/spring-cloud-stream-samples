@@ -1,0 +1,47 @@
+== Spring Cloud Stream Sample Transactional Application
+
+This sample is showing how you can get a transactional producer using Kafka.
+
+The flow is as follows
+
+1. POST request with /<name> to :9997
+2. transaction-http-source put on kafka topic person-event
+3. transaction-spring-data-processor
+a. listen to topic person-event
+b. create new person entity and save to maria db
+c. create a new person saved event and put on topic person-command
+d. all this as a single transaction
+4. transaction-logger-sink litsen to person-command and log out
+
+=== How to start sample
+Start kafka, zookeeper and mariaDb with `docker-compuse up -d` in this folder. 
+Start each of the individual submodules in this project. Either in your IDE or by running `mvn spring:boot run` in each subfolder.
+Send a POST request to localhost:9997
+
+=== How to verify success and failure
+Do a post request to localhost:9997 with a name field. This can be done with the following code using https://httpie.org[httpie]
+```
+http :9997 name=TonyStark
+```
+In the log for the sink application you will see that there is a PersonCreated event, the person is stored in the database.
+Repeat the same command again and observe in the same log that there is not another PersonCreated event with the same name.
+
+Look in the processor log and observe that the message is not removed from the queue since its transaction fails.
+
+NB! Note that in a real world application you would have to handle unique constraint errors like this in the producers. Transaction failures like this are there to catch errors that you do not expect will happen, like network errors or similar scenarios. 
+
+=== What properties makes this request transactional
+ - Add @Transactional to method you want to be transactional and @EnableTransactional on the class
+ - Configure the Producing application. 
+```
+spring.kafka.binder.transaction:
+  transaction-id-prefix: person-
+  producer:
+    configuration:
+      retries: 1
+      acks: all
+```
+
+Transaction-id-prefix is required to start a transaction, The binder also requires setting retires to anything but 0 and set acks to all in order to enable transactions.
+
+Note that consumers of the resulting topic should set issolation level to READ_COMMITED. This will not read messages that are on the topic but that is not commited.

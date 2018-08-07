@@ -1,0 +1,19 @@
+spring:
+    cloud.stream:
+        bindings:
+            input.destination: person-command
+            output.destination: person-event
+        kafka.binder.transaction:
+            transaction-id-prefix: person-
+            producer:
+              configuration:
+                retries: 1
+                acks: all
+
+    datasource:
+        url: jdbc:mariadb://localhost:3306/sample_mysql_db
+        username: root
+        password: pwd
+        driver-class-name: org.mariadb.jdbc.Driver
+    jpa.hibernate.ddl-auto: create-drop
+server.port: 9998

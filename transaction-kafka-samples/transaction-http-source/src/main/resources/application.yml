@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: person-command
+server.port: 9997
