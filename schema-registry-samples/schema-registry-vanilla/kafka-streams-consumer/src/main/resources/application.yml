@@ -1,0 +1,24 @@
+spring:
+    cloud:
+        stream:
+            schema-registry-client:
+                endpoint: http://localhost:8990
+            schema:
+                avro:
+                    schema-locations: classpath:avro/sensor.avsc
+server.port: 9998
+
+spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
+spring.cloud.stream.kafka.streams:
+    binder.configuration:
+        key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    bindings.output.producer:
+        keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        valueSerde: org.apache.kafka.common.serialization.Serdes$LongSerde
+spring.cloud.stream.bindings.output:
+    destination: sensor-version-counts
+spring.cloud.stream.bindings.input:
+    destination: sensor-topic
+spring.cloud.stream.kafka.streams.binder:
+    brokers: localhost #192.168.99.100
