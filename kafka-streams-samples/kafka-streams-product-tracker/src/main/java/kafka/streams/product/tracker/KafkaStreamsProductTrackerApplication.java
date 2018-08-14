@@ -18,6 +18,8 @@ package kafka.streams.product.tracker;
 
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -60,8 +62,9 @@ public class KafkaStreamsProductTrackerApplication {
 			return input
 					.filter((key, product) -> productIds().contains(product.getId()))
 					.map((key, value) -> new KeyValue<>(value, value))
-					.groupByKey(new JsonSerde<>(Product.class), new JsonSerde<>(Product.class))
-					.count(timeWindows, "product-counts")
+					.groupByKey(Serialized.with(new JsonSerde<>(Product.class), new JsonSerde<>(Product.class)))
+					.windowedBy(timeWindows)
+					.count(Materialized.as("product-counts"))
 					.toStream()
 					.map((key, value) -> new KeyValue<>(key.key().id, new ProductStatus(key.key().id,
 							value, Instant.ofEpochMilli(key.window().start()).atZone(ZoneId.systemDefault()).toLocalTime(),
