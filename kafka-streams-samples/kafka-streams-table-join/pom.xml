@@ -11,7 +11,7 @@
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
-		<groupId>spring.cloud.stream.samples</groupId>
+		<groupId>io.spring.cloud.stream.sample</groupId>
 		<artifactId>spring-cloud-stream-samples-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../..</relativePath>

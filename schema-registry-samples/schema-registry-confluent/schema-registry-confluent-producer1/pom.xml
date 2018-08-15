@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>producer2</artifactId>
+    <artifactId>schema-registry-confluent-producer1</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>producer2</name>
-    <description>Schema Registry Producer2</description>
+    <name>schema-registry-confluent-producer1</name>
+    <description>Schema Registry Producer1</description>
 
     <parent>
-        <groupId>spring.cloud.stream.samples</groupId>
+        <groupId>io.spring.cloud.stream.sample</groupId>
         <artifactId>spring-cloud-stream-samples-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../../..</relativePath>
@@ -17,6 +17,7 @@
 
     <properties>
         <avro.version>1.8.2</avro.version>
+        <confluent.version>4.0.0</confluent.version>
     </properties>
 
     <dependencies>
@@ -25,9 +26,24 @@
             <artifactId>spring-cloud-stream-schema</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>${confluent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-schema-registry-client</artifactId>
+            <version>${confluent.version}</version>
         </dependency>
     </dependencies>
 
@@ -81,4 +97,10 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>http://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
 </project>
