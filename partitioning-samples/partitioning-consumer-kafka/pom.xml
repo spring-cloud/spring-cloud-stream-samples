@@ -41,15 +41,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>rabbit-binder</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
     <build>

@@ -60,6 +60,17 @@
 					<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<classifier>kafka</classifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>rabbit-binder</id>
@@ -69,6 +80,18 @@
 					<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<classifier>rabbit</classifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
 		</profile>
 	</profiles>
 
