@@ -13,4 +13,17 @@
         <module>partitioning-consumer-kafka</module>
         <module>partitioning-consumer-rabbit</module>
     </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>repo.spring.io</id>
+            <name>Spring Snapshot Repository</name>
+            <url>https://repo.spring.io/libs-snapshot-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo.spring.io</id>
+            <name>Spring Snapshot Repository</name>
+            <url>https://repo.spring.io/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
