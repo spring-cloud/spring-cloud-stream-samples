@@ -9,9 +9,9 @@
     <description>Collection of Spring Cloud Stream partitioning Samples</description>
 
     <modules>
-        <module>partitioning-producer</module>
-        <module>partitioning-consumer-kafka</module>
-        <module>partitioning-consumer-rabbit</module>
+        <module>partitioning-producer-sample</module>
+        <module>partitioning-consumer-sample-kafka</module>
+        <module>partitioning-consumer-sample-rabbit</module>
     </modules>
 
     <distributionManagement>
