@@ -27,11 +27,10 @@
 		<module>kinesis-samples</module>
 		<module>multibinder-samples</module>
 		<module>schema-registry-samples</module>
-		<module>testing-samples</module>
 		<module>partitioning-samples</module>
-		<module>samples-acceptance-tests</module>
-		<module>cf-acceptance-tests</module>
-    	<module>transaction-kafka-samples</module>
+		<module>transaction-kafka-samples</module>
+		<module>testing-samples</module>
+		<module>samples-e2e-tests</module>
 	</modules>
 
 	<properties>

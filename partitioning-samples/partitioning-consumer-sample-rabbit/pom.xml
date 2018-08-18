@@ -49,34 +49,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.14.2</version>
-                <configuration>
-                    <images>
-                        <image>
-                            <name>springcloudstream/${project.artifactId}</name>
-                            <build>
-                                <from>anapsix/alpine-java:8</from>
-                                <volumes>
-                                    <volume>/tmp</volume>
-                                </volumes>
-                                <entryPoint>
-                                    <exec>
-                                        <arg>java</arg>
-                                        <arg>-jar</arg>
-                                        <arg>/maven/partitioning-consumer-sample-rabbit.jar</arg>
-                                    </exec>
-                                </entryPoint>
-                                <assembly>
-                                    <descriptor>assembly-rabbit.xml</descriptor>
-                                </assembly>
-                            </build>
-                        </image>
-                    </images>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
