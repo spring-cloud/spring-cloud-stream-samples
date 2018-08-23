@@ -9,8 +9,8 @@
     <description>Kafka Streams Schema Evolution Sample</description>
 
     <modules>
-        <module>kafka-streams-confluent-producer1</module>
-        <module>kafka-streams-confluent-producer2</module>
+        <module>custom-confluent-producer1</module>
+        <module>custom-confluent-producer2</module>
         <module>kafka-streams-confluent-consumer</module>
     </modules>
 </project>
