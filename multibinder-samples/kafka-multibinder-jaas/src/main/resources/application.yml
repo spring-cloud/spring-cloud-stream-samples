@@ -1,0 +1,43 @@
+spring.cloud.stream:
+  bindings:
+    input:
+      destination: kafka1-in
+      binder: kafka1
+    output:
+      destination: kafka2-out
+      binder: kafka2
+    input1:
+      destination: kafka2-in
+      binder: kafka2
+    output1:
+      destination: kafka1-out
+      binder: kafka1
+  binders:
+    kafka1:
+      type: kafka
+      environment:
+         spring:
+           cloud:
+             stream:
+              kafka:
+                binder.brokers: localhost:9092
+                binder.jaas.loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
+                binder.jaas.options.username: admin
+                binder.jaas.options.password: admin-secret
+    kafka2:
+      type: kafka
+      environment:
+        spring:
+          cloud:
+            stream:
+              kafka:
+                binder:
+                  zkNodes: localhost:2182
+                  brokers: localhost:9093
+                  jaas.loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
+                  jaas.options.username: admin
+                  jaas.options.password: admin-secret
+  kafka.binder:
+    configuration:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: PLAIN
