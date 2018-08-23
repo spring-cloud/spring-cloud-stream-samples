@@ -42,7 +42,7 @@ java -jar custom-confluent-producer1/target/custom-confluent-producer1-0.0.1-SNA
 - Start `custom-confluent-producer2` on another terminal session
 [source,bash]
 ----
-java -jar custom-confluent-producer1/target/custom-confluent-producer1-0.0.1-SNAPSHOT.jar
+java -jar custom-confluent-producer2/target/custom-confluent-producer2-0.0.1-SNAPSHOT.jar
 ----
 
 === Sample Data
