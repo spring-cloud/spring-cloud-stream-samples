@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          producer:
+            useNativeEncoding: true
+          destination: sensors
+server.port: 9010
+spring.cloud.stream.kafka.binder.configuration:
+  schema.registry.url: http://localhost:8081
+  key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+  value.serializer: sample.producer2.FooSerde
