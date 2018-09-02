@@ -66,12 +66,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class EmbeddedKafkaApplicationTests {
 
-	private static final String INPUT_TOPIC = "testEmbeddedIn";
-	private static final String OUTPUT_TOPIC = "testEmbeddedOut";
+	private static final String TOPIC = "testEmbeddedTopic";
 	private static final String GROUP_NAME = "embeddedKafkaApplication";
 
 	@ClassRule
-	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, OUTPUT_TOPIC);
+	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, TOPIC);
 
 	@BeforeClass
 	public static void setup() {
@@ -85,7 +84,7 @@ public class EmbeddedKafkaApplicationTests {
 		senderProps.put("value.serializer", ByteArraySerializer.class);
 		DefaultKafkaProducerFactory<byte[], byte[]> pf = new DefaultKafkaProducerFactory<>(senderProps);
 		KafkaTemplate<byte[], byte[]> template = new KafkaTemplate<>(pf, true);
-		template.setDefaultTopic(INPUT_TOPIC);
+		template.setDefaultTopic(TOPIC);
 		template.sendDefault("foo".getBytes());
 
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(GROUP_NAME, "false", embeddedKafka);
@@ -95,12 +94,12 @@ public class EmbeddedKafkaApplicationTests {
 		DefaultKafkaConsumerFactory<byte[], byte[]> cf = new DefaultKafkaConsumerFactory<>(consumerProps);
 
 		Consumer<byte[], byte[]> consumer = cf.createConsumer();
-		consumer.subscribe(Collections.singleton(OUTPUT_TOPIC));
+		consumer.subscribe(Collections.singleton(TOPIC));
 		ConsumerRecords<byte[], byte[]> records = consumer.poll(10_000);
 		consumer.commitSync();
 
 		assertThat(records.count()).isEqualTo(1);
-		assertThat(new String(records.iterator().next().value())).isEqualTo("FOO");
+		assertThat(new String(records.iterator().next().value())).isEqualTo("foo");
 	}
 
 }
