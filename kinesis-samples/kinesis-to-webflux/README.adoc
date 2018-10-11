@@ -1,0 +1,10 @@
+== Reactive Spring Cloud Stream AWS Kinesis Binder to SSE via WebFlux
+
+This sample demonstrate a simple bridging of AWS Kinesis stream records to the Server Side Events subscribers.
+The `@StreamListener` sink side is based on the Spring Cloud Stream Reactive support, streaming incoming messages to the `Flux` argument which, in turn, is used as a source for the `@GetMapping` controller.
+
+The `CloudStreamKinesisToWebfluxApplicationTests` demonstrates:
+
+- an `AmazonKinesisAsync` client configured against local Kineselite on the `4568` port;
+- the `TestSource` binding for producing records into the Kinesis stream;
+- a `WebTestClient` to perform SSE request against embedded Netty started by the `CloudStreamKinesisToWebfluxApplication` Spring Boot application on the random port and subsequent verification of the data produced by the `Flux` from the `@StreamListener` against Kinesis Binder consumer.

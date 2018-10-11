@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: SSE_DATA
+          group: kinesis-to-sse
+          consumer:
+            headerMode: none
+            useNativeDecoding: true
+      kinesis:
+        bindings:
+          input:
+            consumer:
+              listenerMode: batch
+
+cloud:
+  aws:
+    region:
+      static: eu-west-1
