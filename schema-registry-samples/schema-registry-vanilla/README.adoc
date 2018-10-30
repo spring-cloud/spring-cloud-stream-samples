@@ -26,12 +26,12 @@ If you are using RabbitMQ binder: `./mvnw clean package -P rabbit-binder`
 - Start the Schema Registry server
 [source,bash]
 ----
-java -jar registry/target/registry-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-vanilla-server/target/schema-registry-vanilla-server-0.0.1-SNAPSHOT.jar
 ----
 - Start `consumer` on another terminal session
 [source,bash]
 ----
-java -jar consumer/target/consumer-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-vanilla-consumer/target/schema-registry-vanilla-consumer-0.0.1-SNAPSHOT.jar
 ----
 - If you want to see how a Spring Cloud Stream application with Kafka Streams work with the schema registry, start the Kafka Streams consumer application.
 This step only works, if you are using Kafka as the middleware.
@@ -41,12 +41,12 @@ java -jar kafka-streams-consumer/target/kafka-streams-consumer-0.0.1-SNAPSHOT.ja
 - Start `producer1` on another terminal session
 [source,bash]
 ----
-java -jar producer1/target/producer1-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-vanilla-producer1/target/schema-registry-vanilla-producer1-0.0.1-SNAPSHOT.jar
 ----
 - Start `producer2` on another terminal session
 [source,bash]
 ----
-java -jar producer2/target/producer2-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-vanilla-producer2/target/schema-registry-vanilla-producer2-0.0.1-SNAPSHOT.jar
 ----
 
 === Sample Data
