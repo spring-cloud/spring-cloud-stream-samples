@@ -18,6 +18,7 @@
 	    <module>kafka-streams-message-channel</module>
         <module>kafka-streams-product-tracker</module>
         <module>kafka-streams-aggregate</module>
+        <module>kafka-streams-to-rabbitmq-message-channel</module>
     </modules>
 
 </project>

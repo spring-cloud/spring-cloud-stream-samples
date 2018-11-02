@@ -1,0 +1,32 @@
+== What is this app?
+
+This application contains two processors, a regular Kafka Streams processor and another one that consumes data from Kafka and produces into Rabbitmq.
+
+The example is based on the word count application from the https://github.com/confluentinc/examples/blob/3.2.x/kafka-streams/src/main/java/io/confluent/examples/streams/WordCountLambdaExample.java[reference documentation].
+The application receives from Kafka through KStream and output to Kafka through KStream.
+Then another processor listens from the same topic where the kafka streams processor output data and then it sends data to a Rabbit exchange.
+There is a convenient test processor provided as part of the application that logs messages from the Rabbit destination.
+
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`docker-compose up -d`
+(This starts both Kafka and Rabbitmq in docker containers)
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-to-rabbitmq-message-channel-0.0.1-SNAPSHOT.jar`
+
+Issue the following commands:
+
+`docker exec -it kafka-streams-multibinder /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic words`
+
+On another terminal:
+
+`docker exec -it kafka-streams-multibinder /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092 --topic counts`
+
+Enter some text in the console producer (the first terminal above) and watch the output in the console consumer (second terminal).
+
+Also watch the console for logging statements from the test consumer that listens from the Rabbit exchange.
+
