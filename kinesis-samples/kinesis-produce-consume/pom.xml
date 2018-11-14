@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-stream-kinesis</artifactId>
+			<artifactId>spring-cloud-stream-binder-kinesis</artifactId>
 			<version>1.0.0.RELEASE</version>
 		</dependency>
 
