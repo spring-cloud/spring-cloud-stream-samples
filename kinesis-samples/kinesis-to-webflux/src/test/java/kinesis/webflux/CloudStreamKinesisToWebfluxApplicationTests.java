@@ -16,6 +16,7 @@
 
 package kinesis.webflux;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -61,6 +62,7 @@ import reactor.test.StepVerifier;
 		}
 )
 @AutoConfigureWebTestClient
+@Ignore
 public class CloudStreamKinesisToWebfluxApplicationTests {
 
 	@Autowired
