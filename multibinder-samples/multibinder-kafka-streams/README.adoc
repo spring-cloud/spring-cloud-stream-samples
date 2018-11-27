@@ -21,7 +21,7 @@ After running the program, watch your console, every second some data is sent to
 To run the example, command line parameters for the Zookeeper ensembles and Kafka clusters must be provided, as in the following example:
 ```
 java -jar target/multibinder-kafka-streams-0.0.1-SNAPSHOT.jar --kafkaBroker1=localhost:9092 --zk1=localhost:2181 --kafkaBroker2=localhost:9093 --zk2=localhost:2182```
-
+```
 Alternatively, the default values of `localhost:9092` and `localhost:2181` can be provided for both clusters.
 
 Assuming you are running two dockerized Kafka clusters as above.
