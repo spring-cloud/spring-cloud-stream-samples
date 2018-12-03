@@ -6,19 +6,15 @@ spring.cloud.stream.kafka.streams.binder.configuration:
 spring.cloud.stream.bindings.singleOutput:
   destination: counts
   producer:
-    headerMode: raw
     #useNativeEncoding: true
 spring.cloud.stream.bindings.binding2:
   destination: words
   consumer:
-    headerMode: raw
 spring.cloud.stream.bindings.binding1:
   destination: words
   consumer:
-    headerMode: raw
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
-  zkNodes: localhost #192.168.99.100
-
+spring.applicaiton.name: kafka-streams-message-channel-sample
 
 

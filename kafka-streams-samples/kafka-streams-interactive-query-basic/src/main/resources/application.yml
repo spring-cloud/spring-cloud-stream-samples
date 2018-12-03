@@ -10,12 +10,10 @@ spring.cloud.stream.kafka.streams:
 spring.cloud.stream.bindings.output:
   destination: product-counts
   producer:
-    headerMode: raw
     useNativeEncoding: true
 spring.cloud.stream.bindings.input:
   destination: products
   consumer:
-    headerMode: raw
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
-  zkNodes: localhost #192.168.99.100
+spring.applicaiton.name: kafka-streams-iq-basic-sample

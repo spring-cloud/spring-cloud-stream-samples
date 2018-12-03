@@ -8,12 +8,10 @@ spring.cloud.stream.kafka.streams:
 spring.cloud.stream.bindings.output:
   destination: counts
   producer:
-    headerMode: raw
     #useNativeEncoding: true
 spring.cloud.stream.bindings.input:
   destination: words
   consumer:
-    headerMode: raw
 #For testing
 spring.cloud.stream.bindings.input1.destination: counts
 spring.cloud.stream.bindings.output1.destination: words

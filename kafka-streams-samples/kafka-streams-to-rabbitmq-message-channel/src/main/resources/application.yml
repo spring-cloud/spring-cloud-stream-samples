@@ -22,8 +22,3 @@ spring.cloud.stream.bindings.testInputFromRabbit:
 
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost
-
-
-
-
-

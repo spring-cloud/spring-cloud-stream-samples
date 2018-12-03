@@ -2,12 +2,10 @@ spring.cloud.stream.bindings.input:
   destination: play-events
   consumer:
     useNativeDecoding: true
-    headerMode: raw
 spring.cloud.stream.bindings.inputX:
   destination: song-feed
   consumer:
     useNativeDecoding: true
-    headerMode: raw
 spring.cloud.stream.kafka.streams.bindings.input:
   consumer:
     keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
@@ -19,10 +17,10 @@ spring.cloud.stream.kafka.streams.bindings.inputX:
     materializedAs: all-songs
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
-  zkNodes: localhost #192.168.99.100
   configuration:
     schema.registry.url: http://localhost:8081
     commit.interval.ms: 1000
 spring.cloud.stream.kafka.streams.binder.autoAddPartitions: true
 spring.cloud.stream.kafka.streams.binder.minPartitionCount: 4
 spring.cloud.stream.kafka.streams.binder.configuration.application.server: localhost:8080
+spring.applicaiton.name: kafka-streams-iq-advanced-sample
