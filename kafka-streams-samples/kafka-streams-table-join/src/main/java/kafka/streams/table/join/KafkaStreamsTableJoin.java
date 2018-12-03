@@ -44,7 +44,7 @@ public class KafkaStreamsTableJoin {
 		@StreamListener
 		@SendTo("output")
 		public KStream<String, Long> process(@Input("input") KStream<String, Long> userClicksStream,
-											 @Input("inputX") KTable<String, String> userRegionsTable) {
+											 @Input("inputTable") KTable<String, String> userRegionsTable) {
 
 			return userClicksStream
 					.leftJoin(userRegionsTable,
@@ -60,8 +60,8 @@ public class KafkaStreamsTableJoin {
 
 	interface KStreamProcessorX extends KafkaStreamsProcessor {
 
-		@Input("inputX")
-		KTable<?, ?> inputX();
+		@Input("inputTable")
+		KTable<?, ?> inputKTable();
 	}
 
 	private static final class RegionWithClicks {

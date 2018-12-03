@@ -1,10 +1,12 @@
+spring.application.name: stream-table-sample
 spring.cloud.stream.bindings.input:
   destination: user-clicks3
   consumer:
     useNativeDecoding: true
     headerMode: raw
-spring.cloud.stream.bindings.inputX:
+spring.cloud.stream.bindings.inputTable:
   destination: user-regions
+  contentType: application/avro
   consumer:
     useNativeDecoding: true
     headerMode: raw
@@ -17,7 +19,7 @@ spring.cloud.stream.kafka.streams.bindings.input:
   consumer:
     keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
     valueSerde: org.apache.kafka.common.serialization.Serdes$LongSerde
-spring.cloud.stream.kafka.streams.bindings.inputX:
+spring.cloud.stream.kafka.streams.bindings.inputTable:
   consumer:
     keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
     valueSerde: org.apache.kafka.common.serialization.Serdes$StringSerde
