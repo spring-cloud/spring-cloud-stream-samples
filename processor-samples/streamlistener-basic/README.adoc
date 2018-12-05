@@ -66,6 +66,6 @@ All the instructions above apply here also, but instead of running the default `
 
 * `./mvnw clean package -P rabbit-binder`
 
-* `java -jar target/streamlistener-basic-0.0.1-SNAPSHOT.jar`
+* `java -jar target/streamlistener-basic-0.0.1-SNAPSHOT-rabbit.jar`
 
 Once you are done testing: `docker-compose -f docker-compose-rabbit.yml down`
