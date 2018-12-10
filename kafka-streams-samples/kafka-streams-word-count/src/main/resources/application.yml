@@ -7,11 +7,8 @@ spring.cloud.stream.kafka.streams:
   bindings.input.consumer.application-id: basic-word-count
 spring.cloud.stream.bindings.output:
   destination: counts
-  producer:
-    #useNativeEncoding: true
 spring.cloud.stream.bindings.input:
   destination: words
-  consumer:
 #For testing
 spring.cloud.stream.bindings.input1.destination: counts
 spring.cloud.stream.bindings.output1.destination: words
