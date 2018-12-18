@@ -16,49 +16,46 @@
 
 package demo.controller;
 
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.*;
+import demo.data.Order;
+import demo.stream.Event;
+import demo.stream.OrdersSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import demo.data.*;
-import demo.repository.*;
-import demo.stream.*;
+import java.util.Arrays;
 
 /**
- *
  * @author Peter Oates
- *
  */
 @RestController
 public class OrderController {
 
-	@Autowired
-	private OrderRepository orders;
+    @Autowired
+    private OrdersSource orderSource;
 
-	@Autowired
-	private OrdersSource orderSource;
+    @Value("${originator}")
+    private String originator;
 
-	@Value("${originator}")
-	private String originator;
+    @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Order> getOrder() {
 
-	@RequestMapping(value = "/orders", method = RequestMethod.GET, produces = { "application/json" })
-	@ResponseStatus(HttpStatus.OK)
-	public Iterable<Order> getOrder() {
+        //	Iterable<Order> orderList = orders.findAll();
 
-		Iterable<Order> orderList = orders.findAll();
+        return Arrays.asList(new Order());
+    }
 
-		return orderList;
-	}
+    @RequestMapping(value = "/a",method = RequestMethod.GET)
+    public ResponseEntity<Order> add() {
 
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Order> add(@RequestBody Order input) {
+        // place order on Kinesis Stream
+        Order input = new Order();
+        orderSource.sendOrder(new Event(input, "ORDER", originator));
 
-		orders.save(input);
-
-		// place order on Kinesis Stream
-		orderSource.sendOrder(new Event(input, "ORDER", originator));
-
-		return new ResponseEntity<Order>(input, HttpStatus.OK);
-	}
+        return new ResponseEntity<Order>(input, HttpStatus.OK);
+    }
 
 }

@@ -18,26 +18,16 @@ package demo.data;
 
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 
 /**
  *
  * @author Peter Oates
  *
  */
-@Entity
-@Table(name = "ORDER_TB")
 public class Order {
 
-	@Id
-	@Column(name = "ID")
 	private UUID id;
 
-	@Column(name = "NAME")
 	private String name;
 
 	public Order() {

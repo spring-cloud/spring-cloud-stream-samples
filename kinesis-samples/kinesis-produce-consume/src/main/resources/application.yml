@@ -1,6 +1,6 @@
 originator: KinesisProducer
 server:
- port: 64398
+ port: 64397
 management:
  port: 8082
  context-path: /manage
@@ -14,12 +14,13 @@ spring:
   cloud:
     stream:
       bindings:
-        ordersOut: 
+        ordersOut:
           destination: test_stream
           content-type: application/json
           producer: 
-            partitionKeyExpression: "1" 
+            partitionKeyExpression: "1"
         ordersIn:
+          group: pierwsza
           destination: test_stream
           content-type: application/json
     
@@ -31,6 +32,7 @@ cloud:
       static: eu-west-1 
 
 
+
 logging: 
   level:
     com: 
@@ -38,3 +40,7 @@ logging:
     org:
       apache: 
         http: INFO
+
+amazon:
+  dynamodb:
+    endpoint: http://localhost:8000/
