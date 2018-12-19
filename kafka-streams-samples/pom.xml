@@ -13,6 +13,7 @@
         <module>kafka-streams-branching</module>
         <module>kafka-streams-dlq-sample</module>
         <module>kafka-streams-table-join</module>
+        <module>kafka-streams-global-table-join</module>
         <module>kafka-streams-interactive-query-basic</module>
         <module>kafka-streams-interactive-query-advanced</module>
 	    <module>kafka-streams-message-channel</module>
