@@ -8,8 +8,6 @@ spring.cloud.stream.kafka.streams:
     keySerde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
 spring.cloud.stream.bindings.output:
   destination: product-counts
-  producer:
-    #useNativeEncoding: true
 spring.cloud.stream.bindings.input:
   destination: products
   consumer:

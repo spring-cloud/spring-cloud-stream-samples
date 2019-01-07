@@ -5,8 +5,6 @@ spring.cloud.stream.kafka.streams.binder.configuration:
   default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 spring.cloud.stream.bindings.singleOutput:
   destination: counts
-  producer:
-    #useNativeEncoding: true
 spring.cloud.stream.bindings.binding2:
   destination: words
   consumer:

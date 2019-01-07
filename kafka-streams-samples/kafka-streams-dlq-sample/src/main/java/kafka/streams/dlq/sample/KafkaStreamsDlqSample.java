@@ -43,9 +43,6 @@ public class KafkaStreamsDlqSample {
 	@EnableBinding(KafkaStreamsProcessor.class)
 	public static class WordCountProcessorApplication {
 
-		@Autowired
-		private TimeWindows timeWindows;
-
 		@StreamListener("input")
 		@SendTo("output")
 		public KStream<?, WordCount> process(KStream<Object, String> input) {
@@ -54,7 +51,7 @@ public class KafkaStreamsDlqSample {
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
 					.map((key, value) -> new KeyValue<>(value, value))
 					.groupByKey(Serialized.with(Serdes.String(), Serdes.String()))
-					.windowedBy(timeWindows)
+					.windowedBy(TimeWindows.of(5000))
 					.count(Materialized.as("WordCounts-1"))
 					.toStream()
 					.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
