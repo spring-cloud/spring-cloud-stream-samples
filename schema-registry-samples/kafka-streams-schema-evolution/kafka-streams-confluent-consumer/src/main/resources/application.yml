@@ -1,4 +1,5 @@
 server.port: 9998
+spring.application.name: kafka-streams-confluent-consumer
 spring.cloud.stream.bindings.output:
     destination: sensor-versions
 spring.cloud.stream.bindings.input:
