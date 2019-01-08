@@ -15,7 +15,7 @@ This sample uses lambda expressions and thus requires Java 8+.
 
 Go to the root of the repository and do: `./mvnw clean package`
 
-`java -jar target/kstream-word-count-0.0.1-SNAPSHOT.jar`
+`java -jar target/kafka-streams-dlq-sample-0.0.1-SNAPSHOT.jar`
 
 The default application.yml file demonstrates native decoding by Kafka.
 The default value serializer is set to IntegerSerde to force a deserialization errors.
