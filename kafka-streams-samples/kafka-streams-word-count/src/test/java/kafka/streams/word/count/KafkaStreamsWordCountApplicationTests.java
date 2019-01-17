@@ -76,7 +76,7 @@ public class KafkaStreamsWordCountApplicationTests {
 	}
 
 	@Test
-	public void testKstreamWordCountWithApplicationIdSpecifiedAtDefaultConsumer() throws Exception {
+	public void testKafkaStreamsWordCountProcessor() throws Exception {
 		Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
 		DefaultKafkaProducerFactory<Integer, String> pf = new DefaultKafkaProducerFactory<>(senderProps);
 		try {
