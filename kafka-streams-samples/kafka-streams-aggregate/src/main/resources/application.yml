@@ -1,7 +1,6 @@
 spring.application.name: kafka-streams-aggregate-sample
 spring.cloud.stream.bindings.input:
   destination: foobar
-  consumer:
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
   configuration:

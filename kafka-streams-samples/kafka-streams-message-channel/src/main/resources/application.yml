@@ -7,10 +7,8 @@ spring.cloud.stream.bindings.singleOutput:
   destination: counts
 spring.cloud.stream.bindings.binding2:
   destination: words
-  consumer:
 spring.cloud.stream.bindings.binding1:
   destination: words
-  consumer:
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
 spring.applicaiton.name: kafka-streams-message-channel-sample

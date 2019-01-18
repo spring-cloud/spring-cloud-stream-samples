@@ -10,7 +10,6 @@ spring.cloud.stream.bindings.output:
   destination: product-counts
 spring.cloud.stream.bindings.input:
   destination: products
-  consumer:
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
 spring.applicaiton.name: kafka-streams-product-tracker-sample

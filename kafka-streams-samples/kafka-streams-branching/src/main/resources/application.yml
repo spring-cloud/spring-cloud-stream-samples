@@ -7,17 +7,13 @@ spring.cloud.stream.kafka.streams.binder.configuration:
   default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 spring.cloud.stream.bindings.output1:
   destination: english-counts
-  producer:
 spring.cloud.stream.bindings.output2:
   destination: french-counts
-  producer:
 spring.cloud.stream.bindings.output3:
   destination: spanish-counts
-  producer:
 spring.cloud.stream.bindings.input:
   destination: words
   group: group1
-  consumer:
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100 #localhost
 spring.application.name: kafka-streams-branching-sample
