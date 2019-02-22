@@ -2,10 +2,8 @@
 
 This is an example of a Spring Cloud Stream processor using Kafka Streams support.
 
-This example is a Spring Cloud Stream adaptation of this Kafka Streams sample: https://github.com/confluentinc/kafka-streams-examples/blob/4.0.0-post/src/test/java/io/confluent/examples/streams/StreamToTableJoinIntegrationTest.java
-
-The application uses two inputs - one KStream for user-clicks and a KTable for user-regions.
-Then it joins the information from stream to table to find out total clicks per region.
+The application uses two inputs - one KStream for user-clicks and a GlobalKTable for user-regions.
+Then it joins the information from stream to table to find out total clicks per region. You could compare the this with ktable join sample.
 
 === Running the app:
 
@@ -15,7 +13,7 @@ Go to the root of the repository.
 
 `./mvnw clean package`
 
-`java -jar target/kafka-streams-table-join-0.0.1-SNAPSHOT.jar`
+`java -jar target/kafka-streams-global-table-join-0.0.1-SNAPSHOT.jar`
 
 `docker exec -it kafka-join /opt/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 1 --topic user-regions`
 

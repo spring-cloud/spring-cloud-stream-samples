@@ -1,4 +1,4 @@
-spring.application.name: stream-table-sample
+spring.application.name: stream-global-table-sample
 spring.cloud.stream.bindings.input:
   destination: user-clicks3
   consumer:
