@@ -16,4 +16,4 @@ spring.cloud.stream.bindings.input:
   consumer:
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100
-spring.applicaiton.name: kafka-streams-iq-basic-sample
+spring.application.name: kafka-streams-iq-basic-sample
