@@ -200,7 +200,7 @@ public class KafkaStreamsInteractiveQuerySample {
 				logger.info("Top Five songs request served from different host: " + hostInfo);
 				RestTemplate restTemplate = new RestTemplate();
 				return restTemplate.postForObject(
-						String.format("http://%s:%d/%s", hostInfo.host(),
+						String.format("https://%s:%d/%s", hostInfo.host(),
 								hostInfo.port(), "charts/top-five?genre=Punk"), "punk", List.class);
 			}
 		}
@@ -235,7 +235,7 @@ public class KafkaStreamsInteractiveQuerySample {
 					logger.info("Song info request served from different host: " + hostInfo);
 					RestTemplate restTemplate = new RestTemplate();
 					SongBean song = restTemplate.postForObject(
-							String.format("http://%s:%d/%s", hostInfo.host(),
+							String.format("https://%s:%d/%s", hostInfo.host(),
 									hostInfo.port(), "song/idx?id=" + songPlayCount.getSongId()),  "id", SongBean.class);
 					results.add(new SongPlayCountBean(song.getArtist(),song.getAlbum(), song.getName(),
 							songPlayCount.getPlays()));
