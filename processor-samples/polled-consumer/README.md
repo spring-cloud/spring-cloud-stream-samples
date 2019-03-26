@@ -18,7 +18,7 @@ It uses a Polled Consumer (rather than a message-driven `@StreamListener`).
 * PolledConsumerApplicationTests - the test case
 
 The `spring-kafka-test` dependency added to the `pom.xml` puts the `KafkaEmbedded` JUnit `@Rule` on the class path.
-Refer to the [Spring for Apache Kafka Reference Manual](http://docs.spring.io/spring-kafka/reference/htmlsingle/#testing) for more information about this.
+Refer to the [Spring for Apache Kafka Reference Manual](https://docs.spring.io/spring-kafka/reference/htmlsingle/#testing) for more information about this.
 Notice how the `@BeforeClass` method sets up the Boot and binder properties to locate the servers.
 
 See the test method for the details on interacting with Embedded Kafka.
