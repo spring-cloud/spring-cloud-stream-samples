@@ -34,7 +34,7 @@ To build the samples do:
 * `stream-listener` shows how to use StreamListener support to enable message mapping and automatic type conversion.
 
 * `test-embedded-kafka` is a sample that shows how to test with an embedded Apache Kafka broker.
-We generally recommend testing with the http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_testing[TestSupportBinder] but if you have a need for testing with an embedded broker, you can use the techniques in this sample.
+We generally recommend testing with the https://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_testing[TestSupportBinder] but if you have a need for testing with an embedded broker, you can use the techniques in this sample.
 
 * `transform` is a simple pass through logging transformer (just logs the incoming message and passes it on).
 
