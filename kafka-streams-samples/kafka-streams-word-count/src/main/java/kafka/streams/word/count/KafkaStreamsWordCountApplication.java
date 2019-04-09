@@ -43,11 +43,11 @@ public class KafkaStreamsWordCountApplication {
 	@EnableBinding(KafkaStreamsProcessor.class)
 	public static class WordCountProcessorApplication {
 
-        public static final String INPUT_TOPIC = "input";
-        public static final String OUTPUT_TOPIC = "output";
+		public static final String INPUT_TOPIC = "input";
+		public static final String OUTPUT_TOPIC = "output";
 		public static final int WINDOW_SIZE_MS = 30000;
 
-        @StreamListener(INPUT_TOPIC)
+		@StreamListener(INPUT_TOPIC)
 		@SendTo(OUTPUT_TOPIC)
 		public KStream<String, WordCount> process(KStream<Bytes, String> input) {
 
@@ -72,18 +72,18 @@ public class KafkaStreamsWordCountApplication {
 
 		private Date end;
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("WordCount{");
-            sb.append("word='").append(word).append('\'');
-            sb.append(", count=").append(count);
-            sb.append(", start=").append(start);
-            sb.append(", end=").append(end);
-            sb.append('}');
-            return sb.toString();
-        }
+		@Override
+		public String toString() {
+			final StringBuffer sb = new StringBuffer("WordCount{");
+			sb.append("word='").append(word).append('\'');
+			sb.append(", count=").append(count);
+			sb.append(", start=").append(start);
+			sb.append(", end=").append(end);
+			sb.append('}');
+			return sb.toString();
+		}
 
-        WordCount() {}
+		WordCount() {}
 
 		WordCount(String word, long count, Date start, Date end) {
 			this.word = word;
