@@ -17,6 +17,11 @@
 		<relativePath>../..</relativePath>
 	</parent>
 
+	<properties>
+		<!-- This should be kept in sync with spring-kafka-test kafka version -->
+		<kafka.version>2.0.1</kafka.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -35,6 +40,12 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams-test-utils</artifactId>
+			<version>${kafka.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
