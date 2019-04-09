@@ -76,8 +76,8 @@ public class WordCountProcessorApplicationTests {
         final StreamsBuilder builder = new StreamsBuilder();
         KStream<Bytes, String> input = builder.stream(INPUT_TOPIC, Consumed.with(nullSerde, stringSerde));
         KafkaStreamsWordCountApplication.WordCountProcessorApplication app = new KafkaStreamsWordCountApplication.WordCountProcessorApplication();
-        KStream<String, KafkaStreamsWordCountApplication.WordCount> output = app.process(input);
-        output.to(OUTPUT_TOPIC, Produced.with(stringSerde, countSerde));
+        KStream<Bytes, KafkaStreamsWordCountApplication.WordCount> output = app.process(input);
+        output.to(OUTPUT_TOPIC, Produced.with(nullSerde, countSerde));
         testDriver = new TopologyTestDriver(builder.build(), getStreamsConfiguration());
     }
 

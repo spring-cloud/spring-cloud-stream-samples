@@ -49,7 +49,7 @@ public class KafkaStreamsWordCountApplication {
 
 		@StreamListener(INPUT_TOPIC)
 		@SendTo(OUTPUT_TOPIC)
-		public KStream<String, WordCount> process(KStream<Bytes, String> input) {
+		public KStream<Bytes, WordCount> process(KStream<Bytes, String> input) {
 
 			return input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
