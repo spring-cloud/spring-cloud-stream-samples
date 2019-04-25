@@ -1,0 +1,11 @@
+{
+  "namespace" : "kafka.e2e.shipping",
+  "type" : "record",
+  "name" : "OrderShippedEvent",
+  "fields" : [
+    {"name":"id","type":"int"},
+    {"name":"productId","type":"int"},
+    {"name":"customerName","type":"string"},
+    {"name":"customerAddress","type":"string"}
+  ]
+}

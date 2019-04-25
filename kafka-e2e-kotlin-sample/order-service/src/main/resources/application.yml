@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: order-service
+  cloud:
+    stream:
+      kafka:
+        bindings:
+          output:
+            producer:
+              configuration:
+                key:
+                  serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      bindings:
+        output:
+          destination: order
+          contentType: application/*+avro
+      schema-registry-client:
+        endpoint: http://localhost:8081
+
+server:
+  port: 8085
+

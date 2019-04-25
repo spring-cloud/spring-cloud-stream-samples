@@ -31,6 +31,7 @@
 		<module>transaction-kafka-samples</module>
 		<module>testing-samples</module>
 		<module>samples-e2e-tests</module>
+		<module>kafka-e2e-kotlin-sample</module>
 	</modules>
 
 	<properties>
