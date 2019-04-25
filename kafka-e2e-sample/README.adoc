@@ -41,5 +41,3 @@ Create an order for that customer:
 Check the order topic content to verify that there are two records corresponding to the OrderCreatedEvent from customer-service
 and the OrderShippedEvent from shipping-service.
 
-Then go to the URL: http://localhost:8080/events
-
