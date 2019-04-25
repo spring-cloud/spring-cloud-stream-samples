@@ -1,0 +1,10 @@
+{
+  "namespace" : "kafka.e2e.order",
+  "type" : "record",
+  "name" : "OrderCreatedEvent",
+  "fields" : [
+    {"name":"id","type":"int"},
+    {"name":"productId","type":"int"},
+    {"name":"customerId","type":"int"}
+  ]
+}

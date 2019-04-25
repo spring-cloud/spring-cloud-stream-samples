@@ -1,0 +1,10 @@
+{
+  "namespace" : "kafka.e2e.customer",
+  "type" : "record",
+  "name" : "Customer",
+  "fields" : [
+    {"name":"id","type":"int"},
+    {"name":"name","type":"string"},
+    {"name":"address","type":"string"}
+  ]
+}
