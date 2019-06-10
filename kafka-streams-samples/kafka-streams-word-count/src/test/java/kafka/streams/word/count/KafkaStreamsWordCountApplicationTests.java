@@ -44,7 +44,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 		"spring.jmx.enabled=false",
 		"spring.cloud.stream.bindings.input.destination=words",
 		"spring.cloud.stream.bindings.output.destination=counts",
-		"spring.cloud.stream.bindings.output.contentType=application/json",
 		"spring.cloud.stream.kafka.streams.default.consumer.application-id=basic-word-count",
 		"spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms=1000",
 		"spring.cloud.stream.kafka.streams.binder.configuration.default.key.serde=org.apache.kafka.common.serialization.Serdes$StringSerde",
@@ -65,14 +64,14 @@ public class KafkaStreamsWordCountApplicationTests {
 		DefaultKafkaConsumerFactory<String, String> cf = new DefaultKafkaConsumerFactory<>(consumerProps);
 		consumer = cf.createConsumer();
 		embeddedKafka.consumeFromAnEmbeddedTopic(consumer, "counts");
-
-		System.setProperty("spring.cloud.stream.kafka.streams.binder.brokers", embeddedKafka.getBrokersAsString());
+		//Since there are both binders present in this app, we resort to the spring kafka broker property.
+		System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getBrokersAsString());
 	}
 
 	@AfterClass
 	public static void tearDown() {
 		consumer.close();
-		System.clearProperty("spring.cloud.stream.kafka.streams.binder.brokers");
+		System.clearProperty("spring.kafka.bootstrap-servers");
 	}
 
 	@Test
