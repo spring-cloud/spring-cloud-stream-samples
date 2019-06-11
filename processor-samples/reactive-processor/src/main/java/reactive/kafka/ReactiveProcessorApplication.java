@@ -20,6 +20,7 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 @SpringBootApplication
 @EnableBinding(Processor.class)
@@ -29,12 +30,21 @@ public class ReactiveProcessorApplication {
 		SpringApplication.run(ReactiveProcessorApplication.class, args);
 	}
 
-	@StreamListener
-	@Output(Processor.OUTPUT)
-	public Flux<String> aggregate(@Input(Processor.INPUT) Flux<String> inbound) {
-		return inbound.
+//	@StreamListener
+//	@Output(Processor.OUTPUT)
+//	public Flux<String> aggregate(@Input(Processor.INPUT) Flux<String> inbound) {
+//		return inbound.
+//				log()
+//				.window(Duration.ofSeconds(5), Duration.ofSeconds(5))
+//				.flatMap(w -> w.reduce("", (s1,s2)->s1+s2))
+//				.log();
+//	}
+
+	@Bean
+	public Function<Flux<String>, Flux<String>> aggregate() {
+		return inbound -> inbound.
 				log()
-				.window(Duration.ofSeconds(5), Duration.ofSeconds(5))
+				.window(Duration.ofSeconds(30), Duration.ofSeconds(5))
 				.flatMap(w -> w.reduce("", (s1,s2)->s1+s2))
 				.log();
 	}

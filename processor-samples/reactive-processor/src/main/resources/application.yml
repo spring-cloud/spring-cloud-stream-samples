@@ -1,6 +1,7 @@
 spring:
   cloud:
     stream:
+      function.definition: aggregate
       bindings:
         output:
           destination: transformed

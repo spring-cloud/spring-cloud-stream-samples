@@ -18,7 +18,7 @@ The following instructions assume that you are running Kafka as a Docker image.
 
 * `./mvnw clean package`
 
-* `java -jar target/reactive-processor-0.0.1-SNAPSHOT.jar`
+* `java -jar target/reactive-processor-0.0.1-SNAPSHOT-kafka.jar`
 
 The main application contains the reactive processor that receives textual data for a duration and aggregates them.
 It then sends the aggregated data through the outbound destination of the processor.
@@ -47,6 +47,6 @@ All the instructions above apply here also, but instead of running the default `
 
 * `./mvnw clean package -P rabbit-binder`
 
-* `java -jar target/reactive-processor-0.0.1-SNAPSHOT.jar`
+* `java -jar target/reactive-processor-0.0.1-SNAPSHOT-rabbit.jar`
 
 Once you are done testing: `docker-compose -f docker-compose-rabbit.yml down`

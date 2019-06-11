@@ -241,8 +241,8 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 		waitForLogEntryInFile("Reactive processor", file,"Started ReactiveProcessorApplication in");
 
 		waitForLogEntryInFile("Reactive processor", file,
-				"Data received: foobarfoobarfoo",
-				"Data received: barfoobarfoobar");
+				"Data received: foo",
+				"Data received: bar");
 	}
 
 	@Test
@@ -256,8 +256,8 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 		waitForLogEntryInFile("Reactive processor", file,"Started ReactiveProcessorApplication in");
 
 		waitForLogEntryInFile("Reactive processor", file,
-				"Data received: foobarfoobarfoo",
-				"Data received: barfoobarfoobar");
+				"Data received: foo",
+				"Data received: bar");
 	}
 
 	@Test
