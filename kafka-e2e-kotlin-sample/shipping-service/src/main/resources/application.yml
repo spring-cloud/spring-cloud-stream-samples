@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: shipping-service
+  cloud:
+    stream:
+      schema-registry-client:
+        endpoint: http://localhost:8081
+      kafka:
+        streams:
+          binder:
+            configuration:
+              application:
+                id: shipping-service
+              default:
+                key:
+                  serde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
+          bindings:
+            input:
+              consumer:
+                valueSerde: io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+      bindings:
+        input:
+          destination: customer
+          contentType: application/*+avro
+        order:
+          destination: order
+          contentType: application/*+avro
+        output:
+          destination: order
+          contentType: application/*+avro
+
+
+server:
+  port: 8086
+

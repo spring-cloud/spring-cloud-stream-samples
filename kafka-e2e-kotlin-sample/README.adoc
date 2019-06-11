@@ -1,0 +1,99 @@
+== What is this app?
+
+This is an example using Spring Cloud Stream to model a subset of a purchasing system. This e2e project showcases the following
+features:
+
+* Avro messaging
+* Confluent Schema Registry
+* Event-carried state transfer pattern
+* KStream processing with a join operation
+
+=== Running the app:
+
+Start the Confluent Platform:
+
+```
+git clone https://github.com/confluentinc/cp-docker-images
+cd cp-docker-images
+git checkout 5.2.1-post
+cd examples/cp-all-in-one/
+docker-compose up -d --build
+```
+
+Go to the root of the sample project and do:
+
+`./mvnw clean package`
+
+`java -jar customer-service/target/customer-service-0.0.1-SNAPSHOT.jar`
+
+`java -jar order-service/target/order-service-0.0.1-SNAPSHOT.jar`
+
+`java -jar shipping-service/target/shipping-service-0.0.1-SNAPSHOT.jar`
+
+
+Start two https://github.com/edenhill/kafkacat[kafkacat] processes to examine topic information:
+
+```
+kafkacat -b localhost:9092 -t customer -C \
+  -f '\nKey (%K bytes): %k
+  Value (%S bytes): %s
+  Timestamp: %T
+  Partition: %p
+  Offset: %o
+  Headers: %h\n'
+```
+
+
+```
+kafkacat -b localhost:9092 -t order -C \
+  -f '\nKey (%K bytes): %k
+  Value (%S bytes): %s
+  Timestamp: %T
+  Partition: %p
+  Offset: %o
+  Headers: %h\n'
+```
+
+Create a customer:
+
+`curl -X POST -H "content-type: application/json" http://localhost:8084/customers -d '{"id":1,"name":"John Doe","address":"Elm Street"}'`
+
+Create an order for that customer:
+
+`curl -X POST http://localhost:8085/orders -H "content-type: application/json" -d '{"id":1,"productId":100,"customerId":1}'`
+
+Check the kafkacat output to verify that there is a record in the customer topic, and two in the order topic, corresponding
+to the OrderCreatedEvent from customer-service and the OrderShippedEvent from shipping-service.
+
+Customer topic kafkacat output:
+
+```
+Key (4 bytes):
+  Value (21 bytes): John DoeElm Street
+  Timestamp: 1560236330571
+  Partition: 0
+  Offset: 0
+  Headers: contentType="application/vnd.customer.v1+avro",spring_json_header_types={"contentType":"java.lang.String"}
+% Reached end of topic customer [0] at offset 1
+
+```
+
+Order topic kafkacat output:
+
+```
+Key (4 bytes):
+  Value (4 bytes): ?
+  Timestamp: 1560236355714
+  Partition: 0
+  Offset: 0
+  Headers: contentType="application/vnd.ordercreatedevent.v1+avro",spring_json_header_types={"contentType":"java.lang.String"}
+
+Key (4 bytes):
+  Value (23 bytes): ?John DoeElm Street
+  Timestamp: 1560236355714
+  Partition: 0
+  Offset: 1
+  Headers: spring_json_header_types={"contentType":"java.lang.String"},contentType="application/vnd.ordershippedevent.v1+avro"
+% Reached end of topic order [0] at offset 2
+
+```
