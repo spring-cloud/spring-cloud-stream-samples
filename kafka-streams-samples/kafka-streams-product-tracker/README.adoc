@@ -15,7 +15,7 @@ Go to the root of the repository and do:
 
 `./mvnw clean package`
 
-`java -jar target/kafka-streams-product-tracker-0.0.1-SNAPSHOT.jar --app.product.tracker.productIds=123,124,125 --spring.cloud.stream.kafka.streams.timeWindow.length=60000 --spring.cloud.stream.kafka.streams.timeWindow.advanceBy=30000`
+`java -jar target/kafka-streams-product-tracker-0.0.1-SNAPSHOT.jar --app.product.tracker.productIds=123,124,125`
 
 The above command will track products with ID's 123,124 and 125 every 30 seconds with the counts from the last minute.
 In other words, every 30 seconds a new 1 minute window is started.
@@ -38,10 +38,3 @@ Enter the following in the console producer (one line at a time) and watch the o
 {"id":"123"}
 {"id":"123"}
 ```
-
-The default time window is configured for 30 seconds and you can change that using the following property.
-
-`spring.cloud.stream.kafka.streams.timeWindow.length` (value is expressed in milliseconds)
-
-In order to switch to a hopping window, you can use the `spring.cloud.stream.kafka.streams.timeWindow.advanceBy` (value in milliseconds).
-This will create an overlapped hopping windows depending on the value you provide.

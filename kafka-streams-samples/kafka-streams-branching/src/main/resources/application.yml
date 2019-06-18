@@ -1,6 +1,3 @@
-spring.cloud.stream.bindings.output1.contentType: application/json
-spring.cloud.stream.bindings.output2.contentType: application/json
-spring.cloud.stream.bindings.output3.contentType: application/json
 spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
 spring.cloud.stream.kafka.streams.binder.configuration:
   default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
@@ -13,7 +10,6 @@ spring.cloud.stream.bindings.output3:
   destination: spanish-counts
 spring.cloud.stream.bindings.input:
   destination: words
-  group: group1
 spring.cloud.stream.kafka.streams.binder:
   brokers: localhost #192.168.99.100 #localhost
 spring.application.name: kafka-streams-branching-sample

@@ -29,12 +29,12 @@ For more information on how this is done, please take a look at the application 
 5. Run the stand-alone `Producers` application to generate data and start the processing.
 Keep it running for a while.
 
-6. Go to the URL: http://localhost:8080/charts/top-five?genre=Punk
+6. Go to the URL: https://localhost:8080/charts/top-five?genre=Punk
 keep refreshing the URL and you will see the song play count information changes.
 
 Take a look at the console sessions for the applications and you will see that it may not be the processor started on 8080 that serves this request.
 
-7. Go to the URL: http://localhost:8082/charts/top-five?genre=Punk
+7. Go to the URL: https://localhost:8082/charts/top-five?genre=Punk
 
 Take a look at the console sessions for the applications and you will see that it may not be the processor started on 8082 that serves this request.
 

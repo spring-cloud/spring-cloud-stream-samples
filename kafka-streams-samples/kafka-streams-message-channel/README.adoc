@@ -13,7 +13,7 @@ Go to the root of the repository and do:
 
 `./mvnw clean package`
 
-`java -jar target/kafka-streams-message-channel-0.0.1-SNAPSHOT.jar --spring.cloud.stream.kafka.streams.timeWindow.length=60000`
+`java -jar target/kafka-streams-message-channel-0.0.1-SNAPSHOT.jar`
 
 Issue the following commands:
 

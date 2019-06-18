@@ -6,18 +6,16 @@ spring.cloud.stream.kafka.streams.binder:
     commit.interval.ms: 1000
     default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-    application.id: default
+    application.id: dlq-2
 spring.cloud.stream.bindings.output:
   destination: counts
   producer:
-    headerMode: raw
-    #useNativeEncoding: true
+    useNativeEncoding: false
 spring.cloud.stream.bindings.input:
   contentType: foo/bar
   destination: words
   group: group1
   consumer:
-    headerMode: raw
     useNativeDecoding: false
 spring.cloud.stream.kafka.streams.bindings.input.consumer.dlqName: words-count-dlq
 

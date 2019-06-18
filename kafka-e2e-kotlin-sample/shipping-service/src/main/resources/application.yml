@@ -1,3 +1,6 @@
+spring.cloud.stream.bindings.input.consumer.useNativeDecoding: false
+spring.cloud.stream.bindings.order.consumer.useNativeDecoding: false
+spring.cloud.stream.bindings.output.producer.useNativeEncoding: false
 spring:
   application:
     name: shipping-service
@@ -14,10 +17,10 @@ spring:
               default:
                 key:
                   serde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
-          bindings:
-            input:
-              consumer:
-                valueSerde: io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+#          bindings:
+#            input:
+#              consumer:
+#                valueSerde: io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
       bindings:
         input:
           destination: customer

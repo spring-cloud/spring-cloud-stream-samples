@@ -56,6 +56,8 @@ class ShippingKStreamConfiguration {
         val orderShippedSerde = SpecificAvroSerde<OrderShippedEvent>()
         orderShippedSerde.configure(serdeConfig, false)
 
+
+
         val stateStore: Materialized<Int, Customer, KeyValueStore<Bytes, ByteArray>> =
                 Materialized.`as`<Int, Customer, KeyValueStore<Bytes, ByteArray>>("customer-store")
                         .withKeySerde(intSerde)

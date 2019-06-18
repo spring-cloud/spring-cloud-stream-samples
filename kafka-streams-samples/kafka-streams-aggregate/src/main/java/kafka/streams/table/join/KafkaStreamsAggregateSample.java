@@ -32,7 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.kafka.streams.QueryableStoreRegistry;
+import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KafkaStreamsAggregateSample {
 
 	@Autowired
-	private QueryableStoreRegistry queryableStoreRegistry;
+	private InteractiveQueryService interactiveQueryService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaStreamsAggregateSample.class, args);
@@ -51,7 +51,7 @@ public class KafkaStreamsAggregateSample {
 	public static class KafkaStreamsAggregateSampleApplication {
 
 		@StreamListener("input")
-		public void process(KStream<Object, DomainEvent> input) {
+		public void process(KStream<String, DomainEvent> input) {
 			ObjectMapper mapper = new ObjectMapper();
 			Serde<DomainEvent> domainEventSerde = new JsonSerde<>( DomainEvent.class, mapper );
 
@@ -75,7 +75,7 @@ public class KafkaStreamsAggregateSample {
 		public String events() {
 
 			final ReadOnlyKeyValueStore<String, String> topFiveStore =
-					queryableStoreRegistry.getQueryableStoreType("test-events-snapshots", QueryableStoreTypes.<String, String>keyValueStore());
+					interactiveQueryService.getQueryableStore("test-events-snapshots", QueryableStoreTypes.<String, String>keyValueStore());
 			return topFiveStore.get("12345");
 		}
 	}

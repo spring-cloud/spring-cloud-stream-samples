@@ -53,9 +53,6 @@ public class KafkaStreamsProductTrackerApplication {
 		@Autowired
 		ProductTrackerProperties productTrackerProperties;
 
-		@Autowired
-		TimeWindows timeWindows;
-
 		@StreamListener("input")
 		@SendTo("output")
 		public KStream<Integer, ProductStatus> process(KStream<Object, Product> input) {
@@ -63,7 +60,7 @@ public class KafkaStreamsProductTrackerApplication {
 					.filter((key, product) -> productIds().contains(product.getId()))
 					.map((key, value) -> new KeyValue<>(value, value))
 					.groupByKey(Serialized.with(new JsonSerde<>(Product.class), new JsonSerde<>(Product.class)))
-					.windowedBy(timeWindows)
+					.windowedBy(TimeWindows.of(60_000))
 					.count(Materialized.as("product-counts"))
 					.toStream()
 					.map((key, value) -> new KeyValue<>(key.key().id, new ProductStatus(key.key().id,

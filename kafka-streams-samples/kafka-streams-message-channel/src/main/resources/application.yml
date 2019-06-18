@@ -1,4 +1,3 @@
-spring.cloud.stream.bindings.singleOutput.contentType: application/json
 spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
 spring.cloud.stream.kafka.streams.binder.configuration:
   default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
@@ -10,7 +9,7 @@ spring.cloud.stream.bindings.binding2:
 spring.cloud.stream.bindings.binding1:
   destination: words
 spring.cloud.stream.kafka.streams.binder:
-  brokers: localhost #192.168.99.100
-spring.applicaiton.name: kafka-streams-message-channel-sample
+  brokers: localhost
+spring.application.name: kafka-streams-message-channel-sample
 
 

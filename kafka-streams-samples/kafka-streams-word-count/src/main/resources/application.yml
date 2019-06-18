@@ -1,4 +1,3 @@
-spring.cloud.stream.bindings.output.contentType: application/json
 spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
 spring.cloud.stream.kafka.streams:
   binder.configuration:

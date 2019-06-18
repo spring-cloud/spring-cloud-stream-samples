@@ -1,20 +1,19 @@
-spring.cloud.stream.bindings.output.contentType: application/json
 spring.cloud.stream.kafka.streams.binder:
   configuration:
     commit.interval.ms: 1000
     default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     default.value.serde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
-    application.id: default
-  brokers: localhost #192.168.99.100
+    application.id: dlq-1
+  brokers: localhost
   serdeError: sendToDlq
 spring.cloud.stream.bindings.output:
   destination: counts
 spring.cloud.stream.bindings.input:
   destination: words
   group: group1
-  consumer:
-    useNativeDecoding: true
-spring.cloud.stream.kafka.streams.bindings.input.consumer.dlqName: words-count-dlq
+spring.cloud.stream.kafka.streams.bindings.input.consumer:
+  dlqName: words-count-dlq
+  valueSerde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
 
 
 

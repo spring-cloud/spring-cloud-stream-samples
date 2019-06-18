@@ -43,9 +43,6 @@ public class KafkaStreamsBranchingSample {
 	@EnableBinding(KStreamProcessorX.class)
 	public static class WordCountProcessorApplication {
 
-		@Autowired
-		private TimeWindows timeWindows;
-
 		@StreamListener("input")
 		@SendTo({"output1","output2","output3"})
 		@SuppressWarnings("unchecked")
@@ -58,7 +55,7 @@ public class KafkaStreamsBranchingSample {
 			return input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
 					.groupBy((key, value) -> value)
-					.windowedBy(timeWindows)
+					.windowedBy(TimeWindows.of(60_000))
 					.count(Materialized.as("WordCounts-1"))
 					.toStream()
 					.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))))
