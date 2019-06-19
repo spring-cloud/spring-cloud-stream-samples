@@ -36,7 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.rule.KafkaEmbedded;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -52,7 +52,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PolledConsumerApplicationTests {
 
 	@ClassRule
-	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1);
+	public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, "input", "output");
+
 
 	@Value("${spring.cloud.stream.bindings.input.destination}")
 	private String inputTopic;
@@ -62,12 +63,12 @@ public class PolledConsumerApplicationTests {
 
 	@BeforeClass
 	public static void setup() {
-		System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getBrokersAsString());
+		System.setProperty("spring.cloud.stream.kafka.binder.brokers", embeddedKafka.getEmbeddedKafka().getBrokersAsString());
 	}
 
 	@Test
 	public void testSendReceive() throws Exception {
-		Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
+		Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka.getEmbeddedKafka());
 		senderProps.put("key.serializer", ByteArraySerializer.class);
 		senderProps.put("value.serializer", ByteArraySerializer.class);
 		DefaultKafkaProducerFactory<byte[], byte[]> pf = new DefaultKafkaProducerFactory<>(senderProps);
@@ -75,7 +76,7 @@ public class PolledConsumerApplicationTests {
 		template.setDefaultTopic(inputTopic);
 		template.sendDefault("foo".getBytes());
 
-		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testGroup", "false", embeddedKafka);
+		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("testGroup", "false", embeddedKafka.getEmbeddedKafka());
 		consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 		consumerProps.put("key.deserializer", ByteArrayDeserializer.class);
 		consumerProps.put("value.deserializer", ByteArrayDeserializer.class);

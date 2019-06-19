@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.stream.testing.processor.integration;
 
+import java.util.Iterator;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -24,17 +26,16 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.testing.processor.ToUpperCaseProcessor;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.rule.KafkaEmbedded;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +63,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ToUpperCaseProcessorIntTests {
 
 	@ClassRule
-	public static KafkaEmbedded kafkaEmbedded = new KafkaEmbedded(1, true, "output");
+	public static EmbeddedKafkaRule kafkaEmbedded = new EmbeddedKafkaRule(1, true, "output");
 
 	@Autowired
 	private KafkaTemplate<byte[], byte[]> template;
@@ -72,8 +73,7 @@ public class ToUpperCaseProcessorIntTests {
 
 	@BeforeClass
 	public static void setup() {
-		System.setProperty("spring.kafka.bootstrap-servers", kafkaEmbedded.getBrokersAsString());
-		System.setProperty("spring.cloud.stream.kafka.binder.zkNodes", kafkaEmbedded.getZookeeperConnectionString());
+		System.setProperty("spring.kafka.bootstrap-servers", kafkaEmbedded.getEmbeddedKafka().getBrokersAsString());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class ToUpperCaseProcessorIntTests {
 
 		Consumer<byte[], String> consumer = this.consumerFactory.createConsumer();
 
-		kafkaEmbedded.consumeFromAnEmbeddedTopic(consumer, "output");
+		kafkaEmbedded.getEmbeddedKafka().consumeFromAnEmbeddedTopic(consumer, "output");
 
 		ConsumerRecords<byte[], String> replies = KafkaTestUtils.getRecords(consumer);
 		assertThat(replies.count()).isEqualTo(1);

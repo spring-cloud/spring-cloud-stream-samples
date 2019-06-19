@@ -16,9 +16,16 @@
 
 package multibinder;
 
+import java.util.UUID;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.stream.binder.BinderFactory;
@@ -32,13 +39,11 @@ import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSuppo
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.QueueChannel;
-import org.springframework.kafka.test.rule.KafkaEmbedded;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.UUID;
 
 /**
  * @author Marius Bogoevici
@@ -52,7 +57,8 @@ public class RabbitAndKafkaBinderApplicationTests {
 	public static RabbitTestSupport rabbitTestSupport = new RabbitTestSupport();
 
 	@ClassRule
-	public static KafkaEmbedded kafkaEmbedded = new KafkaEmbedded(1, true, "test");
+	public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, "test");
+
 
 	private final String randomGroup = UUID.randomUUID().toString();
 
@@ -68,8 +74,7 @@ public class RabbitAndKafkaBinderApplicationTests {
 	public void contextLoads() throws Exception {
 		// passing connection arguments arguments to the embedded Kafka instance
 		ConfigurableApplicationContext context = SpringApplication.run(MultibinderApplication.class,
-				"--spring.cloud.stream.kafka.binder.brokers=" + kafkaEmbedded.getBrokersAsString(),
-				"--spring.cloud.stream.kafka.binder.zkNodes=" + kafkaEmbedded.getZookeeperConnectionString());
+				"--spring.cloud.stream.kafka.binder.brokers=" + embeddedKafka.getEmbeddedKafka().getBrokersAsString());
 		context.close();
 	}
 
@@ -77,8 +82,7 @@ public class RabbitAndKafkaBinderApplicationTests {
 	public void messagingWorks() throws Exception {
 		// passing connection arguments arguments to the embedded Kafka instance
 		ConfigurableApplicationContext context = SpringApplication.run(MultibinderApplication.class,
-				"--spring.cloud.stream.kafka.binder.brokers=" + kafkaEmbedded.getBrokersAsString(),
-				"--spring.cloud.stream.kafka.binder.zkNodes=" + kafkaEmbedded.getZookeeperConnectionString(),
+				"--spring.cloud.stream.kafka.binder.brokers=" + embeddedKafka.getEmbeddedKafka().getBrokersAsString(),
 				"--spring.cloud.stream.bindings.input.group=testGroup",
 				"--spring.cloud.stream.bindings.output.producer.requiredGroups=" + this.randomGroup);
 		DirectChannel dataProducer = new DirectChannel();
