@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: sensor-topic
+          producer:
+            useNativeEncoding: true
+      kafka:
+        bindings:
+          output:
+            producer:
+              configuration:
+                value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+                schema.registry.url: http://localhost:8081
+server.port: 9009

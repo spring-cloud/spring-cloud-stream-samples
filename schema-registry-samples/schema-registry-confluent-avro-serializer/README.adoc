@@ -1,8 +1,14 @@
-== Spring Cloud Stream and Schema Evolution in Action with Confluent Schema Registry Server!
+== Spring Cloud Stream and Schema Evolution in Action with Confluent Schema Registry Server and Confluent Avro Serializers!
 
-This repo includes thress Spring Boot applications to demonstrate Schema Evolution using Spring Cloud Stream.
+These are collection of Spring Boot applications to demonstrate Schema Evolution using Spring Cloud Stream and Confluent Schema Registry.
 Producer V1 (`producer1`), Producer V2 (`producer2`), and Consumer (`consumer`) are included in this project.
-This example in particular uses the Confluent Schema Registry server.
+
+These samples are identical in functionality with https://github.com/spring-cloud/spring-cloud-stream-samples/tree/master/schema-registry-samples/schema-registry-confluent[this sample],
+but with an important difference. All the components (producers and consumer) use the Avro serializer provided by Confluent, rather than using the Spring Cloud Stream provided Avro serializers.
+Spring Cloud Stream producers provided using native decoding to use the Confluent avro serializer and similarly the consumer using native decoding to use the Confluent Avro deserializer.
+The benefit is that these components are now cross compatible with external tools that use the Confluent Avro serializers such
+as the out of the box tools - `kafka-avro-console-consumer` and `kafka-avro-console-producer` - that come with Confluent Schema registry.
+If your use case requires you to use these external tools, then we recommend using the stratgies implemented in these samples.
 
 === Requirement
 As a developer, I'd like to design my consumer to be resilient to differing payload schemas and I want to use Confluent Schema Registry.
@@ -14,17 +20,17 @@ consumes both the payload versions will be designed to adapt to evolving schemas
 
 === Running the application
 
+Start the Confluent Platform:
+
+```
+git clone https://github.com/confluentinc/cp-docker-images
+cd cp-docker-images
+git checkout 5.2.1-post
+cd examples/cp-all-in-one/
+docker-compose up -d --build
+```
+
 Make sure you are in the directory `schema-registry-confluent`
-
-Bring up Kafka: `docker-compose up -d`
-
-Build the project: `./mvnw clean package`
-
-- Start the Confluent Schema Registry server in a terminal window session (Make sure that you have it locally installed)
-[source,bash]
-----
-<ROOT_OF_CONFLUENT_PLATFORM_INSTALLATION>/bin/schema-registry-start ./etc/schema-registry/schema-registry.properties
-----
 
 In order to run this sample, you need to set compatibility to `NONE` on Confluent schema registry server.
 
@@ -33,17 +39,17 @@ In order to run this sample, you need to set compatibility to `NONE` on Confluen
 - Start `consumer` on another terminal session
 [source,bash]
 ----
-java -jar schema-registry-confluent-consumer/target/schema-registry-confluent-consumer-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-confluent-avro-serializer-consumer/target/schema-registry-confluent-avro-serializer-consumer-0.0.1-SNAPSHOT.jar
 ----
 - Start `producer1` on another terminal session
 [source,bash]
 ----
-java -jar schema-registry-confluent-producer1/target/schema-registry-confluent-producer1-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-confluent-avro-serializer-producer1/target/schema-registry-confluent-avro-serializer-producer1-0.0.1-SNAPSHOT.jar
 ----
 - Start `producer2` on another terminal session
 [source,bash]
 ----
-java -jar schema-registry-confluent-producer2/target/schema-registry-confluent-producer2-0.0.1-SNAPSHOT.jar
+java -jar schema-registry-confluent-avro-serializer-producer2/target/schema-registry-confluent-avro-serializer-producer2-0.0.1-SNAPSHOT.jar
 ----
 
 === Sample Data
@@ -88,12 +94,10 @@ applied.
 
 Because each payload also includes the payload version in the header, Spring Cloud Stream with the help of Schema
 Registry server and Avro, the schema evolution occurs behind the scenes. The automatic mapping of `temperature` to
-`internalTemperature` field is applied, since that's the field where the `aliases` is defined in the link:https://github.com/sabbyanandan/schema/blob/master/consumer/src/main/resources/avro/sensor.avsc#L7[new schema].
+`internalTemperature` field is applied.
 
 === Cleanup
 
 Once you are done with running the samples, stop the docker containers
 
 `docker-compose down`
-
-and stop the Confluent Schema Registry server.
