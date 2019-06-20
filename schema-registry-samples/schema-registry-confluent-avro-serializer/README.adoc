@@ -5,10 +5,10 @@ Producer V1 (`producer1`), Producer V2 (`producer2`), and Consumer (`consumer`) 
 
 These samples are identical in functionality with https://github.com/spring-cloud/spring-cloud-stream-samples/tree/master/schema-registry-samples/schema-registry-confluent[this sample],
 but with an important difference. All the components (producers and consumer) use the Avro serializer provided by Confluent, rather than using the Spring Cloud Stream provided Avro serializers.
-Spring Cloud Stream producers provided using native decoding to use the Confluent avro serializer and similarly the consumer using native decoding to use the Confluent Avro deserializer.
+Spring Cloud Stream producers in this sample are using native encoding to use the Confluent avro serializer and similarly the consumer is using native decoding to use the Confluent Avro deserializer.
 The benefit is that these components are now cross compatible with external tools that use the Confluent Avro serializers such
 as the out of the box tools - `kafka-avro-console-consumer` and `kafka-avro-console-producer` - that come with Confluent Schema registry.
-If your use case requires you to use these external tools, then we recommend using the stratgies implemented in these samples.
+If your use case requires to use these external tools, then we recommend using the strategies implemented in these samples.
 
 === Requirement
 As a developer, I'd like to design my consumer to be resilient to differing payload schemas and I want to use Confluent Schema Registry.
