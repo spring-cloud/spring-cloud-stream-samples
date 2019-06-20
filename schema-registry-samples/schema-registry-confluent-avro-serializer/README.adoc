@@ -78,6 +78,18 @@ The consumer should log the results.
 {"id": "149637a9-c7a6-4ab8-b7aa-021c72d9ebd7-v2", "internalTemperature": 2.2332578, "externalTemperature": 0.0, "acceleration": 6.251889, "velocity": 65.84996}
 ----
 
+You can also sue external tools to query:
+
+----
+./bin/kafka-avro-console-consumer --topic sensor-topic \
+--bootstrap-server localhost:9092 \
+--from-beginning
+{"id":"a4c03b84-3598-4b29-8507-edf05f211263-v1","temperature":7.0681753,"acceleration":6.8061967,"velocity":86.663795}
+{"id":"92e5fa92-c90b-49ca-b3c1-1b0b98fb3d82-v1","temperature":3.0760436,"acceleration":4.700919,"velocity":20.379478}
+{"id":"0ac79b9f-6ba3-4381-b933-da8355555650-v1","temperature":21.31792,"acceleration":7.2651076,"velocity":14.394546}
+{"id":"c6c6a453-b8a0-4c67-ab5d-be4f6f04123a-v2","internalTemperature":31.67511,"externalTemperature":0.0,"acceleration":3.66884,"velocity":80.335815,"accelerometer":null,"magneticField":null}
+----
+
 NOTE: Refer to the payload suffix in the `id` field. Each of them are appended with `-v1` or `-v2` indicating they are from
 `producer1` and `producer2` respectively.
 
