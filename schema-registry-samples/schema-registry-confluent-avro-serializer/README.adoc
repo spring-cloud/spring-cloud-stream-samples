@@ -30,7 +30,7 @@ cd examples/cp-all-in-one/
 docker-compose up -d --build
 ```
 
-Make sure you are in the directory `schema-registry-confluent`
+Make sure you are in the directory `schema-registry-confluent-avro-serializer`
 
 In order to run this sample, you need to set compatibility to `NONE` on Confluent schema registry server.
 
