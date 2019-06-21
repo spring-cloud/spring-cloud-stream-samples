@@ -3,6 +3,8 @@ spring:
     name: order-service
   cloud:
     stream:
+      schema-registry-client:
+        endpoint: http://localhost:8081
       kafka:
         bindings:
           output:
@@ -10,12 +12,19 @@ spring:
               configuration:
                 key:
                   serializer: org.apache.kafka.common.serialization.IntegerSerializer
+                value:
+                  serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+                  subject:
+                    name:
+                      strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
+                schema:
+                  registry:
+                    url: ${spring.cloud.stream.schema-registry-client.endpoint}
       bindings:
         output:
           destination: order
-          contentType: application/*+avro
-      schema-registry-client:
-        endpoint: http://localhost:8081
+          producer:
+            useNativeEncoding: true
 
 server:
   port: 8085
