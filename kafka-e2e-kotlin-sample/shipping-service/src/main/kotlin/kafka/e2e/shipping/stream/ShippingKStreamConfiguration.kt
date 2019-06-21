@@ -17,7 +17,6 @@
 package kafka.e2e.shipping.stream
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import kafka.e2e.customer.Customer
 import kafka.e2e.order.OrderCreatedEvent
@@ -40,7 +39,6 @@ import org.springframework.messaging.handler.annotation.SendTo
 @Configuration
 class ShippingKStreamConfiguration {
 
-
     @StreamListener
     @SendTo("output")
     fun process(@Input("input") input: KStream<Int, Customer>, @Input("order") orderEvent: KStream<Int, GenericRecord>): KStream<Int, OrderShippedEvent> {
@@ -55,8 +53,6 @@ class ShippingKStreamConfiguration {
         orderCreatedSerde.configure(serdeConfig, false)
         val orderShippedSerde = SpecificAvroSerde<OrderShippedEvent>()
         orderShippedSerde.configure(serdeConfig, false)
-
-
 
         val stateStore: Materialized<Int, Customer, KeyValueStore<Bytes, ByteArray>> =
                 Materialized.`as`<Int, Customer, KeyValueStore<Bytes, ByteArray>>("customer-store")

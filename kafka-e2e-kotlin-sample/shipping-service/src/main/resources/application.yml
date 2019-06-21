@@ -1,6 +1,3 @@
-spring.cloud.stream.bindings.input.consumer.useNativeDecoding: false
-spring.cloud.stream.bindings.order.consumer.useNativeDecoding: false
-spring.cloud.stream.bindings.output.producer.useNativeEncoding: false
 spring:
   application:
     name: shipping-service
@@ -17,22 +14,34 @@ spring:
               default:
                 key:
                   serde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
-#          bindings:
-#            input:
-#              consumer:
-#                valueSerde: io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+              schema:
+                registry:
+                  url: ${spring.cloud.stream.schema-registry-client.endpoint}
+              value:
+                subject:
+                  name:
+                    strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
+          bindings:
+            input:
+              consumer:
+                valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+            order:
+              consumer:
+                valueSerde: io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+            output:
+              producer:
+                valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
       bindings:
         input:
           destination: customer
-          contentType: application/*+avro
         order:
           destination: order
-          contentType: application/*+avro
         output:
           destination: order
-          contentType: application/*+avro
-
 
 server:
   port: 8086
 
+logging:
+  level:
+    org.springframework.kafka.config: debug

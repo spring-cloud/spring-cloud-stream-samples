@@ -69,12 +69,11 @@ Customer topic kafkacat output:
 
 ```
 Key (4 bytes):
-  Value (21 bytes): John DoeElm Street
-  Timestamp: 1560236330571
+  Value (26 bytes): John DoeElm Street
+  Timestamp: 1561153134430
   Partition: 0
   Offset: 0
-  Headers: contentType="application/vnd.customer.v1+avro",spring_json_header_types={"contentType":"java.lang.String"}
-% Reached end of topic customer [0] at offset 1
+  Headers:
 
 ```
 
@@ -82,18 +81,17 @@ Order topic kafkacat output:
 
 ```
 Key (4 bytes):
-  Value (4 bytes): ?
-  Timestamp: 1560236355714
+  Value (9 bytes): ?
+  Timestamp: 1561153313512
   Partition: 0
   Offset: 0
-  Headers: contentType="application/vnd.ordercreatedevent.v1+avro",spring_json_header_types={"contentType":"java.lang.String"}
+  Headers:
 
 Key (4 bytes):
-  Value (23 bytes): ?John DoeElm Street
-  Timestamp: 1560236355714
+  Value (28 bytes): ?John DoeElm Street
+  Timestamp: 1561153313512
   Partition: 0
   Offset: 1
-  Headers: spring_json_header_types={"contentType":"java.lang.String"},contentType="application/vnd.ordershippedevent.v1+avro"
-% Reached end of topic order [0] at offset 2
+  Headers:
 
 ```
