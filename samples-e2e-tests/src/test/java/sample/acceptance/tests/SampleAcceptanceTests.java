@@ -18,6 +18,7 @@ package sample.acceptance.tests;
 
 import org.assertj.core.util.Files;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testJdbcSinkSampleKafka() throws Exception {
 		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/jdbc-sink-kafka-sample.jar");
 		File file = Files.newTemporaryFile();
@@ -93,6 +95,7 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testJdbcSinkSampleRabbit() throws Exception {
 		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/jdbc-sink-rabbit-sample.jar");
 		File file = Files.newTemporaryFile();
