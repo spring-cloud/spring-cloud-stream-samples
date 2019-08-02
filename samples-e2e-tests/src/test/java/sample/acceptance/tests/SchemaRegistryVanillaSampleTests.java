@@ -1,6 +1,7 @@
 package sample.acceptance.tests;
 
 import org.assertj.core.util.Files;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class SchemaRegistryVanillaSampleTests extends AbstractSampleTests {
 	private static final Logger logger = LoggerFactory.getLogger(SchemaRegistryVanillaSampleTests.class);
 
 	@Test
+	@Ignore
 	public void testSchemaRegistryVanillaKafka() throws Exception {
 		runAgainstMiddleware("/tmp/schema-registry-vanilla-registry-kafka.jar",
 				"/tmp/schema-registry-vanilla-consumer-kafka.jar",
@@ -28,6 +30,7 @@ public class SchemaRegistryVanillaSampleTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testSchemaRegistryVanillaRabbit() throws Exception {
 		runAgainstMiddleware("/tmp/schema-registry-vanilla-registry-rabbit.jar",
 				"/tmp/schema-registry-vanilla-consumer-rabbit.jar",
