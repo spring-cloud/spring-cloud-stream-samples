@@ -234,6 +234,7 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testReactiveProcessorSampleKafka() throws Exception {
 		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/reactive-processor-kafka-sample.jar");
 		File file = Files.newTemporaryFile();
@@ -249,6 +250,7 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testReactiveProcessorSampleRabbit() throws Exception {
 		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/reactive-processor-rabbit-sample.jar");
 		File file = Files.newTemporaryFile();
@@ -264,6 +266,7 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testSensorAverageReactiveSampleKafka() throws Exception {
 		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/sensor-average-reactive-kafka-sample.jar");
 		File file = Files.newTemporaryFile();
@@ -279,6 +282,7 @@ public class SampleAcceptanceTests extends AbstractSampleTests {
 	}
 
 	@Test
+	@Ignore
 	public void testSensorAverageReactiveSampleRabbit() throws Exception {
 
 		ProcessBuilder pb = new ProcessBuilder("java", "-jar", "/tmp/sensor-average-reactive-rabbit-sample.jar");
