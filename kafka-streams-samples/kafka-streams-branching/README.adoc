@@ -2,7 +2,7 @@
 
 This is an example of a Spring Cloud Stream processor using Kafka Streams branching support.
 
-The example is based on the word count application from the https://github.com/confluentinc/examples/blob/3.2.x/kafka-streams/src/main/java/io/confluent/examples/streams/WordCountLambdaExample.java[reference documentation].
+The example is based on the word count application from the https://github.com/confluentinc/kafka-streams-examples/blob/5.3.0-post/src/main/java/io/confluent/examples/streams/WordCountLambdaExample.java[reference documentation].
 It uses a single input and 3 output destinations.
 In essence, the application receives text messages from an input topic, filter them by language (English, French, Spanish and ignoring the rest), and computes word occurrence counts in a configurable time window and report that in the output topics.
 
