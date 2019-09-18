@@ -1,11 +1,9 @@
 server.port: 9998
 spring.application.name: kafka-streams-confluent-consumer
-spring.cloud.stream.bindings.output:
+spring.cloud.stream.bindings.process_out:
     destination: sensor-versions
-spring.cloud.stream.bindings.input:
+spring.cloud.stream.bindings.process_in:
     destination: sensors
-    consumer:
-      useNativeDecoding: true
 spring.cloud.stream.kafka.streams.binder:
     brokers: localhost
     configuration:

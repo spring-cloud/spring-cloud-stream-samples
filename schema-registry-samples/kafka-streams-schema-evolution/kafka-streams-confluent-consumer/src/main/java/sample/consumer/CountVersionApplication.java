@@ -20,15 +20,16 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.cloud.stream.binder.kafka.streams.annotations.KafkaStreamsProcessor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 @SpringBootApplication
-@EnableBinding(KafkaStreamsProcessor.class)
 @EnableScheduling
 public class CountVersionApplication {
 
@@ -45,9 +46,12 @@ public class CountVersionApplication {
 		SpringApplication.run(CountVersionApplication.class, args);
 	}
 
-	@StreamListener("input")
-	@SendTo("output")
-	public KStream<String, Long> process(KStream<Object, Sensor> input) {
+	@Bean
+	public Function<KStream<Object, Sensor>, KStream<String, Long>> process() {
+
+		//The following Serde definitions are not needed in the topoloyy below
+		//as we are not using it. However, if your topoloyg explicitly uses this
+		//Serde, you need to configure this with the schema registry url as below.
 
 		final Map<String, String> serdeConfig = Collections.singletonMap(
 				AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
@@ -55,7 +59,7 @@ public class CountVersionApplication {
 		final SpecificAvroSerde<Sensor> sensorSerde = new SpecificAvroSerde<>();
 		sensorSerde.configure(serdeConfig, false);
 
-		return input
+		return input -> input
 				.map((k, value) -> {
 					String newKey = "v1";
 					if (value.getId().toString().endsWith("v2")) {

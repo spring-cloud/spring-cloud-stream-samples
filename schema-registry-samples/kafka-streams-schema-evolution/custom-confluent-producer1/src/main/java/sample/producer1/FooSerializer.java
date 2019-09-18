@@ -1,4 +1,4 @@
-package sample.producer2;
+package sample.producer1;
 
 import com.example.Sensor;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * @author Soby Chacko
  */
-public class FooSerde extends SpecificAvroSerializer<Sensor> {
+public class FooSerializer extends SpecificAvroSerializer<Sensor> {
 
 	@Override
 	public void configure(Map<String, ?> serializerConfig, boolean isSerializerForRecordKeys) {

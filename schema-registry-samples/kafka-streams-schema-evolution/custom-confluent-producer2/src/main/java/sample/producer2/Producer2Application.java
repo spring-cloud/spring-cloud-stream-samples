@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;
+import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,25 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Supplier;
 
 @SpringBootApplication
-@EnableBinding(Source.class)
 @RestController
-public class Producer2Application {
-
-	@Autowired
-	private Source source;
+public class Producer2Application{
 
 	private Random random = new Random();
 
+	BlockingQueue<Sensor> unbounded = new LinkedBlockingQueue<>();
+
 	public static void main(String[] args) {
 		SpringApplication.run(Producer2Application.class, args);
-	}
-
-	@RequestMapping(value = "/messages", method = RequestMethod.POST)
-	public String sendMessage() {
-		source.output().send(MessageBuilder.withPayload(randomSensor()).build());
-		return "ok, have fun with v2 payload!";
 	}
 
 	private Sensor randomSensor() {
@@ -44,5 +40,17 @@ public class Producer2Application {
 		sensor.setMagneticField(null);
 		return sensor;
 	}
+
+	@RequestMapping(value = "/messages", method = RequestMethod.POST)
+	public String sendMessage() {
+		unbounded.offer(randomSensor());
+		return "ok, have fun with v2 payload!";
+	}
+
+	@Bean
+	public Supplier<Sensor> supplier() {
+		return () -> unbounded.poll();
+	}
 }
+
 
