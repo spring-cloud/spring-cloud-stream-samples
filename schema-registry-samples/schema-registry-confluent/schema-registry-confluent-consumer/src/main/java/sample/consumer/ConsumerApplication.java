@@ -1,22 +1,20 @@
 package sample.consumer;
 
+import java.util.function.Consumer;
+
 import com.example.Sensor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.schema.client.ConfluentSchemaRegistryClient;
-import org.springframework.cloud.stream.schema.client.EnableSchemaRegistryClient;
-import org.springframework.cloud.stream.schema.client.SchemaRegistryClient;
+import org.springframework.cloud.schema.registry.client.ConfluentSchemaRegistryClient;
+import org.springframework.cloud.schema.registry.client.EnableSchemaRegistryClient;
+import org.springframework.cloud.schema.registry.client.SchemaRegistryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @SpringBootApplication
-@EnableBinding(Sink.class)
 @EnableSchemaRegistryClient
 public class ConsumerApplication {
 
@@ -26,9 +24,9 @@ public class ConsumerApplication {
 		SpringApplication.run(ConsumerApplication.class, args);
 	}
 
-	@StreamListener(Sink.INPUT)
-	public void process(Sensor data) {
-		logger.info(data);
+	@Bean
+	public Consumer<Sensor> process()  {
+		return input -> logger.info("input: " + input);
 	}
 
 	@Configuration

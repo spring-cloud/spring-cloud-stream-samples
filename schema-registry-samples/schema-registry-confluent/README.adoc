@@ -30,6 +30,10 @@ In order to run this sample, you need to set compatibility to `NONE` on Confluen
 
 `curl -X PUT http://127.0.0.1:8081/config -d '{"compatibility": "NONE"}' -H "Content-Type:application/json"`
 
+If you have sensor schema already registered, you might want to consider deleting the registered schema for that to run these apps with a clean slate.
+
+For e.g., `curl -X DELETE http://localhost:8081/subjects/sensor`
+
 - Start `consumer` on another terminal session
 [source,bash]
 ----
@@ -40,6 +44,19 @@ java -jar schema-registry-confluent-consumer/target/schema-registry-confluent-co
 ----
 java -jar schema-registry-confluent-producer1/target/schema-registry-confluent-producer1-0.0.1-SNAPSHOT.jar
 ----
+
+=== Sample Data
+The producers are _also_ REST controllers. We will hit the `/messages` endpoint of the first producer to POST sample data.
+
+_Example:_
+[source,bash]
+----
+curl -X POST http://localhost:9009/messages
+curl -X POST http://localhost:9009/messages
+curl -X POST http://localhost:9009/messages
+----
+
+
 - Start `producer2` on another terminal session
 [source,bash]
 ----
@@ -47,16 +64,13 @@ java -jar schema-registry-confluent-producer2/target/schema-registry-confluent-p
 ----
 
 === Sample Data
-Both the producers in the demonstration are _also_ REST controllers. We will hit the `/messages` endpoint on each producer
-to POST sample data.
+We will hit the `/messages` endpoint on the second producer to POST sample data.
 
 _Example:_
 [source,bash]
 ----
-curl -X POST http://localhost:9009/messages
 curl -X POST http://localhost:9010/messages
-curl -X POST http://localhost:9009/messages
-curl -X POST http://localhost:9009/messages
+curl -X POST http://localhost:9010/messages
 curl -X POST http://localhost:9010/messages
 ----
 
