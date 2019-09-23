@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.schema.registry.client.EnableSchemaRegistryClient;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.cloud.stream.binder.kafka.streams.serde.CompositeNonNativeSerde;
+import org.springframework.cloud.stream.binder.kafka.streams.serde.MessageConverterDelegateSerde;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,7 +43,7 @@ public class CountVersionApplication {
      * Avro message converter used by the inbound serialization by the framework. This Serde implementation
      * will interact with the Spring Cloud Stream provided Schema Registry for resolving schema. */
     @Autowired
-    private CompositeNonNativeSerde<Sensor> customSerde;
+    private MessageConverterDelegateSerde<Sensor> customSerde;
 
     public static void main(String[] args) {
         SpringApplication.run(CountVersionApplication.class, args);
