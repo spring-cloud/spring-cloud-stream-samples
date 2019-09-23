@@ -1,5 +1,7 @@
 package sample.consumer;
 
+import java.util.function.Consumer;
+
 import com.example.Sensor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,9 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@EnableBinding(Sink.class)
 public class ConfluentAvroConsumerApplication {
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -19,9 +21,9 @@ public class ConfluentAvroConsumerApplication {
 		SpringApplication.run(ConfluentAvroConsumerApplication.class, args);
 	}
 
-	@StreamListener(Sink.INPUT)
-	public void process(Sensor data) {
-		logger.info(data);
+	@Bean
+	public Consumer<Sensor> process()  {
+		return input -> logger.info("input: " + input);
 	}
 
 }

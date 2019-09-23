@@ -13,4 +13,5 @@ spring:
               configuration:
                 value.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
                 schema.registry.url: http://localhost:8081
+                specific.avro.reader: true
 server.port: 9999
