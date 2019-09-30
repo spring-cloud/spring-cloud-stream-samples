@@ -1,11 +1,11 @@
-spring.cloud.stream.bindings.input:
+spring.cloud.stream.bindings.process-in-0:
   destination: play-events
-spring.cloud.stream.bindings.inputX:
+spring.cloud.stream.bindings.process-in-1:
   destination: song-feed
-spring.cloud.stream.kafka.streams.bindings.input:
+spring.cloud.stream.kafka.streams.bindings.process-in-0:
   consumer:
     valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-spring.cloud.stream.kafka.streams.bindings.inputX:
+spring.cloud.stream.kafka.streams.bindings.process-in-1:
   consumer:
     valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
     materializedAs: all-songs

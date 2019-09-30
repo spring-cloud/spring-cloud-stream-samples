@@ -16,6 +16,20 @@
 
 package kafka.streams.interactive.query;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.function.BiConsumer;
+
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import kafka.streams.interactive.query.avro.PlayEvent;
@@ -23,10 +37,19 @@ import kafka.streams.interactive.query.avro.Song;
 import kafka.streams.interactive.query.avro.SongPlayCount;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.kafka.common.serialization.*;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.LongSerializer;
+import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.Joined;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -34,17 +57,12 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.*;
-import java.util.*;
 
 @SpringBootApplication
 public class KafkaStreamsInteractiveQuerySample {
@@ -61,7 +79,6 @@ public class KafkaStreamsInteractiveQuerySample {
 		SpringApplication.run(KafkaStreamsInteractiveQuerySample.class, args);
 	}
 
-	@EnableBinding(KStreamProcessorX.class)
 	public static class KStreamMusicSampleApplication {
 
 		private static final Long MIN_CHARTABLE_DURATION = 30 * 1000L;
@@ -70,101 +87,93 @@ public class KafkaStreamsInteractiveQuerySample {
 		static final String TOP_FIVE_SONGS_BY_GENRE_STORE = "top-five-songs-by-genre";
 		static final String TOP_FIVE_KEY = "all";
 
-		@StreamListener
-		public void process(@Input("input") KStream<String, PlayEvent> playEvents,
-							@Input("inputX") KTable<Long, Song> songTable) {
+		@Bean
+		public BiConsumer<KStream<String, PlayEvent>, KTable<Long, Song>> process() {
 
-			// create and configure the SpecificAvroSerdes required in this example
-			final Map<String, String> serdeConfig = Collections.singletonMap(
-					AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
+			return (s, t) -> {
+				// create and configure the SpecificAvroSerdes required in this example
+				final Map<String, String> serdeConfig = Collections.singletonMap(
+						AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
 
-			final SpecificAvroSerde<PlayEvent> playEventSerde = new SpecificAvroSerde<>();
-			playEventSerde.configure(serdeConfig, false);
+				final SpecificAvroSerde<PlayEvent> playEventSerde = new SpecificAvroSerde<>();
+				playEventSerde.configure(serdeConfig, false);
 
-			final SpecificAvroSerde<Song> keySongSerde = new SpecificAvroSerde<>();
-			keySongSerde.configure(serdeConfig, true);
+				final SpecificAvroSerde<Song> keySongSerde = new SpecificAvroSerde<>();
+				keySongSerde.configure(serdeConfig, true);
 
-			final SpecificAvroSerde<Song> valueSongSerde = new SpecificAvroSerde<>();
-			valueSongSerde.configure(serdeConfig, false);
+				final SpecificAvroSerde<Song> valueSongSerde = new SpecificAvroSerde<>();
+				valueSongSerde.configure(serdeConfig, false);
 
-			final SpecificAvroSerde<SongPlayCount> songPlayCountSerde = new SpecificAvroSerde<>();
-			songPlayCountSerde.configure(serdeConfig, false);
+				final SpecificAvroSerde<SongPlayCount> songPlayCountSerde = new SpecificAvroSerde<>();
+				songPlayCountSerde.configure(serdeConfig, false);
 
-			// Accept play events that have a duration >= the minimum
-			final KStream<Long, PlayEvent> playsBySongId =
-					playEvents.filter((region, event) -> event.getDuration() >= MIN_CHARTABLE_DURATION)
-							// repartition based on song id
-							.map((key, value) -> KeyValue.pair(value.getSongId(), value));
+				// Accept play events that have a duration >= the minimum
+				final KStream<Long, PlayEvent> playsBySongId =
+						s.filter((region, event) -> event.getDuration() >= MIN_CHARTABLE_DURATION)
+								// repartition based on song id
+								.map((key, value) -> KeyValue.pair(value.getSongId(), value));
 
-			// join the plays with song as we will use it later for charting
-			final KStream<Long, Song> songPlays = playsBySongId.leftJoin(songTable,
-					(value1, song) -> song,
-					Joined.with(Serdes.Long(), playEventSerde, valueSongSerde));
+				// join the plays with song as we will use it later for charting
+				final KStream<Long, Song> songPlays = playsBySongId.leftJoin(t,
+						(value1, song) -> song,
+						Joined.with(Serdes.Long(), playEventSerde, valueSongSerde));
 
-			// create a state store to track song play counts
-			final KTable<Song, Long> songPlayCounts = songPlays.groupBy((songId, song) -> song,
-					Serialized.with(keySongSerde, valueSongSerde))
-					.count(Materialized.<Song, Long, KeyValueStore<Bytes, byte[]>>as(SONG_PLAY_COUNT_STORE)
-							.withKeySerde(valueSongSerde)
-							.withValueSerde(Serdes.Long()));
+				// create a state store to track song play counts
+				final KTable<Song, Long> songPlayCounts = songPlays.groupBy((songId, song) -> song,
+						Serialized.with(keySongSerde, valueSongSerde))
+						.count(Materialized.<Song, Long, KeyValueStore<Bytes, byte[]>>as(SONG_PLAY_COUNT_STORE)
+								.withKeySerde(valueSongSerde)
+								.withValueSerde(Serdes.Long()));
 
-			final TopFiveSerde topFiveSerde = new TopFiveSerde();
+				final TopFiveSerde topFiveSerde = new TopFiveSerde();
 
-			// Compute the top five charts for each genre. The results of this computation will continuously update the state
-			// store "top-five-songs-by-genre", and this state store can then be queried interactively via a REST API (cf.
-			// MusicPlaysRestService) for the latest charts per genre.
-			songPlayCounts.groupBy((song, plays) ->
-							KeyValue.pair(song.getGenre().toLowerCase(),
-									new SongPlayCount(song.getId(), plays)),
-					Serialized.with(Serdes.String(), songPlayCountSerde))
-					// aggregate into a TopFiveSongs instance that will keep track
-					// of the current top five for each genre. The data will be available in the
-					// top-five-songs-genre store
-					.aggregate(TopFiveSongs::new,
-							(aggKey, value, aggregate) -> {
-								aggregate.add(value);
-								return aggregate;
-							},
-							(aggKey, value, aggregate) -> {
-								aggregate.remove(value);
-								return aggregate;
-							},
-							Materialized.<String, TopFiveSongs, KeyValueStore<Bytes, byte[]>>as(TOP_FIVE_SONGS_BY_GENRE_STORE)
-									.withKeySerde(Serdes.String())
-									.withValueSerde(topFiveSerde)
-					);
+				// Compute the top five charts for each genre. The results of this computation will continuously update the state
+				// store "top-five-songs-by-genre", and this state store can then be queried interactively via a REST API (cf.
+				// MusicPlaysRestService) for the latest charts per genre.
+				songPlayCounts.groupBy((song, plays) ->
+								KeyValue.pair(song.getGenre().toLowerCase(),
+										new SongPlayCount(song.getId(), plays)),
+						Serialized.with(Serdes.String(), songPlayCountSerde))
+						// aggregate into a TopFiveSongs instance that will keep track
+						// of the current top five for each genre. The data will be available in the
+						// top-five-songs-genre store
+						.aggregate(TopFiveSongs::new,
+								(aggKey, value, aggregate) -> {
+									aggregate.add(value);
+									return aggregate;
+								},
+								(aggKey, value, aggregate) -> {
+									aggregate.remove(value);
+									return aggregate;
+								},
+								Materialized.<String, TopFiveSongs, KeyValueStore<Bytes, byte[]>>as(TOP_FIVE_SONGS_BY_GENRE_STORE)
+										.withKeySerde(Serdes.String())
+										.withValueSerde(topFiveSerde)
+						);
 
-			// Compute the top five chart. The results of this computation will continuously update the state
-			// store "top-five-songs", and this state store can then be queried interactively via a REST API (cf.
-			// MusicPlaysRestService) for the latest charts per genre.
-			songPlayCounts.groupBy((song, plays) ->
-							KeyValue.pair(TOP_FIVE_KEY,
-									new SongPlayCount(song.getId(), plays)),
-					Serialized.with(Serdes.String(), songPlayCountSerde))
-					.aggregate(TopFiveSongs::new,
-							(aggKey, value, aggregate) -> {
-								aggregate.add(value);
-								return aggregate;
-							},
-							(aggKey, value, aggregate) -> {
-								aggregate.remove(value);
-								return aggregate;
-							},
-							Materialized.<String, TopFiveSongs, KeyValueStore<Bytes, byte[]>>as(TOP_FIVE_SONGS_STORE)
-									.withKeySerde(Serdes.String())
-									.withValueSerde(topFiveSerde)
-					);
+				// Compute the top five chart. The results of this computation will continuously update the state
+				// store "top-five-songs", and this state store can then be queried interactively via a REST API (cf.
+				// MusicPlaysRestService) for the latest charts per genre.
+				songPlayCounts.groupBy((song, plays) ->
+								KeyValue.pair(TOP_FIVE_KEY,
+										new SongPlayCount(song.getId(), plays)),
+						Serialized.with(Serdes.String(), songPlayCountSerde))
+						.aggregate(TopFiveSongs::new,
+								(aggKey, value, aggregate) -> {
+									aggregate.add(value);
+									return aggregate;
+								},
+								(aggKey, value, aggregate) -> {
+									aggregate.remove(value);
+									return aggregate;
+								},
+								Materialized.<String, TopFiveSongs, KeyValueStore<Bytes, byte[]>>as(TOP_FIVE_SONGS_STORE)
+										.withKeySerde(Serdes.String())
+										.withValueSerde(topFiveSerde)
+						);
+			};
+
 		}
-	}
-
-
-	interface KStreamProcessorX {
-
-		@Input("input")
-		KStream<?, ?> input();
-
-		@Input("inputX")
-		KTable<?, ?> inputX();
 	}
 
 	@RestController
@@ -200,7 +209,7 @@ public class KafkaStreamsInteractiveQuerySample {
 				logger.info("Top Five songs request served from different host: " + hostInfo);
 				RestTemplate restTemplate = new RestTemplate();
 				return restTemplate.postForObject(
-						String.format("https://%s:%d/%s", hostInfo.host(),
+						String.format("http://%s:%d/%s", hostInfo.host(),
 								hostInfo.port(), "charts/top-five?genre=Punk"), "punk", List.class);
 			}
 		}
@@ -235,7 +244,7 @@ public class KafkaStreamsInteractiveQuerySample {
 					logger.info("Song info request served from different host: " + hostInfo);
 					RestTemplate restTemplate = new RestTemplate();
 					SongBean song = restTemplate.postForObject(
-							String.format("https://%s:%d/%s", hostInfo.host(),
+							String.format("http://%s:%d/%s", hostInfo.host(),
 									hostInfo.port(), "song/idx?id=" + songPlayCount.getSongId()),  "id", SongBean.class);
 					results.add(new SongPlayCountBean(song.getArtist(),song.getAlbum(), song.getName(),
 							songPlayCount.getPlays()));
@@ -253,17 +262,8 @@ public class KafkaStreamsInteractiveQuerySample {
 	private static class TopFiveSerde implements Serde<TopFiveSongs> {
 
 		@Override
-		public void configure(final Map<String, ?> map, final boolean b) {
-
-		}
-
-		@Override
-		public void close() {
-
-		}
-
-		@Override
 		public Serializer<TopFiveSongs> serializer() {
+
 			return new Serializer<TopFiveSongs>() {
 				@Override
 				public void configure(final Map<String, ?> map, final boolean b) {
@@ -271,6 +271,7 @@ public class KafkaStreamsInteractiveQuerySample {
 
 				@Override
 				public byte[] serialize(final String s, final TopFiveSongs topFiveSongs) {
+
 					final ByteArrayOutputStream out = new ByteArrayOutputStream();
 					final DataOutputStream
 							dataOutputStream =
@@ -286,48 +287,31 @@ public class KafkaStreamsInteractiveQuerySample {
 					}
 					return out.toByteArray();
 				}
-
-				@Override
-				public void close() {
-
-				}
 			};
 		}
 
 		@Override
 		public Deserializer<TopFiveSongs> deserializer() {
-			return new Deserializer<TopFiveSongs>() {
-				@Override
-				public void configure(final Map<String, ?> map, final boolean b) {
 
+			return (s, bytes) -> {
+				if (bytes == null || bytes.length == 0) {
+					return null;
 				}
+				final TopFiveSongs result = new TopFiveSongs();
 
-				@Override
-				public TopFiveSongs deserialize(final String s, final byte[] bytes) {
-					if (bytes == null || bytes.length == 0) {
-						return null;
+				final DataInputStream
+						dataInputStream =
+						new DataInputStream(new ByteArrayInputStream(bytes));
+
+				try {
+					while(dataInputStream.available() > 0) {
+						result.add(new SongPlayCount(dataInputStream.readLong(),
+								dataInputStream.readLong()));
 					}
-					final TopFiveSongs result = new TopFiveSongs();
-
-					final DataInputStream
-							dataInputStream =
-							new DataInputStream(new ByteArrayInputStream(bytes));
-
-					try {
-						while(dataInputStream.available() > 0) {
-							result.add(new SongPlayCount(dataInputStream.readLong(),
-									dataInputStream.readLong()));
-						}
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-					return result;
+				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
-
-				@Override
-				public void close() {
-
-				}
+				return result;
 			};
 		}
 	}
