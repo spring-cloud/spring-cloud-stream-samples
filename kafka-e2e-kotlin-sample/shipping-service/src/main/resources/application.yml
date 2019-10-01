@@ -3,20 +3,15 @@ spring:
     name: shipping-service
   cloud:
     stream:
-      schema-registry-client:
-        endpoint: http://localhost:8081
       kafka:
         streams:
           binder:
             configuration:
               application:
                 id: shipping-service
-              default:
-                key:
-                  serde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
               schema:
                 registry:
-                  url: ${spring.cloud.stream.schema-registry-client.endpoint}
+                  url: http://localhost:8081
               value:
                 subject:
                   name:

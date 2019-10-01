@@ -3,8 +3,8 @@ spring:
     name: customer-service
   cloud:
     stream:
-      schema-registry-client:
-        endpoint: http://localhost:8081
+#      schema-registry-client:
+#        endpoint: http://localhost:8081
       kafka:
         bindings:
           output:
@@ -19,7 +19,7 @@ spring:
                       strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
                 schema:
                   registry:
-                    url: ${spring.cloud.stream.schema-registry-client.endpoint}
+                    url: http://localhost:8081
       bindings:
         output:
           destination: customer

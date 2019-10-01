@@ -56,10 +56,8 @@ class ShippingKStreamConfiguration {
 
         val stateStore: Materialized<Int, Customer, KeyValueStore<Bytes, ByteArray>> =
                 Materialized.`as`<Int, Customer, KeyValueStore<Bytes, ByteArray>>("customer-store")
-                        .withKeySerde(intSerde)
-                        .withValueSerde(customerSerde)
 
-        val customerTable: KTable<Int, Customer> = input.groupByKey(Serialized.with(intSerde, customerSerde))
+        val customerTable: KTable<Int, Customer> = input.groupByKey()
                 .reduce({ _, y -> y }, stateStore)
 
         return (orderEvent.filter { _, value -> value.schema.name == "OrderCreatedEvent" }
