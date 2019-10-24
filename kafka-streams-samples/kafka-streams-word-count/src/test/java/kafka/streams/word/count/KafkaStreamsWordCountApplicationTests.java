@@ -16,15 +16,20 @@
 
 package kafka.streams.word.count;
 
+import java.util.Map;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -33,21 +38,12 @@ import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 		webEnvironment = SpringBootTest.WebEnvironment.NONE,
-		properties = {"server.port=0",
-		"spring.jmx.enabled=false",
-		"spring.cloud.stream.bindings.input.destination=words",
-		"spring.cloud.stream.bindings.output.destination=counts",
-		"spring.cloud.stream.kafka.streams.default.consumer.application-id=basic-word-count",
-		"spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms=1000",
-		"spring.cloud.stream.kafka.streams.binder.configuration.default.key.serde=org.apache.kafka.common.serialization.Serdes$StringSerde",
-		"spring.cloud.stream.kafka.streams.binder.configuration.default.value.serde=org.apache.kafka.common.serialization.Serdes$StringSerde"})
+		properties = {"server.port=0"})
 public class KafkaStreamsWordCountApplicationTests {
 
 	@ClassRule
@@ -57,25 +53,32 @@ public class KafkaStreamsWordCountApplicationTests {
 
 	private static Consumer<String, String> consumer;
 
+	@Autowired
+	StreamsBuilderFactoryBean streamsBuilderFactoryBean;
+
+	@Before
+	public void before() {
+		streamsBuilderFactoryBean.setCloseTimeout(0);
+	}
+
 	@BeforeClass
-	public static void setUp() throws Exception {
+	public static void setUp() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps("group", "false", embeddedKafka);
 		consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 		DefaultKafkaConsumerFactory<String, String> cf = new DefaultKafkaConsumerFactory<>(consumerProps);
 		consumer = cf.createConsumer();
 		embeddedKafka.consumeFromAnEmbeddedTopic(consumer, "counts");
-		//Since there are both binders present in this app, we resort to the spring kafka broker property.
-		System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getBrokersAsString());
+		System.setProperty("spring.cloud.stream.kafka.streams.binder.brokers", embeddedKafka.getBrokersAsString());
 	}
 
 	@AfterClass
 	public static void tearDown() {
 		consumer.close();
-		System.clearProperty("spring.kafka.bootstrap-servers");
+		System.clearProperty("spring.cloud.stream.kafka.streams.binder.brokers");
 	}
 
 	@Test
-	public void testKafkaStreamsWordCountProcessor() throws Exception {
+	public void testKafkaStreamsWordCountProcessor() {
 		Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
 		DefaultKafkaProducerFactory<Integer, String> pf = new DefaultKafkaProducerFactory<>(senderProps);
 		try {

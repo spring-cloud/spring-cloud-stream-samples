@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,8 +76,12 @@ public class WordCountProcessorApplicationTests {
         final StreamsBuilder builder = new StreamsBuilder();
         KStream<Bytes, String> input = builder.stream(INPUT_TOPIC, Consumed.with(nullSerde, stringSerde));
         KafkaStreamsWordCountApplication.WordCountProcessorApplication app = new KafkaStreamsWordCountApplication.WordCountProcessorApplication();
-        KStream<Bytes, KafkaStreamsWordCountApplication.WordCount> output = app.process(input);
-        output.to(OUTPUT_TOPIC, Produced.with(nullSerde, countSerde));
+        final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = app.process();
+
+		final KStream<Bytes, KafkaStreamsWordCountApplication.WordCount> output = process.apply(input);
+
+		output.to(OUTPUT_TOPIC, Produced.with(nullSerde, countSerde));
+
         testDriver = new TopologyTestDriver(builder.build(), getStreamsConfiguration());
     }
 

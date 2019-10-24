@@ -5,7 +5,6 @@ This is an example of a Spring Cloud Stream processor using Kafka Streams suppor
 The example is based on the word count application from the https://github.com/confluentinc/examples/blob/3.2.x/kafka-streams/src/main/java/io/confluent/examples/streams/WordCountLambdaExample.java[reference documentation].
 It uses a single input and a single output.
 In essence, the application receives text messages from an input topic and computes word occurrence counts in a configurable time window and report that in an output topic.
-This sample uses lambda expressions and thus requires Java 8+.
 The sample uses a default timewindow of 30 seconds.
 
 === Running the app:
@@ -24,9 +23,17 @@ Issue the following commands:
 
 `docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic words`
 
+Or if you prefer `kafkacat`:
+
+`kafkacat -b localhost:9092 -t words -P`
+
 On another terminal:
 
 `docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092 --topic counts`
+
+Or if you prefer `kafkacat`:
+
+`kafkacat -b localhost:9092 -t counts`
 
 Enter some text in the console producer and watch the output in the console consumer.
 
