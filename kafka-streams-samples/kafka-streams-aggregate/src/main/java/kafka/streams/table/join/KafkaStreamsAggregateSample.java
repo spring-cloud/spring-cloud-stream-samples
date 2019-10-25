@@ -16,23 +16,23 @@
 
 package kafka.streams.table.join;
 
+import java.util.function.Consumer;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
+import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,22 +47,23 @@ public class KafkaStreamsAggregateSample {
 		SpringApplication.run(KafkaStreamsAggregateSample.class, args);
 	}
 
-	@EnableBinding(KafkaStreamsProcessorX.class)
 	public static class KafkaStreamsAggregateSampleApplication {
 
-		@StreamListener("input")
-		public void process(KStream<String, DomainEvent> input) {
+		@Bean
+		public Consumer<KStream<String, DomainEvent>> aggregate() {
+
 			ObjectMapper mapper = new ObjectMapper();
 			Serde<DomainEvent> domainEventSerde = new JsonSerde<>( DomainEvent.class, mapper );
 
-			input
+			return input -> input
 					.groupBy(
 							(s, domainEvent) -> domainEvent.boardUuid,
-							Serialized.with(null, domainEventSerde))
+							Grouped.with(null, domainEventSerde))
 					.aggregate(
 							String::new,
 							(s, domainEvent, board) -> board.concat(domainEvent.eventType),
-							Materialized.<String, String, KeyValueStore<Bytes, byte[]>>as("test-events-snapshots").withKeySerde(Serdes.String()).
+							Materialized.<String, String, KeyValueStore<Bytes, byte[]>>as("test-events-snapshots")
+									.withKeySerde(Serdes.String()).
 									withValueSerde(Serdes.String())
 					);
 		}
@@ -80,9 +81,4 @@ public class KafkaStreamsAggregateSample {
 		}
 	}
 
-	interface KafkaStreamsProcessorX {
-
-		@Input("input")
-		KStream<?, ?> input();
-	}
 }
