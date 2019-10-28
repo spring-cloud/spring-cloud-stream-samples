@@ -3,15 +3,13 @@ spring.cloud.stream.kafka.streams.binder:
     commit.interval.ms: 1000
     default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     default.value.serde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
-    application.id: dlq-1
-  brokers: localhost
+    application.id: dlq-demo-sample
   serdeError: sendToDlq
-spring.cloud.stream.bindings.output:
+spring.cloud.stream.bindings.process-out-0:
   destination: counts
-spring.cloud.stream.bindings.input:
+spring.cloud.stream.bindings.process-in-0:
   destination: words
-  group: group1
-spring.cloud.stream.kafka.streams.bindings.input.consumer:
+spring.cloud.stream.kafka.streams.bindings.process-in-0.consumer:
   dlqName: words-count-dlq
   valueSerde: org.apache.kafka.common.serialization.Serdes$IntegerSerde
 

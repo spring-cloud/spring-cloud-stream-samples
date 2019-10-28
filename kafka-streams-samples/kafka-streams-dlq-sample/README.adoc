@@ -36,6 +36,5 @@ On the console producer, enter some text data.
 You will see that the messages produce deserialization errors and end up in the DLQ topic - words-count-dlq.
 You will not see any messages coming to the regular destination counts.
 
-There is another yaml file provided (by-framework-decoding.yml).
-Use that as application.yml to see how it works when the deserialization done by the framework.
-In this case also, the messages on error appear in the DLQ topic.
+In the application's configuration we set the value `Serde` as `Integer` and this is the reason why deserialization errors occur.
+The application expects numerical data, but the producer sends regular text.
