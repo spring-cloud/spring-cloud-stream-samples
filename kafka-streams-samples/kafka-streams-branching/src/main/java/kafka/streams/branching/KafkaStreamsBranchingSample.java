@@ -16,22 +16,19 @@
 
 package kafka.streams.branching;
 
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.function.Function;
+
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Predicate;
 import org.apache.kafka.streams.kstream.TimeWindows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.handler.annotation.SendTo;
-
-import java.util.Arrays;
-import java.util.Date;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class KafkaStreamsBranchingSample {
@@ -40,42 +37,26 @@ public class KafkaStreamsBranchingSample {
 		SpringApplication.run(KafkaStreamsBranchingSample.class, args);
 	}
 
-	@EnableBinding(KStreamProcessorX.class)
 	public static class WordCountProcessorApplication {
 
-		@StreamListener("input")
-		@SendTo({"output1","output2","output3"})
+		@Bean
 		@SuppressWarnings("unchecked")
-		public KStream<?, WordCount>[] process(KStream<Object, String> input) {
+		public Function<KStream<Object, String>, KStream<?, WordCount>[]> process() {
 
 			Predicate<Object, WordCount> isEnglish = (k, v) -> v.word.equals("english");
 			Predicate<Object, WordCount> isFrench =  (k, v) -> v.word.equals("french");
 			Predicate<Object, WordCount> isSpanish = (k, v) -> v.word.equals("spanish");
 
-			return input
+			return input -> input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
 					.groupBy((key, value) -> value)
-					.windowedBy(TimeWindows.of(60_000))
+					.windowedBy(TimeWindows.of(Duration.ofSeconds(6)))
 					.count(Materialized.as("WordCounts-1"))
 					.toStream()
-					.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))))
+					.map((key, value) -> new KeyValue<>(null,
+							new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))))
 					.branch(isEnglish, isFrench, isSpanish);
 		}
-	}
-
-	interface KStreamProcessorX {
-
-		@Input("input")
-		KStream<?, ?> input();
-
-		@Output("output1")
-		KStream<?, ?> output1();
-
-		@Output("output2")
-		KStream<?, ?> output2();
-
-		@Output("output3")
-		KStream<?, ?> output3();
 	}
 
 	static class WordCount {
