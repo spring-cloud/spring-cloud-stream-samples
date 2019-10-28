@@ -1,15 +1,14 @@
-spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
-spring.cloud.stream.kafka.streams.binder.configuration:
+spring.cloud.stream:
+ function:
+    definition: sink;process
+ kafka.streams.binder.configuration:
+  commit.interval.ms: 1000
   default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
   default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-spring.cloud.stream.bindings.singleOutput:
+spring.cloud.stream.bindings.process-out-0:
   destination: counts
-spring.cloud.stream.bindings.binding2:
+spring.cloud.stream.bindings.process-in-0:
   destination: words
-spring.cloud.stream.bindings.binding1:
+spring.cloud.stream.bindings.sink-in-0:
   destination: words
-spring.cloud.stream.kafka.streams.binder:
-  brokers: localhost
 spring.application.name: kafka-streams-message-channel-sample
-
-

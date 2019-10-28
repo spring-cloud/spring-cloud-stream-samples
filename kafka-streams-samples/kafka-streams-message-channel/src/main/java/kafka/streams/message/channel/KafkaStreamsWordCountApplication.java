@@ -16,23 +16,21 @@
 
 package kafka.streams.message.channel;
 
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.SubscribableChannel;
-import org.springframework.messaging.handler.annotation.SendTo;
-
-import java.util.Arrays;
-import java.util.Date;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class KafkaStreamsWordCountApplication {
@@ -41,44 +39,26 @@ public class KafkaStreamsWordCountApplication {
 		SpringApplication.run(KafkaStreamsWordCountApplication.class, args);
 	}
 
-	@EnableBinding(MultipleProcessor.class)
 	public static class WordCountProcessorApplication {
 
-		@StreamListener("binding2")
-		@SendTo("singleOutput")
-		public KStream<?, WordCount> process(KStream<Object, String> input) {
+		@Bean
+		public Function<KStream<Object, String>, KStream<?, WordCount>> process() {
 
-			return input
+			return input -> input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
 					.map((key, value) -> new KeyValue<>(value, value))
-					.groupByKey(Serialized.with(Serdes.String(), Serdes.String()))
-					.windowedBy(TimeWindows.of(60_000))
+					.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
+					.windowedBy(TimeWindows.of(Duration.ofSeconds(60)))
 					.count(Materialized.as("WordCounts-1"))
 					.toStream()
-					.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
+					.map((key, value) -> new KeyValue<>(null,
+							new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
 		}
 
-		@StreamListener("binding1")
-		public void sink(String input) {
-			System.out.println("FOOBAR -- " + input);
+		@Bean
+		public Consumer<String> sink() {
+			return s -> System.out.println("FOOBAR -- " + s);
 		}
-
-	}
-
-	interface MultipleProcessor {
-
-		String BINDING_1 = "binding1";
-		String BINDING_2 = "binding2";
-		String OUTPUT = "singleOutput";
-
-		@Input(BINDING_1)
-		SubscribableChannel binding1();
-
-		@Input(BINDING_2)
-		KStream<?, ?> binding2();
-
-		@Output(OUTPUT)
-		KStream<?, ?> singleOutput();
 	}
 
 	static class WordCount {
