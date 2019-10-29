@@ -1,0 +1,52 @@
+Spring Cloud Stream Reactive Processor Basic Sample
+==================================================
+
+This is a Spring Cloud Stream reactive processor sample.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Running the application
+
+The following instructions assume that you are running Kafka as a Docker image.
+
+* Go to the application root (not the repository root, but this application)
+* `docker-compose up -d`
+
+* `./mvnw clean package`
+
+* `java -jar target/reactive-processor-0.0.1-SNAPSHOT-kafka.jar`
+
+The main application contains the reactive processor that receives textual data for a duration and aggregates them.
+It then sends the aggregated data through the outbound destination of the processor.
+
+The application also provides a source and sink for testing.
+Test source will generate some text every second and the test sink will verify that the processor has accumulated the text over a duration.
+Test source is bound to the same broker destination where the processor is listening from.
+Similarly test sink is bound to the same broker destination where the processor is producing to.
+
+You will see output similar to the following on the console every 5 seconds.
+
+```
+Data received: foobarfoobarfoo
+Data received: barfoobarfoobar
+Data received: foobarfoobarfoo
+Data received: foobarfoobarfoo
+```
+
+* `docker-compose down`
+
+## Running the application using Rabbit binder
+
+All the instructions above apply here also, but instead of running the default `docker-compose.yml`, use the command below to start a Rabbitmq cluser.
+
+* `docker-compose -f docker-compose-rabbit.yml up -d`
+
+* `./mvnw clean package -P rabbit-binder`
+
+* `java -jar target/reactive-processor-0.0.1-SNAPSHOT-rabbit.jar`
+
+Once you are done testing: `docker-compose -f docker-compose-rabbit.yml down`

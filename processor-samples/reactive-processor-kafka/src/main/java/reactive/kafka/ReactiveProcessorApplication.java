@@ -20,25 +20,20 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @SpringBootApplication
-@EnableBinding(Processor.class)
 public class ReactiveProcessorApplication {
+
+	private final Log logger = LogFactory.getLog(getClass());
+
+	private AtomicBoolean semaphore = new AtomicBoolean(true);
 
 	public static void main(String[] args) {
 		SpringApplication.run(ReactiveProcessorApplication.class, args);
 	}
-
-//	@StreamListener
-//	@Output(Processor.OUTPUT)
-//	public Flux<String> aggregate(@Input(Processor.INPUT) Flux<String> inbound) {
-//		return inbound.
-//				log()
-//				.window(Duration.ofSeconds(5), Duration.ofSeconds(5))
-//				.flatMap(w -> w.reduce("", (s1,s2)->s1+s2))
-//				.log();
-//	}
 
 	@Bean
 	public Function<Flux<String>, Flux<String>> aggregate() {
@@ -53,37 +48,15 @@ public class ReactiveProcessorApplication {
 	//Test source will send data to the same destination where the processor receives data
 	//Test sink will consume data from the same destination where the processor produces data
 
-	@EnableBinding(Source.class)
-	static class TestSource {
+	@Bean
+	public Supplier<String> testSource() {
+		return () -> this.semaphore.getAndSet(!this.semaphore.get()) ? "foo" : "bar";
 
-		private AtomicBoolean semaphore = new AtomicBoolean(true);
-
-		@Bean
-		@InboundChannelAdapter(channel = "test-source", poller = @Poller(fixedDelay = "1000"))
-		public MessageSource<String> sendTestData() {
-			return () ->
-					new GenericMessage<>(this.semaphore.getAndSet(!this.semaphore.get()) ? "foo" : "bar");
-		}
 	}
 
-	@EnableBinding(Sink.class)
-	static class TestSink {
+	@Bean
+	public Consumer<String>  testSink() {
+		return payload -> logger.info("Data received: " + payload);
 
-		private final Log logger = LogFactory.getLog(getClass());
-
-		@StreamListener("test-sink")
-		public void receive(String payload) {
-			logger.info("Data received: " + payload);
-		}
-	}
-
-	public interface Sink {
-		@Input("test-sink")
-		SubscribableChannel sampleSink();
-	}
-
-	public interface Source {
-		@Output("test-source")
-		MessageChannel sampleSource();
 	}
 }

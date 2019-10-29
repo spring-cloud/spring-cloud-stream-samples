@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    stream:
+      function.definition: aggregate;testSource;testSink
+      bindings:
+        aggregate-out-0:
+          destination: transformed
+        testSink-in-0:
+          destination: transformed
+        aggregate-in-0:
+          destination: testtock
+        testSource-out-0:
+          destination: testtock
