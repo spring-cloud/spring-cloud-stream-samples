@@ -34,7 +34,7 @@ The following instructions assume that you are running Kafka as a Docker image.
 
 * `./mvnw clean package`
 
-* `java -jar target/streamlistener-basic-0.0.1-SNAPSHOT.jar`
+* `java -jar target/streamlistener-basic-0.0.1-SNAPSHOT-kafka.jar`
 
 The application will log messages from source, transformer and sink.
 Source sends a message every second which will initiate the processor and then the sink.
