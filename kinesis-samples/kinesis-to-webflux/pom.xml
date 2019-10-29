@@ -12,11 +12,27 @@
 	<description>Spring Cloud Stream Kinesis to WebFlux Sample</description>
 
 	<parent>
-		<groupId>io.spring.cloud.stream.sample</groupId>
-		<artifactId>spring-cloud-stream-samples-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.0.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
+	<properties>
+		<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -25,12 +41,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-reactive</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kinesis</artifactId>
-			<version>1.0.0.RELEASE</version>
+			<version>2.0.0.BUILD-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -41,12 +53,6 @@
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-test-support-internal</artifactId>
-			<version>2.1.0.BUILD-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
