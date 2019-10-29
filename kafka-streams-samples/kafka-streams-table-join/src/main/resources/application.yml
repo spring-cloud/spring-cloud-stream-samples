@@ -1,12 +1,11 @@
 spring.application.name: stream-table-sample
-spring.cloud.stream.bindings.input:
-  destination: user-clicks3
-spring.cloud.stream.bindings.inputTable:
+spring.cloud.stream.bindings.process-in-0:
+  destination: user-clicks
+spring.cloud.stream.bindings.process-in-1:
   destination: user-regions
-spring.cloud.stream.bindings.output:
+spring.cloud.stream.bindings.process-out-0:
   destination: output-topic
 spring.cloud.stream.kafka.streams.binder:
-  brokers: localhost
   configuration:
     default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
