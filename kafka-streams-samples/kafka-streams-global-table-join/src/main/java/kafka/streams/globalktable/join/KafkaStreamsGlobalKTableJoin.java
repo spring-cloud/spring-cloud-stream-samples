@@ -16,18 +16,16 @@
 
 package kafka.streams.globalktable.join;
 
+import java.util.function.BiFunction;
+
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.GlobalKTable;
+import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Serialized;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.binder.kafka.streams.annotations.KafkaStreamsProcessor;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.context.annotation.Bean;
 
 /**
  * This is the PR that added this sample:
@@ -40,32 +38,22 @@ public class KafkaStreamsGlobalKTableJoin {
 		SpringApplication.run(KafkaStreamsGlobalKTableJoin.class, args);
 	}
 
-	@EnableBinding(KStreamProcessorX.class)
 	public static class KStreamToTableJoinApplication {
 
 
-		@StreamListener
-		@SendTo("output")
-		public KStream<String, Long> process(@Input("input") KStream<String, Long> userClicksStream,
-											 @Input("inputTable") GlobalKTable<String, String> userRegionsTable) {
+		@Bean
+		public BiFunction<KStream<String, Long>, GlobalKTable<String, String>, KStream<String, Long>> process() {
 
-			return userClicksStream
+			return (userClicksStream, userRegionsTable) -> userClicksStream
 					.leftJoin(userRegionsTable,
 							(name,value) -> name,
 							(clicks, region) -> new RegionWithClicks(region == null ? "UNKNOWN" : region, clicks)
 							)
 					.map((user, regionWithClicks) -> new KeyValue<>(regionWithClicks.getRegion(), regionWithClicks.getClicks()))
-					.groupByKey(Serialized.with(Serdes.String(), Serdes.Long()))
+					.groupByKey(Grouped.with(Serdes.String(), Serdes.Long()))
 					.reduce((firstClicks, secondClicks) -> firstClicks + secondClicks)
 					.toStream();
 		}
-	}
-
-
-	interface KStreamProcessorX extends KafkaStreamsProcessor {
-
-		@Input("inputTable")
-		GlobalKTable<?, ?> inputKTable();
 	}
 
 	private static final class RegionWithClicks {

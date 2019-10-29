@@ -57,7 +57,7 @@ public class Producers {
 
 		DefaultKafkaProducerFactory<String, Long> pf = new DefaultKafkaProducerFactory<>(props);
 		KafkaTemplate<String, Long> template = new KafkaTemplate<>(pf, true);
-		template.setDefaultTopic("user-clicks3");
+		template.setDefaultTopic("user-clicks");
 
 		for (KeyValue<String,Long> keyValue : userClicks) {
 			template.sendDefault(keyValue.key, keyValue.value);
