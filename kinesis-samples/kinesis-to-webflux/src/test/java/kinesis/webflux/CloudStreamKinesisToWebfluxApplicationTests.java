@@ -16,10 +16,14 @@
 
 package kinesis.webflux;
 
+import static org.assertj.core.api.Assumptions.assumeThat;
+
+import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +70,20 @@ public class CloudStreamKinesisToWebfluxApplicationTests {
 
 	@Autowired
 	private KinesisTestConfiguration kinesisTestConfiguration;
+
+	@BeforeAll
+	static void setup() {
+		boolean isLocalKinesis;
+		try {
+			new Socket("localhost", KinesisTestConfiguration.DEFAULT_KINESALITE_PORT).close();
+			// Successful connection means local Kinesis is available
+			isLocalKinesis = true;
+		}
+		catch (Exception e) {
+			isLocalKinesis  = false;
+		}
+		assumeThat(isLocalKinesis).isTrue();
+	}
 
 	@Test
 	void testKinesisToWebFlux() {
