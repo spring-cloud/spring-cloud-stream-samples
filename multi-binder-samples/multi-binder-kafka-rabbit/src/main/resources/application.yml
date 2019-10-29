@@ -2,18 +2,20 @@ spring:
   cloud:
     stream:
       bindings:
-        input:
+        process-in-0:
           destination: dataIn
           binder: kafka
-        output:
+        process-out-0:
           destination: dataOut
           binder: rabbit
         #Test sink binding (used for testing)
-        output1:
+        sendTestData-out-0:
           destination: dataIn
           binder: kafka
         #Test sink binding (used for testing)
-        input1:
+        receive-in-0:
           destination: dataOut
           binder: rabbit
+      function:
+        definition: sendTestData;process;receive
 

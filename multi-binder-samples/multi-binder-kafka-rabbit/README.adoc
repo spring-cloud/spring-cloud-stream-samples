@@ -1,10 +1,10 @@
-== Spring Cloud Stream Multibinder Application with Different Systems
+== Spring Cloud Stream Multi-binder Application with Different Systems (Kafka on the inbound and RabbitMQ on the outbound)
 
 This example shows how to run a Spring Cloud Stream application with two different binder types (Kafka and RabbitMQ)
 
 ## Running the application
 
-The following instructions assume that you are running Kafka and RabbitMQ as a Docker images.
+The following instructions assume that you are running Kafka and RabbitMQ as Docker images.
 
 Go to the application root:
 
