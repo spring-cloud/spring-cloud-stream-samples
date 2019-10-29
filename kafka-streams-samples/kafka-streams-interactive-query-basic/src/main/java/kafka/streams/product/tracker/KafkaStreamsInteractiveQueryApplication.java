@@ -16,12 +16,16 @@
 
 package kafka.streams.product.tracker;
 
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
@@ -30,18 +34,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
-import org.springframework.cloud.stream.binder.kafka.streams.annotations.KafkaStreamsProcessor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class KafkaStreamsInteractiveQueryApplication {
@@ -50,7 +48,6 @@ public class KafkaStreamsInteractiveQueryApplication {
 		SpringApplication.run(KafkaStreamsInteractiveQueryApplication.class, args);
 	}
 
-	@EnableBinding(KafkaStreamsProcessor.class)
 	@EnableConfigurationProperties(ProductTrackerProperties.class)
 	@EnableScheduling
 	public static class InteractiveProductCountApplication {
@@ -60,20 +57,18 @@ public class KafkaStreamsInteractiveQueryApplication {
 		@Autowired
 		private InteractiveQueryService queryService;
 
-
 		@Autowired
 		ProductTrackerProperties productTrackerProperties;
 
 		ReadOnlyKeyValueStore<Object, Object> keyValueStore;
 
-		@StreamListener("input")
-		@SendTo("output")
-		public KStream<Integer, Long> process(KStream<Object, Product> input) {
+		@Bean
+		public Function<KStream<Object, Product>, KStream<Integer, Long>> process() {
 
-			return input
+			return input -> input
 					.filter((key, product) -> productIds().contains(product.getId()))
 					.map((key, value) -> new KeyValue<>(value.id, value))
-					.groupByKey(Serialized.with(Serdes.Integer(), new JsonSerde<>(Product.class)))
+					.groupByKey(Grouped.with(Serdes.Integer(), new JsonSerde<>(Product.class)))
 					.count(Materialized.<Integer, Long, KeyValueStore<Bytes, byte[]>>as(STORE_NAME)
 						.withKeySerde(Serdes.Integer())
 						.withValueSerde(Serdes.Long()))
