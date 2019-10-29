@@ -1,8 +1,7 @@
 spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms: 1000
-spring.cloud.stream.bindings.output:
+spring.cloud.stream.bindings.process-out-0:
   destination: product-counts
-spring.cloud.stream.bindings.input:
+spring.cloud.stream.bindings.process-in-0:
   destination: products
 spring.cloud.stream.kafka.streams.binder:
-  brokers: localhost
 spring.application.name: kafka-streams-product-tracker-sample
