@@ -1,12 +1,14 @@
 spring:
   cloud:
     stream:
+      function:
+        definition: transform;sendTestData;receive
       bindings:
-        output:
+        transform-out-0:
           destination: xformed
-        test-sink:
+        receive-in-0:
           destination: xformed
-        input:
+        transform-in-0:
           destination: testtock
-        test-source:
+        sendTestData-out-0:
           destination: testtock

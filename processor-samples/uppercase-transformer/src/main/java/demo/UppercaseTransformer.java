@@ -16,70 +16,54 @@
 
 package demo;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.integration.annotation.InboundChannelAdapter;
-import org.springframework.integration.annotation.Poller;
-import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.integration.core.MessageSource;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.SubscribableChannel;
-import org.springframework.messaging.support.GenericMessage;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author Dave Syer
  * @author Soby Chacko
  */
-@EnableBinding(Processor.class)
+@SpringBootApplication
 public class UppercaseTransformer {
 
 	private static Logger logger = LoggerFactory.getLogger(UppercaseTransformer.class);
 
-	@ServiceActivator(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
-	public String transform(String payload) {
-		return payload.toUpperCase();
+	public static void main(String[] args) {
+		SpringApplication.run(UppercaseTransformer.class, args);
+	}
+
+	@Bean
+	public Function<String, String> transform() {
+		return payload -> payload.toUpperCase();
 	}
 
 	//Following source is used as a test producer.
-	@EnableBinding(Source.class)
 	static class TestSource {
 
 		private AtomicBoolean semaphore = new AtomicBoolean(true);
 
 		@Bean
-		@InboundChannelAdapter(channel = "test-source", poller = @Poller(fixedDelay = "1000"))
-		public MessageSource<String> sendTestData() {
-			return () ->
-					new GenericMessage<>(this.semaphore.getAndSet(!this.semaphore.get()) ? "foo" : "bar");
+		public Supplier<String> sendTestData() {
+			return () -> this.semaphore.getAndSet(!this.semaphore.get()) ? "foo" : "bar";
 
 		}
 	}
 
 	//Following sink is used as a test consumer.
-	@EnableBinding(Sink.class)
 	static class TestSink {
 
-		@StreamListener("test-sink")
-		public void receive(String payload) {
-			logger.info("Data received: " + payload);
+		@Bean
+		public Consumer<String> receive() {
+			return payload -> logger.info("Data received: " + payload);
 		}
-	}
-
-	public interface Sink {
-		@Input("test-sink")
-		SubscribableChannel sampleSink();
-	}
-
-	public interface Source {
-		@Output("test-source")
-		MessageChannel sampleSource();
 	}
 }
