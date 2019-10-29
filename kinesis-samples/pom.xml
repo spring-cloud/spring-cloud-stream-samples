@@ -10,7 +10,7 @@
 
     <modules>
         <module>kinesis-produce-consume</module>
-        <module>kinesis-to-webflux</module>
+<!--        <module>kinesis-to-webflux</module> -->
     </modules>
 
 </project>
