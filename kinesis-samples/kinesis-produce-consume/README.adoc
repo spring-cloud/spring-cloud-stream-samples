@@ -20,12 +20,11 @@ This sample is a Spring Boot application that uses Spring Cloud Stream to produc
 The sample has the following components:
 
 * KinesisApplication - The Spring Boot Main Application
-* OrderController - The Controller exposing POST and GET endpoints 
+* OrderController - The Controller exposing POST and GET endpoints
 * OrderRepository - An in memory database for storing Order objects
-* OrderProcessor - An interface defining the input `ordersIn` and output `ordersOut` channel bindings
-* OrderSource - The class that produces messages for the stream
-* OrderStreamConfiguration - Listens to the Kinesis stream using ` @StreamListener(OrderProcessor.INPUT)` logs receiving messages from the stream
-    	 
+* OrderSource - The class that produces records for the stream
+* OrderStreamConfiguration - Listens to the Kinesis stream and logs receiving records from the stream
+
 ## Building with Maven
 
 Build the sample by executing:
@@ -45,7 +44,7 @@ Start the Consumer using:
 
 `kinesis-produce-consume>$ java -jar target/spring-cloud-stream-sample-kinesis-0.0.1.BUILD-SNAPSHOT.jar --originator=KinesisConsumer --server.port=64399`
 
-The originator is a key added to messages to tell the receiving application who sent the message. 
+The originator is a key added to messages to tell the receiving application who sent the message.
 If the consumer sent the message nothing is done, if the producer sent the message, then it is saved to an in memory database.
 
 
@@ -88,4 +87,4 @@ The returned Order should match the Order that was POSTed to the Producer.
         "name": "pencil"
     }
 ]`
- 
+
