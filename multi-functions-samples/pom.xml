@@ -9,7 +9,8 @@
     <description>Collection of Spring Cloud Stream Aggregate Samples</description>
 
     <modules>
-        <module>multi-io</module>
+        <module>multi-functions-kafka</module>
+        <module>multi-functions-rabbit</module>
     </modules>
 
 </project>

@@ -1,14 +1,14 @@
-server:
-  port: 8082
 spring:
   cloud:
     stream:
       bindings:
-        output1:
+        source1-out-0:
           destination: test1
-        output2:
+        source2-out-0:
           destination: test2
-        input1:
+        sink1-in-0:
           destination: test1
-        input2:
+        sink2-in-0:
           destination: test2
+      function:
+        definition: source1;source2;sink1;sink2

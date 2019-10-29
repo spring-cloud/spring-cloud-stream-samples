@@ -1,0 +1,51 @@
+Spring Cloud Stream Multiple Functions Sample
+====================================
+
+In this *Spring Cloud Stream* sample, we will show how multiple functions can be defined in a single application and establish binding to destinations.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Code Tour
+
+`source1-out-0` and `sink1-in-0` are bound to the same destination.
+Similarly, `source2-out-0` and `sink2-in-0` are bound to the same destination.
+
+## Running the application
+
+The following instructions assume that you are running Rabbitmq as a Docker image.
+
+* Go to the application root
+* `docker-compose up -d`
+
+* `./mvnw clean package`
+
+* `java -jar target/multi-io-0.0.1-SNAPSHOT.jar`
+
+The application will log messages from source and sink.
+Source sends a message every second which will be consumed by the sink.
+You will see output similar to the following every second.
+
+```
+******************
+From Source1
+******************
+Sending value: FromSource1
+******************
+From Source2
+******************
+Sending value: FromSource2
+******************
+At Sink2
+******************
+Received message FromSource2
+******************
+At Sink1
+******************
+Received message FromSource1
+```
+
+* `docker-compose down`

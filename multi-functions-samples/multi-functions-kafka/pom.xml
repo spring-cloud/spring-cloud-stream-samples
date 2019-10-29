@@ -2,51 +2,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.spring.cloud.stream.sample</groupId>
-	<artifactId>spring-cloud-stream-samples-parent</artifactId>
+	<artifactId>multi-functions-kafka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<url>https://github.com/spring-cloud/spring-cloud-stream-samples</url>
-
-	<name>spring-cloud-stream-samples-parent</name>
-	<description>Demo project for Spring Boot</description>
+	<packaging>jar</packaging>
+	<name>multi-functions-kafka</name>
+	<description>Spring Cloud Stream Sample Multiple functions Kafka</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.2.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<modules>
-        <module>sink-samples</module>
-		<module>source-samples</module>
-		<module>processor-samples</module>
-		<module>kafka-streams-samples</module>
-		<module>multi-functions-samples</module>
-		<module>kinesis-samples</module>
-		<module>multibinder-samples</module>
-		<module>schema-registry-samples</module>
-		<module>partitioning-samples</module>
-		<module>transaction-kafka-samples</module>
-		<module>testing-samples</module>
-		<module>samples-e2e-tests</module>
-		<module>kafka-e2e-kotlin-sample</module>
-	</modules>
-
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<spring-cloud-stream.version>Horsham.BUILD-SNAPSHOT</spring-cloud-stream.version>
+		<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>${spring-cloud-stream.version}</version>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -54,6 +32,20 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -67,6 +59,15 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 	<repositories>
 		<repository>
@@ -84,14 +85,6 @@
 			<id>spring-milestones</id>
 			<name>Spring Milestones</name>
 			<url>https://repo.spring.io/libs-milestone-local</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-releases</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/release</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -126,4 +119,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
 </project>
