@@ -1,0 +1,43 @@
+Spring Cloud Stream Reactive Processor Sensor Average Sample
+=============================================================
+
+This is a Spring Cloud Stream reactive processor sample that showcase a sensor temperature average calculator.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Running the application
+
+* Go to the application root (not the repository root, but this application)
+* `docker-compose up -d` (Skip this section if you have Kafka running elsewhere)
+
+* `./mvnw clean package`
+
+* `java -jar target/sensor-average-reactive-0.0.1-SNAPSHOT.jar`
+
+The main application contains the reactive processor that receives the sensor data for a duration (3 seconds) and averages them.
+It then sends the average data (per sensor id) through the outbound destination of the processor.
+
+The application also provides a source and sink for testing.
+Test source will generate some sensor data every 100 milliseconds and the test sink will verify that the processor has calculated the average.
+Test source is bound to the same broker destination where the processor is listening from.
+Similarly test sink is bound to the same broker destination where the processor is producing to.
+
+You will see output similar to the following on the console every 3 seconds.
+
+```
+Data received: {"id":100100,"average":89.0}
+Data received: {"id":100200,"average":84.0}
+Data received: {"id":100300,"average":88.0}
+Data received: {"id":100100,"average":85.0}
+Data received: {"id":100200,"average":85.0}
+Data received: {"id":100300,"average":83.0}
+Data received: {"id":100100,"average":80.0}
+Data received: {"id":100200,"average":90.0}
+```
+
+* `docker-compose down`
+

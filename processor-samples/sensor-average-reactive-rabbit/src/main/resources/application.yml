@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: calculateAverage;receive;sendTestData
+      bindings:
+        calculateAverage-out-0:
+          destination: average
+        receive-in-0:
+          destination: average
+        calculateAverage-in-0:
+          destination: sensor
+        sendTestData-out-0:
+          destination: sensor

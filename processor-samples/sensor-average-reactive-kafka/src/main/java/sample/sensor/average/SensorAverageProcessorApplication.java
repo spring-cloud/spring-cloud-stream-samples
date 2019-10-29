@@ -1,41 +1,31 @@
 package sample.sensor.average;
 
+import java.time.Duration;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.integration.annotation.InboundChannelAdapter;
-import org.springframework.integration.annotation.Poller;
-import org.springframework.integration.core.MessageSource;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.SubscribableChannel;
-import org.springframework.messaging.support.GenericMessage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.GroupedFlux;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 @SpringBootApplication
-@EnableBinding(Processor.class)
 public class SensorAverageProcessorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SensorAverageProcessorApplication.class, args);
 	}
 
-	@StreamListener
-	@Output(Processor.OUTPUT)
-	public Flux<Average> calculateAverage(@Input(Processor.INPUT) Flux<Sensor> data) {
-		return data.window(Duration.ofSeconds(3)).flatMap(
+	@Bean
+	public Function<Flux<Sensor>, Flux<Average>> calculateAverage() {
+		return data -> data.window(Duration.ofSeconds(3)).flatMap(
 				window -> window.groupBy(Sensor::getId).flatMap(this::calculateAverage));
 	}
 
@@ -165,7 +155,6 @@ public class SensorAverageProcessorApplication {
 	//Test source will send data to the same destination where the processor receives data
 	//Test sink will consume data from the same destination where the processor produces data
 
-	@EnableBinding(Source.class)
 	static class TestSource {
 
 		private AtomicBoolean semaphore = new AtomicBoolean(true);
@@ -173,8 +162,7 @@ public class SensorAverageProcessorApplication {
 		private int[] ids = new int[]{100100, 100200, 100300};
 
 		@Bean
-		@InboundChannelAdapter(channel = "test-source", poller = @Poller(fixedDelay = "100"))
-		public MessageSource<Sensor> sendTestData() {
+		public Supplier<Sensor> sendTestData() {
 
 			return () -> {
 				int id = ids[random.nextInt(3)];
@@ -182,29 +170,18 @@ public class SensorAverageProcessorApplication {
 				Sensor sensor = new Sensor();
 				sensor.setId(id);
 				sensor.setTemperature(temperature);
-				return new GenericMessage<>(sensor);
+				return sensor;
 			};
 		}
 	}
 
-	@EnableBinding(Sink.class)
 	static class TestSink {
 
 		private final Log logger = LogFactory.getLog(getClass());
 
-		@StreamListener("test-sink")
-		public void receive(String payload) {
-			logger.info("Data received: " + payload);
+		@Bean
+		public Consumer<String> receive() {
+			return payload -> logger.info("Data received: " + payload);
 		}
-	}
-
-	public interface Sink {
-		@Input("test-sink")
-		SubscribableChannel sampleSink();
-	}
-
-	public interface Source {
-		@Output("test-source")
-		MessageChannel sampleSource();
 	}
 }
