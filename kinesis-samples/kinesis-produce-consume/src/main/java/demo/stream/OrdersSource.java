@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,21 @@
 
 package demo.stream;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Supplier;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.messaging.support.GenericMessage;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 
 /**
  *
  * @author Peter Oates
+ * @author Artem Bilan
  *
  */
 @Component
@@ -35,15 +38,15 @@ public class OrdersSource {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private OrderProcessor orderOut;
+	private BlockingQueue<Event> orderEvent = new LinkedBlockingQueue<>();
 
-	@Autowired
-	public OrdersSource(OrderProcessor orderOut) {
-		this.orderOut = orderOut;
+	@Bean
+	public Supplier<Event> produceOrder() {
+		return () -> this.orderEvent.poll();
 	}
 
 	public void sendOrder(Event event) {
-		orderOut.ordersOut().send(new GenericMessage<>(event));
+		this.orderEvent.offer(event);
 		logger.info("Event sent: " + event.toString());
 	}
 

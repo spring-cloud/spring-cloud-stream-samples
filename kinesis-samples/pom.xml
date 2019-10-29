@@ -6,11 +6,11 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>kinesis-samples</name>
-    <description>Collection of Spring Cloud Stream Aggregate Samples</description>
+    <description>Collection of Spring Cloud Stream Samples with Kinesis Binder</description>
 
     <modules>
         <module>kinesis-produce-consume</module>
-<!--        <module>kinesis-to-webflux</module> -->
+        <module>kinesis-to-webflux</module>
     </modules>
 
 </project>

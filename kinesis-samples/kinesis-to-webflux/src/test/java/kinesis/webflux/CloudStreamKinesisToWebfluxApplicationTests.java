@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package kinesis.webflux;
 
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Supplier;
+
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -27,20 +28,12 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.aws.autoconfigure.context.ContextResourceLoaderAutoConfiguration;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.messaging.Processor;
+import org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.metadata.ConcurrentMetadataStore;
-import org.springframework.integration.metadata.MetadataStore;
 import org.springframework.integration.metadata.SimpleMetadataStore;
 import org.springframework.integration.support.locks.DefaultLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.support.GenericMessage;
-import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.amazonaws.ClientConfiguration;
@@ -49,36 +42,36 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync;
 import com.amazonaws.services.kinesis.AmazonKinesisAsync;
 import com.amazonaws.services.kinesis.AmazonKinesisAsyncClientBuilder;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-@RunWith(SpringRunner.class)
+/**
+ * @author Artem Bilan
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = {
-				"spring.cloud.stream.bindings." + CloudStreamKinesisToWebfluxApplicationTests.TestSource.TO_KINESIS_OUTPUT + ".destination = SSE_DATA",
-				"spring.cloud.stream.bindings." + CloudStreamKinesisToWebfluxApplicationTests.TestSource.TO_KINESIS_OUTPUT + ".producer.headerMode = none",
-				"logging.level.org.springframework.integration=TRACE"
+				"spring.cloud.stream.bindings.kinesisSource-out-0.destination = SSE_DATA",
+				"spring.cloud.stream.bindings.kinesisSource-out-0.producer.headerMode = none",
+				"spring.cloud.function.definition=kinesisSink;kinesisSource"
 		}
 )
 @AutoConfigureWebTestClient
 public class CloudStreamKinesisToWebfluxApplicationTests {
 
-	@ClassRule
-	public static LocalKinesisResource localKinesisResource = new LocalKinesisResource();
-
 	@Autowired
 	private WebTestClient webTestClient;
 
 	@Autowired
-	private TestSource testSource;
+	private KinesisTestConfiguration kinesisTestConfiguration;
 
 	@Test
-	public void testKinesisToWebFlux() {
-		this.testSource.toKinesisOutput().send(new GenericMessage<>("foo"));
-		this.testSource.toKinesisOutput().send(new GenericMessage<>("bar"));
-		this.testSource.toKinesisOutput().send(new GenericMessage<>("baz"));
+	void testKinesisToWebFlux() {
+		this.kinesisTestConfiguration.eventQueue.offer("foo");
+		this.kinesisTestConfiguration.eventQueue.offer("bar");
+		this.kinesisTestConfiguration.eventQueue.offer("baz");
 
 		Flux<String> seeFlux =
 				this.webTestClient.get().uri("/sseFromKinesis")
@@ -94,11 +87,19 @@ public class CloudStreamKinesisToWebfluxApplicationTests {
 	}
 
 	@TestConfiguration
-	@EnableBinding(TestSource.class)
-	@EnableAutoConfiguration(exclude = ContextResourceLoaderAutoConfiguration.class)
+	@EnableAutoConfiguration(exclude =
+			{ ContextResourceLoaderAutoConfiguration.class,
+					ContextStackAutoConfiguration.class })
 	public static class KinesisTestConfiguration {
 
-		public static final int DEFAULT_KINESALITE_PORT = 4568;
+		private static final int DEFAULT_KINESALITE_PORT = 4568;
+
+		private BlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
+
+		@Bean
+		public Supplier<String> kinesisSource() {
+			return () -> this.eventQueue.poll();
+		}
 
 		@Bean
 		public AmazonKinesisAsync amazonKinesis() {
@@ -126,14 +127,12 @@ public class CloudStreamKinesisToWebfluxApplicationTests {
 		public ConcurrentMetadataStore simpleMetadataStore() {
 			return new SimpleMetadataStore();
 		}
-	}
 
-	interface TestSource {
 
-		String TO_KINESIS_OUTPUT = "toKinesisOutput";
-
-		@Output(TO_KINESIS_OUTPUT)
-		MessageChannel toKinesisOutput();
+		@Bean
+		public AmazonDynamoDBAsync dynamoDB() {
+			return null;
+		}
 
 	}
 

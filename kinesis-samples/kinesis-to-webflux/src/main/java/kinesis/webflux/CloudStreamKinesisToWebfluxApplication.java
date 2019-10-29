@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2018-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,38 +18,42 @@ package kinesis.webflux;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amazonaws.services.kinesis.model.Record;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 
+/**
+ * @author Artem Bilan
+ */
 @SpringBootApplication
-@EnableBinding(Sink.class)
 @RestController
 public class CloudStreamKinesisToWebfluxApplication {
 
-	private volatile Flux<String> recordFlux;
+	private final EmitterProcessor<String> recordProcessor = EmitterProcessor.create();
 
 	@GetMapping(value = "/sseFromKinesis", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<String> getSeeFromKinesis() {
-		return this.recordFlux;
+		return this.recordProcessor;
 	}
 
-	@StreamListener(Sink.INPUT)
-	public void kinesisSink(Flux<List<Record>> recordFlux) {
-		this.recordFlux = recordFlux
-				.flatMap(Flux::fromIterable)
-				.map(record -> new String(record.getData().array(), StandardCharsets.UTF_8));
+	@Bean
+	public Consumer<Flux<List<Record>>> kinesisSink() {
+		return recordFlux ->
+				recordFlux
+						.flatMap(Flux::fromIterable)
+						.map(record -> new String(record.getData().array(), StandardCharsets.UTF_8))
+						.doOnNext(this.recordProcessor::onNext)
+						.subscribe();
 	}
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(CloudStreamKinesisToWebfluxApplication.class, args);

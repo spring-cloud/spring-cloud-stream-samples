@@ -2,39 +2,41 @@ originator: KinesisProducer
 server:
  port: 64398
 management:
- port: 8082
- context-path: /manage
-security:
- user:
-  name: admin
-  password: 2c76788d-e661-49fd-baba-4b41e7c1dd47
+  server:
+    port: 8082
+    servlet:
+      context-path: /manage
 
-  
 spring:
+  security:
+    user:
+      name: admin
+      password: 2c76788d-e661-49fd-baba-4b41e7c1dd47
   cloud:
     stream:
       bindings:
-        ordersOut: 
+        produceOrder-out-0:
           destination: test_stream
           content-type: application/json
-          producer: 
-            partitionKeyExpression: "1" 
-        ordersIn:
+          producer:
+            partitionKeyExpression: "1"
+        processOrder-in-0:
           destination: test_stream
           content-type: application/json
-    
-          
-          
-cloud:  
-  aws:  
-    region:  
-      static: eu-west-1 
+    function:
+      definition: processOrder;produceOrder
 
 
-logging: 
+cloud:
+  aws:
+    region:
+      static: eu-west-1
+
+
+logging:
   level:
-    com: 
+    com:
       amazonaws: INFO
     org:
-      apache: 
+      apache:
         http: INFO

@@ -2,7 +2,7 @@ spring:
   cloud:
     stream:
       bindings:
-        input:
+        kinesisSink-in-0:
           destination: SSE_DATA
           group: kinesis-to-sse
           consumer:
@@ -10,7 +10,7 @@ spring:
             useNativeDecoding: true
       kinesis:
         bindings:
-          input:
+          kinesisSink-in-0:
             consumer:
               listenerMode: batch
 
