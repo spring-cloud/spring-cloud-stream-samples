@@ -2,7 +2,7 @@ version: '3'
 services:
   kafka1:
     image: wurstmeister/kafka
-    container_name: kafka-multibinder-1
+    container_name: kafka-multi-binder-1
     ports:
       - "9092:9092"
     environment:
@@ -19,7 +19,7 @@ services:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper1
   kafka2:
     image: wurstmeister/kafka
-    container_name: kafka-multibinder-2
+    container_name: kafka-multi-binder-2
     ports:
       - "9093:9092"
     environment:
