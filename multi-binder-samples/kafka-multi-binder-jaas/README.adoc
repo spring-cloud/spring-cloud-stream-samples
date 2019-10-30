@@ -3,7 +3,6 @@
 This is a sample application that demonstrates how to connect to multi kafka clusters with security enabled using multiple binders.
 This application uses two Kafka clusters both of them are enabled with security (JAAS - SASL/PLAINTEXT).
 
-
 ## Here are the detailed instructions for setting up your cluster.
 
 If you already have two clusters with security (sasl/plaintext) enabled, you can skip this section. However, it may still benefit to go over these instructions in order to avoid any inconsistencies with your environment.
@@ -20,7 +19,7 @@ If you already have two clusters with security (sasl/plaintext) enabled, you can
 KafkaServer {
    org.apache.kafka.common.security.plain.PlainLoginModule required
    username="admin"
-   password="admin-secret";
+   password="admin-secret"
    user_admin="admin-secret";
 };
 
@@ -99,7 +98,7 @@ $ ./<PATH-TO-CLUSTER-1>/bin/kafka-server-start.sh config/server.properties
 KafkaServer {
    org.apache.kafka.common.security.plain.PlainLoginModule required
    username="admin"
-   password="admin-secret";
+   password="admin-secret"
    user_admin="admin-secret";
 };
 

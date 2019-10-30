@@ -16,15 +16,11 @@
 
 package multibinder.kafka.jaas;
 
+import java.util.function.Function;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.SubscribableChannel;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class MultiBinderKafkaJaasSample {
@@ -33,35 +29,17 @@ public class MultiBinderKafkaJaasSample {
 		SpringApplication.run(MultiBinderKafkaJaasSample.class, args);
 	}
 
-	@EnableBinding(CustomProcessor.class)
-	static class Foo  {
+	static class Foo {
 
-		@StreamListener("input")
-		@SendTo("output")
-		public String receive(String foo) {
-			return foo;
+		@Bean
+		public Function<String, String> receive() {
+			return foo -> foo;
 		}
 
-		@StreamListener("input1")
-		@SendTo("output1")
-		public String receive1(String foo) {
-			return foo;
+		@Bean
+		public Function<String, String> receive1() {
+			return foo -> foo;
 		}
 	}
 
-	interface CustomProcessor {
-
-		@Input("input")
-		SubscribableChannel input();
-
-		@Output("output")
-		MessageChannel output();
-
-		@Input("input1")
-		SubscribableChannel input1();
-
-		@Output("output1")
-		MessageChannel output1();
-
-	}
 }

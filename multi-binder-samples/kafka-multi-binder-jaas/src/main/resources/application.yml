@@ -1,15 +1,16 @@
 spring.cloud.stream:
+  function.definition: receive;receive1
   bindings:
-    input:
+    receive-in-0:
       destination: kafka1-in
       binder: kafka1
-    output:
+    receive-out-0:
       destination: kafka2-out
       binder: kafka2
-    input1:
+    receive1-in-0:
       destination: kafka2-in
       binder: kafka2
-    output1:
+    receive1-out-0:
       destination: kafka1-out
       binder: kafka1
   binders:

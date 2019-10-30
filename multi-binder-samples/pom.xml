@@ -11,7 +11,7 @@
     <modules>
         <module>multi-binder-kafka-rabbit</module>
         <module>multi-binder-two-kafka-clusters</module>
-        <module>kafka-multibinder-jaas</module>
+        <module>kafka-multi-binder-jaas</module>
         <module>multi-binder-kafka-streams</module>
     </modules>
 

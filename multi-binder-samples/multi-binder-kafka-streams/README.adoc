@@ -28,7 +28,7 @@ Assuming you are running two dockerized Kafka clusters as above.
 
 Issue the following commands:
 
-`docker exec -it kafka-multib-inder-1 /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic dataIn`
+`docker exec -it kafka-multi-binder-1 /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic dataIn`
 
 On another terminal:
 
