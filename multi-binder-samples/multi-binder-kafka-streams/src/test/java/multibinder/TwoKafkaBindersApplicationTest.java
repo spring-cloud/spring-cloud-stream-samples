@@ -96,7 +96,7 @@ public class TwoKafkaBindersApplicationTest {
 		//receiving test message sent by the test producer in the application
 		Message<?> receive = dataConsumer.receive(60_000);
 		Assert.assertThat(receive, Matchers.notNullValue());
-		Assert.assertThat(receive.getPayload(), CoreMatchers.equalTo("foo".getBytes()));
+		Assert.assertThat(receive.getPayload(), CoreMatchers.anyOf(equalTo("FOO".getBytes()), equalTo("BAR".getBytes())));
 	}
 
 }

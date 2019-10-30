@@ -1,6 +1,8 @@
 spring:
   cloud:
     stream:
+      function:
+        definition: sendTestData;process;receive;concatFn
       kafka:
         streams:
           binder:
@@ -11,24 +13,26 @@ spring:
               default.value.serde: org.apache.kafka.common.serialization.Serdes$BytesSerde
               commit.interval.ms: 1000
       bindings:
-        input:
+        process-in-0:
           destination: dataIn
           binder: kafka1
-          group: testGroup
-        output:
+        process-out-0:
           destination: dataOut
           binder: kafka2
         #Test source binding (used for testing)
-        output1:
+        sendTestData-out-0:
           destination: dataIn
           binder: kafka1
-        #Test sink binding (used for testing)
-        input1:
-          destination: dataOut
-          binder: kafka2
-        input2:
-          destination: foobar
+        concatFn-in-0:
+            destination: dataOut
+            binder: kafka3
+        concatFn-out-0:
+          destination: concatOut
           binder: kafka3
+        #Test sink binding (used for testing)
+        receive-in-0:
+          destination: concatOut
+          binder: kafka2
       binders:
         kafka1:
          type: kafka

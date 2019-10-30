@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>multi-binder-two-kafka-clusters</artifactId>
+	<artifactId>multi-binder-kafka-streams</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>multi-binder-two-kafka-clusters</name>
-	<description>Spring Cloud Stream Multibinder Two Kafka Clusters Sample</description>
+	<name>multi-binder-kafka-streams</name>
+	<description>Spring Cloud Stream Multibinder Two Kafka Clusters (Kafka Streams) Sample</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -35,6 +35,10 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-binder-kafka-streams</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
