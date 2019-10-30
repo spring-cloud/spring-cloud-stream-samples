@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    stream:
+      kafka:
+        binder:
+          autoAddPartitions: true
+          minPartitionCount: 4
+      bindings:
+        listen-in-0:
+          destination: partitioned.destination
+          group: myGroup

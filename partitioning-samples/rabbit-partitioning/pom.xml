@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.spring.cloud.stream.sample</groupId>
-    <artifactId>partitioning-samples</artifactId>
+    <artifactId>rabbit-partitioning</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>partitioning-samples</name>
-    <description>Collection of Spring Cloud Stream partitioning Samples</description>
+    <name>rabbit-partitioning</name>
+    <description>Collection of Spring Cloud Stream partitioning Samples using rabbit binder</description>
 
     <modules>
-        <module>kafka-partitioning</module>
-        <module>rabbit-partitioning</module>
+        <module>partitioning-producer-sample-rabbit</module>
+        <module>partitioning-consumer-sample-rabbit</module>
     </modules>
 
 </project>

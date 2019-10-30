@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        generate-out-0:
+          destination: partitioned.destination
+          producer:
+            #payload string length - 1 is the partition where it will get stored
+            partition-key-expression: headers['partitionKey'] - 1
+            partition-count: 4

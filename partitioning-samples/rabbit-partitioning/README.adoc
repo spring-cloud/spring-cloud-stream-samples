@@ -1,0 +1,51 @@
+Spring Cloud Stream Partitioning Sample
+========================================
+
+These sample apps demonstrate how partitioning works in Spring Cloud Stream with RabbitMQ.
+Sample producer and consumer are provided.
+
+## Quick introduction
+
+The producer used in the sample produces messages with text that has a length of 1, 2, 3 or 4.
+There is a configuration in the producer's application.yml file for `partition-key-expression` that uses the length of the payload minus 1 as the partition key expression to use.
+This value will be used by the binder for selecting the correct partition based on the total number of partitions configured on the destination at the broker.
+We use 4 partitions for this demo.
+
+## Running the samples
+
+The following instructions assume that you are running Rabbit as a Docker image.
+
+* `docker-compose up -d`
+
+* Ensure that you are in the directory `rabbit-partitioning`
+
+* `./mvnw clean package`
+
+Rabbit partitioning demo is slightly different from Kafka.
+We need to spin up 4 consumers for each of the four partitions.
+
+* `java -jar partitioning-consumer-sample-rabbit/target/partitioning-consumer-sample-rabbit-0.0.1-SNAPSHOT.jar --server.port=9005`
+
+On another terminal start another instance of the consumer.
+
+* `java -jar partitioning-consumer-sample-rabbit/target/partitioning-consumer-sample-rabbit-0.0.1-SNAPSHOT.jar --server.port=9006 --spring.cloud.stream.bindings.listen-in-0.consumer.instanceIndex=1`
+
+On another terminal start another instance of the consumer.
+
+* `java -jar partitioning-consumer-sample-rabbit/target/partitioning-consumer-sample-rabbit-0.0.1-SNAPSHOT.jar --server.port=9007 --spring.cloud.stream.bindings.listen-in-0.consumer.instanceIndex=2`
+
+On another terminal start yet another instance of the consumer.
+
+* `java -jar partitioning-consumer-sample-rabbit/target/partitioning-consumer-sample-rabbit-0.0.1-SNAPSHOT.jar --server.port=9008 --spring.cloud.stream.bindings.listen-in-0.consumer.instanceIndex=3`
+
+On another terminal start the producer.
+
+* `java -jar partitioning-producer-sample-rabbit/target/partitioning-producer-sample-rabbit-0.0.1-SNAPSHOT.jar --server.port=9010`
+
+Producer sends messages randomly that has string length of 1, 2, 3, or 4.
+Watch the consumer console logs and verify that the correct instances are receiving the messages.
+The first consumer we started should receive messages with a string length of 1 (partition-0), second consumer with `instanceIndex` set to 1 should receive messages with string length of 2 (partition-1) so on and so forth.
+
+Once you are done testing, stop all the instances.
+
+* `docker-compose down`
