@@ -1,8 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:mariadb://localhost:3306/sample_mysql_db
-    username: root
-    password: pwd
-    driver-class-name: org.mariadb.jdbc.Driver
-spring.cloud.stream.bindings.input.destination: sample-sink-data
-spring.cloud.stream.bindings.output.destination: sample-sink-data

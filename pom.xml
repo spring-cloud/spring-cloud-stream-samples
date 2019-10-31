@@ -19,7 +19,6 @@
 	</parent>
 
 	<modules>
-        <module>sink-samples</module>
 		<module>source-samples</module>
 		<module>processor-samples</module>
 		<module>kafka-streams-samples</module>
