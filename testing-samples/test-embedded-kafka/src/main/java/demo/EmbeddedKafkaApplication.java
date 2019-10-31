@@ -16,29 +16,26 @@
 
 package demo;
 
+import java.util.function.Function;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author Gary Russell
  *
  */
 @SpringBootApplication
-@EnableBinding(Processor.class)
 public class EmbeddedKafkaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EmbeddedKafkaApplication.class, args);
 	}
 
-	@StreamListener(Processor.INPUT)
-	@SendTo(Processor.OUTPUT)
-	public byte[] handle(byte[] in){
-		return new String(in).toUpperCase().getBytes();
+	@Bean
+	public Function<byte[], byte[]> handle(){
+		return in -> new String(in).toUpperCase().getBytes();
 	}
 
 }
