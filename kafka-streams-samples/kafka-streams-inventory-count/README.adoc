@@ -1,0 +1,34 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams aggregation.
+
+The application illustrates an inventory tracking use case. InventoryUpdateEvents are input and keyed by ProductKey.
+
+Each event contains the key, a delta value, an action:
+
+   * `INC` - add the delta to the existing count
+   * `DEC` - subtract the delta from the existing count
+   * `REP` - replace the count with the delta value
+
+The output topic contains a running total for each product key.
+
+This sample illustrates the use of Custom key and Value types with Json serialization. We also
+compare the following testing strategies:
+
+* `KafkaStreamsInventoryCountTests` - Uses an Embedded Kafka Broker and manually created Spring application context.
+* `SpringBootKafkaStreamsInventoryCountTests` - Uses an Embedded Kafka Broker and is annotated with `@SpringBootTest`.
+* `TopolologyTestDriverKafkaStreamsInventoryCountTests` - Use the `TopologyTestDriver` and invokes the processer directly.
+
+There is no Embedded Kafka Broker or Spring configuration, so the tests execute very fast.
+
+All three implementations run the same set of tests, each processes randomly generated test data.
+
+=== Running the tests:
+
+```bash
+$./mvnw clean test
+```
+
+
+
+
