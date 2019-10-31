@@ -1,3 +1,6 @@
 # Input bindings used for testing
-spring.cloud.stream.bindings.input1.destination: customerId-1
-spring.cloud.stream.bindings.input2.destination: customerId-2
+spring.cloud.stream:
+  function.definition: supplier;receive1;receive2;
+  bindings:
+    receive1-in-0.destination: customerId-1
+    receive2-in-0.destination: customerId-2
