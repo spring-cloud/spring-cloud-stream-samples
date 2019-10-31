@@ -16,13 +16,7 @@ However, the recommended approach to build them is to pick the sample that you a
 
 ==== Source samples
 
-* Sample JDBC source using MySQL - MariaDB variant - (Kafka and Rabbit)
-
 * Source with dynamic destinations (Kafka and Rabbit)
-
-==== Sink samples
-
-* Simple JDBC sink using MariaDB (Kafka and Rabbit)
 
 ==== Processor samples
 
@@ -62,9 +56,3 @@ A collection of various applications in stream processing using Spring Cloud Str
 
 * Sample with embedded Kafka
 * General testing patterns in Spring Cloud Stream
-
-==== Samples Acceptance Tests
-
-This module is strictly used as an end to end acceptance test framework for the samples in this repo.
-By default, the tests are not run as part of a normal build.
-Please see the README in the acceptance test module for more details.
