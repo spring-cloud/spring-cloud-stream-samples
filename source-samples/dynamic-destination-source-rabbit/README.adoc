@@ -1,0 +1,69 @@
+Spring Cloud Stream Source with Dynamic Destinations
+====================================================
+
+In this *Spring Cloud Stream* sample, a source application publishes messages to dynamically created destinations.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Code Tour
+
+The class `SourceWithDynamicDestination` is a REST controller that registers the 'POST' request mapping for '/'.
+When a payload is sent to 'http://localhost:8080/' by a POST request (port 8080 is the default), this application uses a router that is SpEL based which usea a `BinderAwareChannelResolver` to resolve the destination dynamically at runtime.
+Currently, this router uses `payload.id` as the SpEL expression for its resolver to resolve the destination name.
+
+## Running the application with Kafka binder
+
+The following instructions assume that you are running Kafka as a Docker image.
+
+* Go to the application root
+* `docker-compose up -d`
+
+* `./mvnw clean package`
+
+* `java -jar target/dynamic-destination-source-0.0.1-SNAPSHOT.jar`
+
+Upon starting the application on the default port 8080, if the following data are sent:
+
+curl -H "Content-Type: application/json" -X POST -d '{"id":"customerId-1","bill-pay":"100"}' http://localhost:8080
+
+curl -H "Content-Type: application/json" -X POST -d '{"id":"customerId-2","bill-pay":"150"}' http://localhost:8080
+
+The destinations 'customerId-1' and 'customerId-2' are created as topics on Kafka and the data is published to the appropriate destinations dynamically.
+
+Do the above HTTP post a few times and watch the output appear on the corresponding dynamically created topics.
+
+`docker exec -it kafka-dynamic-source /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic customerId-1`
+
+`docker exec -it kafka-dynamic-source /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic customerId-2`
+
+There are two convenient test sinks are provided as part of the application for easy testing which log the data from the above dynamic sources.
+
+* `docker-compose down`
+
+## Running the application with Rabbit binder
+
+* Go to the application root
+* `docker-compose -f docker-compose-rabbit.yml up -d`
+
+* `./mvnw clean package -P rabbit-binder`
+
+* `java -jar target/dynamic-destination-source-0.0.1-SNAPSHOT.jar`
+
+Upon starting the application on the default port 8080, if the following data are sent:
+
+curl -H "Content-Type: application/json" -X POST -d '{"id":"customerId-1","bill-pay":"100"}' http://localhost:8080
+
+curl -H "Content-Type: application/json" -X POST -d '{"id":"customerId-2","bill-pay":"150"}' http://localhost:8080
+
+The destinations 'customerId-1' and 'customerId-2' are created as exchanges in Rabbit and the data is published to the appropriate destinations dynamically.
+
+Do the above HTTP post a few times and watch the output appear on the corresponding exchanges.
+
+`http://localhost:15672`
+
+Once you are done testing: `docker-compose -f docker-compose-rabbit.yml down`
+

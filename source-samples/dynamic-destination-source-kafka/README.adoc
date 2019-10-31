@@ -37,6 +37,7 @@ The destinations 'customerId-1' and 'customerId-2' are created as topics on Kafk
 Do the above HTTP post a few times and watch the output appear on the corresponding dynamically created topics.
 
 `docker exec -it kafka-dynamic-source /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic customerId-1`
+
 `docker exec -it kafka-dynamic-source /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic customerId-2`
 
 There are two convenient test sinks are provided as part of the application for easy testing which log the data from the above dynamic sources.

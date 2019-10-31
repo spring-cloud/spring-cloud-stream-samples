@@ -67,10 +67,7 @@ public class DynamicDestinationSourceApplication {
 
 	@Bean
 	public Supplier<Flux<Message<?>>> supplier() {
-		return () ->{
-			System.out.println("hello");
-			return processor;
-		};
+		return () -> processor;
 	}
 
 	//Following sink is used as test consumer. It logs the data received through the consumer.

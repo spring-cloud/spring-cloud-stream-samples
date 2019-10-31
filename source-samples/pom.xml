@@ -9,7 +9,8 @@
     <description>Collection of Spring Cloud Stream Source Samples</description>
 
     <modules>
-        <module>dynamic-destination-source</module>
+        <module>dynamic-destination-source-kafka</module>
+        <module>dynamic-destination-source-rabbit</module>
     </modules>
 
 </project>
