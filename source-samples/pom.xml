@@ -9,7 +9,6 @@
     <description>Collection of Spring Cloud Stream Source Samples</description>
 
     <modules>
-        <module>jdbc-source</module>
         <module>dynamic-destination-source</module>
     </modules>
 
