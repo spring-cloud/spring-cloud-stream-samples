@@ -1,14 +1,6 @@
-spring.application.name: kafka-streams-aggregate-sample
+spring.application.name: kafka-streams-inventory-processor
 
-spring.cloud.stream.bindings.input:
+spring.cloud.stream.bindings.process-in-0:
   destination: inventory-update-events
-  group: inventory-processor
-spring.cloud.stream.bindings.output:
+spring.cloud.stream.bindings.process-out-0:
   destination: inventory-count-events
-
-spring.cloud.stream.kafka.streams.binder:
-  configuration:
-    spring.json.trusted.packages: kafka.streams.inventory.count
-    default.key.serde: org.springframework.kafka.support.serializer.JsonSerde
-
-

@@ -82,7 +82,7 @@ public class TopolologyTestDriverKafkaStreamsInventoryCountTests extends Abstrac
         KStream<ProductKey, InventoryUpdateEvent> input = builder.stream(INPUT_TOPIC, Consumed.with(keySerde, updateEventSerde));
         KafkaStreamsInventoryAggregator inventoryAggregator = new KafkaStreamsInventoryAggregator(Stores.inMemoryKeyValueStore(STORE_NAME));
 
-        KStream<ProductKey, InventoryCountEvent> output = inventoryAggregator.process(input);
+        KStream<ProductKey, InventoryCountEvent> output = inventoryAggregator.process().apply(input);
         output.to(OUTPUT_TOPIC);
 
         Topology topology = builder.build();

@@ -15,25 +15,20 @@
  */
 package kafka.streams.inventory.count;
 
+import java.util.function.Function;
+
 import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
-import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.Stores;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
-import org.springframework.messaging.handler.annotation.SendTo;
 
 
 @SpringBootApplication
@@ -51,8 +46,6 @@ public class KafkaStreamsInventoryCountApplication {
         return Stores.inMemoryKeyValueStore(STORE_NAME);
     }
 
-
-    @EnableBinding(UpdateEventProcessor.class)
     public static class KafkaStreamsInventoryAggregator {
 
         private static final Logger logger = LoggerFactory.getLogger(KafkaStreamsInventoryAggregator.class);
@@ -74,27 +67,16 @@ public class KafkaStreamsInventoryCountApplication {
             this.updateEventSerde = new JsonSerde<>(InventoryUpdateEvent.class);
         }
 
-        @StreamListener("input")
-        @SendTo("output")
-        public KStream<ProductKey, InventoryCountEvent> process(KStream<ProductKey, InventoryUpdateEvent> input) {
-            return input
+        @Bean
+        public Function<KStream<ProductKey, InventoryUpdateEvent>, KStream<ProductKey, InventoryCountEvent>> process() {
+            return input -> input
                     .groupByKey(Grouped.with(keySerde, updateEventSerde))
                     .aggregate(InventoryCountEvent::new,
-                            (key, updateEvent, summaryEvent) -> inventoryCountUpdateEventUpdater.apply(updateEvent, summaryEvent)
-                    //        , Materialized.<ProductKey, InventoryCountEvent, KeyValueStore<Bytes, byte[]>>as(STORE_NAME)
-                              ,Materialized.<ProductKey, InventoryCountEvent>as(storeSupplier)
+                            (key, updateEvent, summaryEvent) -> inventoryCountUpdateEventUpdater.apply(updateEvent, summaryEvent),
+                              Materialized.<ProductKey, InventoryCountEvent>as(storeSupplier)
                                     .withKeySerde(keySerde)
                                     .withValueSerde(countEventSerde))
-
                     .toStream().peek((k, v) -> logger.debug("aggregated count key {} {}", k.getProductCode(), v.getCount()));
         }
-    }
-
-    interface UpdateEventProcessor {
-        @Input("input")
-        KStream<?, ?> input();
-
-        @Output("output")
-        KStream<?, ?> output();
     }
 }

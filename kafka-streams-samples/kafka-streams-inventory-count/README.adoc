@@ -18,8 +18,7 @@ compare the following testing strategies:
 * `KafkaStreamsInventoryCountTests` - Uses an Embedded Kafka Broker and manually created Spring application context.
 * `SpringBootKafkaStreamsInventoryCountTests` - Uses an Embedded Kafka Broker and is annotated with `@SpringBootTest`.
 * `TopolologyTestDriverKafkaStreamsInventoryCountTests` - Use the `TopologyTestDriver` and invokes the processer directly.
-
-There is no Embedded Kafka Broker or Spring configuration, so the tests execute very fast.
+There is no Embedded Kafka Broker or Spring configuration in these tests, so the tests execute very fast.
 
 All three implementations run the same set of tests, each processes randomly generated test data.
 

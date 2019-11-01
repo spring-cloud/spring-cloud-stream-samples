@@ -20,6 +20,7 @@
         <module>kafka-streams-product-tracker</module>
         <module>kafka-streams-aggregate</module>
         <module>kafka-streams-to-rabbitmq-message-channel</module>
+        <module>kafka-streams-inventory-count</module>
     </modules>
 
 </project>
