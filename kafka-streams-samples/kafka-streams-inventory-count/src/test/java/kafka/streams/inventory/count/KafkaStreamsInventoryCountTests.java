@@ -43,8 +43,7 @@ import org.springframework.test.annotation.DirtiesContext;
  *
  * @author David Turanski
  */
-@EmbeddedKafka(topics = KafkaStreamsInventoryCountTests.INPUT_TOPIC,
-        brokerProperties = {"replica.high.watermark.checkpoint.interval.ms=100000000"})
+@EmbeddedKafka(topics = KafkaStreamsInventoryCountTests.INPUT_TOPIC)
 @DirtiesContext
 public class KafkaStreamsInventoryCountTests extends AbstractInventoryCountTests{
 
