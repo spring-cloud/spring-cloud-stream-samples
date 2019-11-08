@@ -30,6 +30,9 @@ import org.mockito.ArgumentCaptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.metrics.KafkaMetricsAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.integration.channel.AbstractMessageChannel;
@@ -50,6 +53,9 @@ import org.springframework.test.annotation.DirtiesContext;
  *
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ImportAutoConfiguration(exclude = {
+		KafkaAutoConfiguration.class,
+		KafkaMetricsAutoConfiguration.class })
 @DirtiesContext
 class JdbcSinkTests {
 

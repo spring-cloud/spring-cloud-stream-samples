@@ -27,6 +27,12 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.metrics.KafkaMetricsAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.messaging.Message;
@@ -40,7 +46,15 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author Artem Bilan
  *
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+		webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = "spring.cloud.stream.poller.fixed-delay=1")
+@ImportAutoConfiguration(exclude = {
+		KafkaAutoConfiguration.class,
+		KafkaMetricsAutoConfiguration.class,
+		DataSourceAutoConfiguration.class,
+		TransactionAutoConfiguration.class,
+		DataSourceTransactionManagerAutoConfiguration.class })
 @DirtiesContext
 class OddEvenSourceTests {
 

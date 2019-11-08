@@ -26,7 +26,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.stream.testing.processor.ToUpperCaseProcessor;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -44,8 +49,6 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(
 		properties = {
-				"spring.autoconfigure.exclude=org.springframework.cloud.stream.test.binder" +
-						".TestSupportBinderAutoConfiguration",
 				"spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer",
 				"spring.cloud.stream.bindings.uppercaseFunction-out-0.producer.headerMode=none",
 				"spring.cloud.stream.bindings.uppercaseFunction-out-0.destination=" + ToUpperCaseProcessorIntTests.TEST_TOPIC_OUT,
@@ -56,6 +59,11 @@ import org.springframework.test.annotation.DirtiesContext;
 		},
 		classes = ToUpperCaseProcessor.class,
 		webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ImportAutoConfiguration(exclude = {
+		TestSupportBinderAutoConfiguration.class,
+		DataSourceAutoConfiguration.class,
+		TransactionAutoConfiguration.class,
+		DataSourceTransactionManagerAutoConfiguration.class })
 @EmbeddedKafka(controlledShutdown = true,
 		bootstrapServersProperty = "spring.kafka.bootstrap-servers",
 		topics = ToUpperCaseProcessorIntTests.TEST_TOPIC_OUT)
