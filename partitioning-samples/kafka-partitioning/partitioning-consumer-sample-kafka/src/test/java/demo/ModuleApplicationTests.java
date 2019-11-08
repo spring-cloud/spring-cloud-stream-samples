@@ -16,6 +16,7 @@
 
 package demo;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +29,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @SpringBootTest(classes = PartitioningKafkaDemoApplication.class)
 @WebAppConfiguration
 @DirtiesContext
+@Ignore("until we have proper test")
 public class ModuleApplicationTests {
 
 	@Test
