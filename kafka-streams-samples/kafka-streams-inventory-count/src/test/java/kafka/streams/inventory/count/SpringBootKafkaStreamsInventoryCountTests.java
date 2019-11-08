@@ -46,6 +46,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
  */
 @EmbeddedKafka(
         bootstrapServersProperty = "spring.kafka.bootstrap-servers",
+        brokerProperties = {"replica.high.watermark.checkpoint.interval.ms=100000000"},
         topics = {
                 SpringBootKafkaStreamsInventoryCountTests.INPUT_TOPIC
         })

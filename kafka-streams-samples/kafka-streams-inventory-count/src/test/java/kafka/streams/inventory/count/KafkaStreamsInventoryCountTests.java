@@ -42,7 +42,8 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
  *
  * @author David Turanski
  */
-@EmbeddedKafka(topics = KafkaStreamsInventoryCountTests.INPUT_TOPIC)
+@EmbeddedKafka(topics = KafkaStreamsInventoryCountTests.INPUT_TOPIC,
+        brokerProperties = {"replica.high.watermark.checkpoint.interval.ms=100000000"})
 public class KafkaStreamsInventoryCountTests extends AbstractInventoryCountTests{
 
     static final String INPUT_TOPIC = "inventory-update-events";
