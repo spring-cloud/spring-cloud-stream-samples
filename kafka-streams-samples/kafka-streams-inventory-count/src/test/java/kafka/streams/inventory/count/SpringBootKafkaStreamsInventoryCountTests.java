@@ -31,6 +31,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.annotation.DirtiesContext;
 
 
 /**
@@ -59,6 +60,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
                 "spring.cloud.stream.kafka.streams.binder.configuration.commit.interval.ms=1000",
                 "spring.cloud.stream.kafka.streams.binder.configuration.cache.max.bytes.buffering=0"
         })
+@DirtiesContext
 public class SpringBootKafkaStreamsInventoryCountTests extends AbstractInventoryCountTests {
 
     static final String INPUT_TOPIC = "inventory-update-events";

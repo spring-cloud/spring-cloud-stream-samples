@@ -32,6 +32,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * A test implementation that uses {@link SpringApplicationBuilder} directly, instead of '@SpringBootTest'.
@@ -44,6 +45,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
  */
 @EmbeddedKafka(topics = KafkaStreamsInventoryCountTests.INPUT_TOPIC,
         brokerProperties = {"replica.high.watermark.checkpoint.interval.ms=100000000"})
+@DirtiesContext
 public class KafkaStreamsInventoryCountTests extends AbstractInventoryCountTests{
 
     static final String INPUT_TOPIC = "inventory-update-events";
