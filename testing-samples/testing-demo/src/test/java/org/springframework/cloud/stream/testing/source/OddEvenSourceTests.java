@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.stream.testing.processor;
+package org.springframework.cloud.stream.testing.source;
+
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesMessageThat;
 import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
-import static org.springframework.integration.test.matcher.PayloadAndHeaderMatcher.sameExceptIgnorableHeaders;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +35,8 @@ import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
-import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
@@ -51,7 +46,9 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author Artem Bilan
  *
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+		webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = "spring.cloud.stream.poller.fixed-delay=1")
 @ImportAutoConfiguration(exclude = {
 		KafkaAutoConfiguration.class,
 		KafkaMetricsAutoConfiguration.class,
@@ -59,50 +56,23 @@ import org.springframework.test.annotation.DirtiesContext;
 		TransactionAutoConfiguration.class,
 		DataSourceTransactionManagerAutoConfiguration.class })
 @DirtiesContext
-class ToUpperCaseProcessorTests {
+class OddEvenSourceTests {
 
 	@Autowired
-	@Qualifier("uppercaseFunction-in-0")
-	private MessageChannel input;
+	@Qualifier("oddEvenSupplier-out-0")
+	MessageChannel outputDestination;
 
 	@Autowired
-	@Qualifier("uppercaseFunction-out-0")
-	private MessageChannel output;
-
-	@Autowired
-	private MessageCollector collector;
+	MessageCollector collector;
 
 	@Test
-	@SuppressWarnings("unchecked")
 	void testMessages() {
-		this.input.send(new GenericMessage<>("odd"));
-		this.input.send(new GenericMessage<>("even"));
-		this.input.send(new GenericMessage<>("odd meets even"));
-		this.input.send(new GenericMessage<>("nothing but the best test"));
+		BlockingQueue<Message<?>> messages = this.collector.forChannel(this.outputDestination);
 
-		BlockingQueue<Message<?>> messages = this.collector.forChannel(this.output);
-
-		assertThat(messages, receivesPayloadThat(is("ODD")));
-		assertThat(messages, receivesPayloadThat(is("EVEN")));
-		assertThat(messages, receivesPayloadThat(is("ODD MEETS EVEN")));
-		assertThat(messages, receivesPayloadThat(not("nothing but the best test")));
-
-		Message<String> testMessage =
-				MessageBuilder.withPayload("headers")
-						.setHeader("odd", "even")
-						.build();
-
-		input.send(testMessage);
-
-		Message<String> expected =
-				MessageBuilder.withPayload("HEADERS")
-						.copyHeaders(testMessage.getHeaders())
-						.build();
-
-		Matcher<Message<Object>> sameExceptIgnorableHeaders =
-				(Matcher<Message<Object>>) (Matcher<?>) sameExceptIgnorableHeaders(expected);
-
-		assertThat(messages, receivesMessageThat(sameExceptIgnorableHeaders));
+		assertThat(messages, receivesPayloadThat(is("odd")));
+		assertThat(messages, receivesPayloadThat(is("even")));
+		assertThat(messages, receivesPayloadThat(is("odd")));
+		assertThat(messages, receivesPayloadThat(is("even")));
 	}
 
 }

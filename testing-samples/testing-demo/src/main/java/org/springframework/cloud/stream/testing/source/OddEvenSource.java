@@ -14,44 +14,34 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.stream.testing.sink;
+package org.springframework.cloud.stream.testing.source;
 
-import java.util.function.Consumer;
-
-import javax.sql.DataSource;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.jdbc.JdbcMessageHandler;
-import org.springframework.messaging.MessageHandler;
 
 /**
- * The Spring Cloud Stream Sink application,
- * which insert payloads of incoming messages to the SINK table in the RDBMS.
+ * The Spring Cloud Stream Source application,
+ * which generates every second "odd" or "even" string in round-robin manner.
  *
  * @author Artem Bilan
  *
  */
 @SpringBootApplication
-public class JdbcSink {
+public class OddEvenSource {
+
+	private AtomicBoolean semaphore = new AtomicBoolean(true);
 
 	@Bean
-	public IntegrationFlow jdbcConsumerFlow() {
-		return IntegrationFlows.from(Consumer.class, (gateway) -> gateway.beanName("jdbcConsumer"))
-				.handle(jdbcHandler(null))
-				.get();
-	}
-
-	@Bean
-	public MessageHandler jdbcHandler(DataSource dataSource) {
-		return new JdbcMessageHandler(dataSource, "INSERT INTO sink (value) VALUES (:payload)");
+	public Supplier<String> oddEvenSupplier() {
+		return () -> this.semaphore.getAndSet(!this.semaphore.get()) ? "odd" : "even";
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(JdbcSink.class, args);
+		SpringApplication.run(OddEvenSource.class, args);
 	}
 
 }

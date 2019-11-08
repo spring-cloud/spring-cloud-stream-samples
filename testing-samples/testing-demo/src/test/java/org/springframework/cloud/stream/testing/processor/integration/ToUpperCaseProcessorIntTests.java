@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,29 @@
 
 package org.springframework.cloud.stream.testing.processor.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Iterator;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.stream.testing.processor.ToUpperCaseProcessor;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A Spring Boot integration test for the Spring Cloud Stream Processor application
@@ -46,24 +47,30 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Artem Bilan
  *
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(
 		properties = {
-				"spring.autoconfigure.exclude=org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration",
 				"spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer",
-				"spring.cloud.stream.bindings.output.producer.headerMode=raw",
-				"spring.cloud.stream.bindings.input.consumer.headerMode=raw",
-				"spring.cloud.stream.bindings.input.group=embeddedKafkaApplication",
+				"spring.cloud.stream.bindings.uppercaseFunction-out-0.destination=" + ToUpperCaseProcessorIntTests.TEST_TOPIC_OUT,
+				"spring.cloud.stream.bindings.uppercaseFunction-in-0.group=embeddedKafkaApplication",
+				"spring.cloud.stream.bindings.uppercaseFunction-in-0.destination=" + ToUpperCaseProcessorIntTests.TEST_TOPIC_IN,
 				"spring.kafka.consumer.group-id=EmbeddedKafkaIntTest"
 		},
 		classes = ToUpperCaseProcessor.class,
 		webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ImportAutoConfiguration(exclude = {
+		TestSupportBinderAutoConfiguration.class,
+		DataSourceAutoConfiguration.class,
+		TransactionAutoConfiguration.class,
+		DataSourceTransactionManagerAutoConfiguration.class })
+@EmbeddedKafka(controlledShutdown = true,
+		bootstrapServersProperty = "spring.kafka.bootstrap-servers",
+		topics = ToUpperCaseProcessorIntTests.TEST_TOPIC_OUT)
 @DirtiesContext
-@Ignore
-public class ToUpperCaseProcessorIntTests {
+class ToUpperCaseProcessorIntTests {
 
-	@ClassRule
-	public static EmbeddedKafkaRule kafkaEmbedded = new EmbeddedKafkaRule(1, true, "output");
+	static final String TEST_TOPIC_IN = "test_topic_in";
+
+	static final String TEST_TOPIC_OUT = "test_topic_out";
 
 	@Autowired
 	private KafkaTemplate<byte[], byte[]> template;
@@ -71,24 +78,22 @@ public class ToUpperCaseProcessorIntTests {
 	@Autowired
 	private DefaultKafkaConsumerFactory<byte[], String> consumerFactory;
 
-	@BeforeClass
-	public static void setup() {
-		System.setProperty("spring.kafka.bootstrap-servers", kafkaEmbedded.getEmbeddedKafka().getBrokersAsString());
-	}
+	@Autowired
+	private EmbeddedKafkaBroker embeddedKafkaBroker;
 
 	@Test
-	public void testMessagesOverKafka() throws Exception {
-		this.template.send("input", "bar".getBytes());
+	void testMessagesOverKafka() {
+		this.template.send(TEST_TOPIC_IN, "test".getBytes());
 
 		Consumer<byte[], String> consumer = this.consumerFactory.createConsumer();
 
-		kafkaEmbedded.getEmbeddedKafka().consumeFromAnEmbeddedTopic(consumer, "output");
+		embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, TEST_TOPIC_OUT);
 
 		ConsumerRecords<byte[], String> replies = KafkaTestUtils.getRecords(consumer);
 		assertThat(replies.count()).isEqualTo(1);
 
 		Iterator<ConsumerRecord<byte[], String>> iterator = replies.iterator();
-		assertThat(iterator.next().value()).isEqualTo("BAR");
+		assertThat(iterator.next().value()).isEqualTo("TEST");
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.springframework.cloud.stream.testing.processor;
 
+import java.util.function.Function;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.context.annotation.Bean;
 
 /**
  * The Spring Cloud Stream Processor application,
@@ -31,13 +30,11 @@ import org.springframework.messaging.handler.annotation.SendTo;
  *
  */
 @SpringBootApplication
-@EnableBinding(Processor.class)
 public class ToUpperCaseProcessor {
 
-	@StreamListener(Processor.INPUT)
-	@SendTo(Processor.OUTPUT)
-	public String transform(String payload) {
-		return payload.toUpperCase();
+	@Bean
+	public Function<String, String> uppercaseFunction() {
+		return String::toUpperCase;
 	}
 
 	public static void main(String[] args) {

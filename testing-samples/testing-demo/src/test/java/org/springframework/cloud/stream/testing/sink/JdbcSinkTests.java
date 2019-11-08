@@ -25,23 +25,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.metrics.KafkaMetricsAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.integration.channel.AbstractMessageChannel;
+import org.springframework.integration.test.mock.MockIntegration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.support.ChannelInterceptorAdapter;
+import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * The Spring Boot-base test-case to demonstrate how can we test Spring Cloud Stream applications
@@ -50,13 +52,16 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Artem Bilan
  *
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ImportAutoConfiguration(exclude = {
+		KafkaAutoConfiguration.class,
+		KafkaMetricsAutoConfiguration.class })
 @DirtiesContext
-public class JdbcSinkTests {
+class JdbcSinkTests {
 
 	@Autowired
-	private Sink channels;
+	@Qualifier("jdbcConsumer-in-0")
+	private AbstractMessageChannel input;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -65,47 +70,45 @@ public class JdbcSinkTests {
 	private MessageHandler jdbcMessageHandler;
 
 	@Test
-	@SuppressWarnings("unchecked")
-	public void testMessages() {
-		AbstractMessageChannel input = (AbstractMessageChannel) this.channels.input();
+	void testMessages() {
+		AtomicReference<Message<?>> messageAtomicReference = new AtomicReference<>();
 
-		final AtomicReference<Message<?>> messageAtomicReference = new AtomicReference<>();
+		ChannelInterceptor assertionInterceptor =
+				new ChannelInterceptor() {
 
-		ChannelInterceptorAdapter assertionInterceptor = new ChannelInterceptorAdapter() {
+					@Override
+					public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent,
+							Exception ex) {
 
-			@Override
-			public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
-				messageAtomicReference.set(message);
-				super.afterSendCompletion(message, channel, sent, ex);
-			}
+						messageAtomicReference.set(message);
+					}
 
-		};
+				};
 
-		input.addInterceptor(assertionInterceptor);
+		this.input.addInterceptor(assertionInterceptor);
 
-		input.send(new GenericMessage<>("foo"));
+		this.input.send(new GenericMessage<>("odd"));
 
-		input.removeInterceptor(assertionInterceptor);
+		this.input.removeInterceptor(assertionInterceptor);
 
-		input.send(new GenericMessage<>("bar"));
+		this.input.send(new GenericMessage<>("even"));
 
-		List<Map<String, Object>> data = this.jdbcTemplate.queryForList("SELECT * FROM foobar");
+		List<Map<String, Object>> data = this.jdbcTemplate.queryForList("SELECT * FROM SINK");
 
 		assertThat(data.size()).isEqualTo(2);
-		assertThat(data.get(0).get("value")).isEqualTo("foo");
-		assertThat(data.get(1).get("value")).isEqualTo("bar");
+		assertThat(data.get(0).get("value")).isEqualTo("odd");
+		assertThat(data.get(1).get("value")).isEqualTo("even");
 
 		Message<?> message1 = messageAtomicReference.get();
 		assertThat(message1).isNotNull();
-		assertThat(message1).hasFieldOrPropertyWithValue("payload", "foo");
+		assertThat(message1).hasFieldOrPropertyWithValue("payload", "odd");
 
-		ArgumentCaptor<Message<?>> messageArgumentCaptor =
-				(ArgumentCaptor<Message<?>>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Message.class);
+		ArgumentCaptor<Message<?>> messageArgumentCaptor = MockIntegration.messageArgumentCaptor();
 
 		verify(this.jdbcMessageHandler, times(2)).handleMessage(messageArgumentCaptor.capture());
 
 		Message<?> message = messageArgumentCaptor.getValue();
-		assertThat(message).hasFieldOrPropertyWithValue("payload", "bar");
+		assertThat(message).hasFieldOrPropertyWithValue("payload", "even");
 	}
 
 }

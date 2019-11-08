@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.springframework.cloud.stream.testing.processor;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The simple test-case to demonstrate how it is easy to apply unit testing assertion
@@ -27,11 +27,11 @@ import org.junit.Test;
  * @author Artem Bilan
  *
  */
-public class NaiveToUpperCaseTests {
+class NaiveToUpperCaseTests {
 
 	@Test
-	public void testUpperCase() {
-		assertEquals("FOO", new ToUpperCaseProcessor().transform("foo"));
+	void testUpperCase() {
+		assertEquals("TEST", new ToUpperCaseProcessor().uppercaseFunction().apply("test"));
 	}
 
 }
