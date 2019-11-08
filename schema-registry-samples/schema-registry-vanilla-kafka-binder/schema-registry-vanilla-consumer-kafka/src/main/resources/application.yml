@@ -2,7 +2,7 @@ spring:
   cloud:
     stream:
       bindings:
-        input:
+        process-in-0:
           destination: sensor-topic
       schema-registry-client:
         endpoint: http://localhost:8990
