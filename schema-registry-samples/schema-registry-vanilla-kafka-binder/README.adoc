@@ -18,9 +18,25 @@ Both producers and consumers interact with this scheam registry to register and 
 
 Make sure you are in the directory `schema-registry-vanilla-kafka-binder`
 
-Start Kafka
+- Start Kafka and Database
 
-`docker-compose up -d`
+Start Kafka with H2 in-memory database:
+[source,bash]
+----
+docker-compose up -d
+----
+
+or start Kafka with Postgres database:
+[source,bash]
+----
+docker-compose -f ./docker-compose.yml -f ../docker-compose-postgres.yml up -d
+----
+
+or start Kafka with MySQL database:
+[source,bash]
+----
+docker-compose -f ./docker-compose.yml -f ../docker-compose-mysql.yml up -d
+----
 
 Build the applications: `./mvnw clean package`
 
@@ -29,8 +45,42 @@ Build the applications: `./mvnw clean package`
 ----
 wget -O /tmp/schema-registry-server.jar https://repo.spring.io/libs-snapshot-local/org/springframework/cloud/spring-cloud-schema-registry-server/1.0.0.BUILD-SNAPSHOT/spring-cloud-schema-registry-server-1.0.0.BUILD-SNAPSHOT.jar
 cd /tmp
+----
+
+Start the Schema Registry server using in-memory H2 database:
+[source,bash]
+----
 java -jar schema-registry-server-1.0.0.BUILD-SNAPSHOT.jar
 ----
+
+to use Postgres database instead of H2, set the following property :
+[source,bash]
+----
+java -jar schema-registry-server-1.0.0.BUILD-SNAPSHOT.jar \
+  --spring.datasource.url=jdbc:postgresql://localhost:5432/registry \
+  --spring.datasource.username=root \
+  --spring.datasource.password=rootpw \
+  --spring.datasource.driver-class-name=org.postgresql.Driver \
+  --spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect \
+  --spring.jpa.hibernate.ddl-auto-create=true \
+  --spring.jpa.hibernate.ddl-auto=update \
+  --spring.jpa.generate-ddl=true
+----
+
+to use MySQL database instead of H2, set the following property :
+[source,bash]
+----
+java -jar schema-registry-server-1.0.0.BUILD-SNAPSHOT.jar \
+  --spring.datasource.url=jdbc:mariadb://localhost:3306/registry \
+  --spring.datasource.username=root \
+  --spring.datasource.password=rootpw \
+  --spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
+  --spring.jpa.database-platform=org.hibernate.dialect.MariaDB53Dialect \
+  --spring.jpa.hibernate.ddl-auto-create=true \
+  --spring.jpa.hibernate.ddl-auto=update \
+  --spring.jpa.generate-ddl=true
+----
+
 - Start `consumer` on another terminal session (or run it from an IDE)
 [source,bash]
 ----
