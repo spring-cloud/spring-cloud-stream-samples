@@ -15,26 +15,28 @@
  */
 package sample.processor;
 
+import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.cloud.stream.config.ListenerContainerCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.listener.AbstractMessageListenerContainer;
+import org.springframework.kafka.listener.DefaultAfterRollbackProcessor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.transaction.Transactional;
-import java.util.StringJoiner;
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.util.backoff.FixedBackOff;
 
 /**
  * @author Bjarte Stien Karlsen
  */
 @SpringBootApplication
-@EnableBinding(Processor.class)
 @EnableTransactionManagement
 public class ProcessorApplication {
 
@@ -53,29 +55,39 @@ public class ProcessorApplication {
     }
 
     @Transactional
-    @StreamListener(Processor.INPUT)
-    @SendTo(Processor.OUTPUT)
-    public PersonEvent process(PersonEvent data) {
-        logger.info("Received event={}", data);
-        Person person = new Person();
-        person.setName(data.getName());
+    @Bean
+    public Function<PersonEvent, PersonEvent> process() {
+        return pe -> {
+            logger.info("Received event={}", pe);
+            Person person = new Person();
+            person.setName(pe.getName());
 
-        if(shouldFail.get()) {
-            shouldFail.set(false);
-            throw new RuntimeException("Simulated network error");
-        } else {
-            //We fail every other request as a test
-            shouldFail.set(true);
-        }
-        logger.info("Saving person={}", person);
+            if (shouldFail.get()) {
+                shouldFail.set(false);
+                throw new RuntimeException("Simulated network error");
+            } else {
+                //We fail every other request as a test
+                shouldFail.set(true);
+            }
+            logger.info("Saving person={}", person);
 
-        Person savedPerson = repository.save(person);
+            Person savedPerson = repository.save(person);
 
-        PersonEvent event = new PersonEvent();
-        event.setName(savedPerson.getName());
-        event.setType("PersonSaved");
-        logger.info("Sent event={}", event);
-        return event;
+            PersonEvent event = new PersonEvent();
+            event.setName(savedPerson.getName());
+            event.setType("PersonSaved");
+            logger.info("Sent event={}", event);
+            return event;
+        };
+    }
+
+    @Bean
+    public ListenerContainerCustomizer<AbstractMessageListenerContainer<byte[], byte[]>> customizer() {
+        // Disable retry in the AfterRollbackProcessor
+        return (container, destination, group) -> container.setAfterRollbackProcessor(
+                new DefaultAfterRollbackProcessor<byte[], byte[]>(
+                        (record, exception) -> System.out.println("Discarding failed record: " + record),
+                        new FixedBackOff(0L, 0)));
     }
 
     static class PersonEvent {

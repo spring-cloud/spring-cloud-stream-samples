@@ -14,7 +14,7 @@ d. all this as a single transaction
 4. transaction-logger-sink litsen to person-command and log out
 
 === How to start sample
-Start kafka, zookeeper and mariaDb with `docker-compuse up -d` in this folder. 
+Start kafka, zookeeper and mariaDb with `docker-compose up -d` in this folder.
 Start each of the individual submodules in this project. Either in your IDE or by running `mvn spring:boot run` in each subfolder.
 Send a POST request to localhost:9997
 

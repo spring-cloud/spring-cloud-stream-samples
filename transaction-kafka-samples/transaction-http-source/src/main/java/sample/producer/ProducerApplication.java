@@ -16,14 +16,16 @@
 package sample.producer;
 
 import java.util.StringJoiner;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,17 +34,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Bjarte Stien Karlsen
  */
 @SpringBootApplication
-@EnableBinding(Source.class)
 @RestController
 public class ProducerApplication {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    private Source source;
 
-    public ProducerApplication(Source source) {
-
-        this.source = source;
-    }
+    BlockingQueue<PersonEvent> unbounded = new LinkedBlockingQueue<>();
 
     public static void main(String[] args) {
         SpringApplication.run(ProducerApplication.class, args);
@@ -53,9 +50,14 @@ public class ProducerApplication {
         PersonEvent personEvent = new PersonEvent();
         personEvent.setType("CreatePerson");
         personEvent.setName(incomming.getName());
-        source.output().send(MessageBuilder.withPayload(personEvent).build());
-        logger.info("Person sendt={}", personEvent);
-        return "Person sendt";
+        unbounded.offer(personEvent);
+        logger.info("Person sent={}", personEvent);
+        return "Person sent";
+    }
+
+    @Bean
+    public Supplier<PersonEvent> supplier() {
+        return () -> unbounded.poll();
     }
 
     static class PersonEvent {

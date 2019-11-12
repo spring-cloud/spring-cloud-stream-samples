@@ -2,6 +2,6 @@ spring:
   cloud:
     stream:
       bindings:
-        output:
+        supplier-out-0:
           destination: person-command
 server.port: 9997

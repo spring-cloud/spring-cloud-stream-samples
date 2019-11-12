@@ -16,20 +16,19 @@
 package sample.processor;
 
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author Bjarte Stien Karlsen
  */
 @SpringBootApplication
-@EnableBinding(Sink.class)
 public class ConsumerApplication {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -38,9 +37,9 @@ public class ConsumerApplication {
         SpringApplication.run(ConsumerApplication.class, args);
     }
 
-    @StreamListener(Sink.INPUT)
-    public void process(PersonEvent data) {
-        logger.info("{}", data);
+    @Bean
+    public Consumer<PersonEvent> process() {
+        return pe -> logger.info("{}", pe);
     }
 
     static class PersonEvent {
