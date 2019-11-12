@@ -1,0 +1,35 @@
+==== Spring Cloud Stream Function Composition Sample
+
+In this *Spring Cloud Stream* sample, we will demo function composition with RabbitMQ.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Running the application
+
+The following instructions assume that you are running RabbitMQ as a Docker image.
+If that's not the case, skip the docker steps below.
+
+* Go to the application root
+* `docker-compose up -d`
+
+* `./mvnw clean package`
+
+* `java -jar target/function-composition-rabbit-0.0.1-SNAPSHOT.jar`
+
+Take a look at the configuration in the application.yml file. The function definition is `uppercase|echo` and the incoming destination is defined as `uppercase-in` (through `uppercase|echo-in-0.destination`)
+
+Now, send some text data to the input exchage (You can use the RabbitMQ admin consloe for doing this).
+
+Then watch the application console.
+
+You should see output messages from both `uppercase` and `echo` functions.
+
+* `docker-compose down`
+
+
+
+

@@ -11,6 +11,8 @@
     <modules>
         <module>multi-functions-kafka</module>
         <module>multi-functions-rabbit</module>
+        <module>function-composition-kafka</module>
+        <module>function-composition-rabbit</module>
     </modules>
 
 </project>

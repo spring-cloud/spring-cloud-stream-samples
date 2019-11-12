@@ -1,0 +1,36 @@
+==== Spring Cloud Stream Function Composition Sample
+
+In this *Spring Cloud Stream* sample, we will demo function composition with Kafka.
+
+## Requirements
+
+To run this sample, you will need to have installed:
+
+* Java 8 or Above
+
+## Running the application
+
+The following instructions assume that you are running Kafka as a Docker image.
+
+* Go to the application root
+* `docker-compose up -d`
+
+* `./mvnw clean package`
+
+* `java -jar target/function-composition-kafka-0.0.1-SNAPSHOT.jar`
+
+Take a look at the configuration in the application.yml file. The function definition is `uppercase|echo` and the incoming destination is defined as `uppercase-in` (through `uppercase|echo-in-0.destination`)
+
+Now, send some text data to the input topic,
+
+`ocker exec -it kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic uppercase-in`
+
+and then watch the application console.
+
+You should see output messages from both `uppercase` and `echo` functions.
+
+* `docker-compose down`
+
+
+
+
