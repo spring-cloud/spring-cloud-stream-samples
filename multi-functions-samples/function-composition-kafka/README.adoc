@@ -23,7 +23,7 @@ Take a look at the configuration in the application.yml file. The function defin
 
 Now, send some text data to the input topic,
 
-`ocker exec -it kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic uppercase-in`
+`docker exec -it kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic uppercase-in`
 
 and then watch the application console.
 
