@@ -15,7 +15,7 @@ d. all this as a single transaction
 
 === How to start sample
 Start kafka, zookeeper and mariaDb with `docker-compose up -d` in this folder.
-Start each of the individual submodules in this project. Either in your IDE or by running `mvn spring:boot run` in each subfolder.
+Start each of the individual submodules in this project, either in your IDE or by running from the command line.
 Send a POST request to localhost:9997
 
 === How to verify success and failure
