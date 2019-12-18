@@ -38,11 +38,14 @@ import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.http.MediaType;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.MimeType;
 
 /**
  * The Spring Boot-base test-case to demonstrate how can we test Spring Cloud Stream applications
@@ -97,6 +100,7 @@ class ToUpperCaseProcessorTests {
 		Message<String> expected =
 				MessageBuilder.withPayload("HEADERS")
 						.copyHeaders(testMessage.getHeaders())
+						.setHeader(MessageHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.build();
 
 		Matcher<Message<Object>> sameExceptIgnorableHeaders =
