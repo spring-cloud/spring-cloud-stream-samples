@@ -14,4 +14,4 @@ spring.cloud:
         process-out-0:
           producer:
             configuration:
-              value.serializer: com.example.kafkanativeserialization.MyJsonSerializer
+              value.serializer: org.springframework.kafka.support.serializer.JsonSerializer

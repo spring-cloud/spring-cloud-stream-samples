@@ -54,7 +54,7 @@ public class KafkaNativeSerializationApplicationTests {
 
 		Consumer<byte[], Person> consumer = cf.createConsumer();
 		consumer.subscribe(Collections.singleton(OUTPUT_TOPIC));
-		ConsumerRecords<byte[], Person> records = consumer.poll(Duration.ofSeconds(5));
+		ConsumerRecords<byte[], Person> records = consumer.poll(Duration.ofSeconds(10));
 		consumer.commitSync();
 
 		assertThat(records.count()).isEqualTo(1);
