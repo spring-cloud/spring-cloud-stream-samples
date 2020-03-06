@@ -3,15 +3,6 @@ spring:
     stream:
       function:
         definition: sendTestData;process;receive;concatFn
-      kafka:
-        streams:
-          binder:
-            brokers: ${kafkaBroker2}
-            applicationId: multi-binder-kafka-streams
-            configuration:
-              default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-              default.value.serde: org.apache.kafka.common.serialization.Serdes$BytesSerde
-              commit.interval.ms: 1000
       bindings:
         process-in-0:
           destination: dataIn
@@ -24,8 +15,8 @@ spring:
           destination: dataIn
           binder: kafka1
         concatFn-in-0:
-            destination: dataOut
-            binder: kafka3
+          destination: dataOut
+          binder: kafka3
         concatFn-out-0:
           destination: concatOut
           binder: kafka3
@@ -35,25 +26,38 @@ spring:
           binder: kafka2
       binders:
         kafka1:
-         type: kafka
-         environment:
-           spring:
-             cloud:
-               stream:
-                kafka:
-                  binder:
-                    brokers: ${kafkaBroker1}
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: ${kafkaBroker1}
         kafka2:
-         type: kafka
-         environment:
-           spring:
-             cloud:
-               stream:
-                 kafka:
-                   binder:
-                     brokers: ${kafkaBroker2}
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: ${kafkaBroker2}
         kafka3:
-           type: kstream
+          type: kstream
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    streams:
+                      binder:
+                        brokers: ${kafkaBroker2}
+                        applicationId: multi-binder-kafka-streams
+                        configuration:
+                          default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                          default.value.serde: org.apache.kafka.common.serialization.Serdes$BytesSerde
+                          commit.interval.ms: 1000
 
 
 

@@ -50,7 +50,6 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest(
 		webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DirtiesContext
-@Ignore
 public class TwoKafkaBindersApplicationTest {
 
 	@ClassRule
