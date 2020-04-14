@@ -21,7 +21,7 @@ Start rabbit
 
 Build the applications: `./mvnw clean package`
 
-- Start the Schema Registry server (Chnage these commands accordingly if you are not on a Unix like platform)
+- Start the Schema Registry server (Change these commands accordingly if you are not on a Unix like platform)
 [source,bash]
 ----
 wget -O /tmp/schema-registry-server.jar https://repo.spring.io/libs-snapshot-local/org/springframework/cloud/spring-cloud-schema-registry-server/1.0.0.BUILD-SNAPSHOT/spring-cloud-schema-registry-server-1.0.0.BUILD-SNAPSHOT.jar
