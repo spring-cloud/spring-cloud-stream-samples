@@ -82,7 +82,7 @@ The `consumer` is coded against a base schema that include the split fields.
 
 The `consumer` app can happily deserialize the payload with `internalTemperature` and `externalTemperature` fields. However, when
 a `producer1` payload arrives (which includes `temperature` field), the schema evolution and compatibility check are automatically
-applied.
+applied. The `consumer` app doesn't need to contain all fields from the newest (`producer2`) schema, but it will obviously not be able to use them if they are missing. For example the `accelerometer` field is not present in the `consumer` app, but is in the `producer2` app.
 
 Because each payload also includes the payload version in the header, Spring Cloud Stream with the help of Schema
 Registry server and Avro, the schema evolution occurs behind the scenes. The automatic mapping of `temperature` to
