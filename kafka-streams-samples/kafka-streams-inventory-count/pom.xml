@@ -15,7 +15,7 @@
 	</parent>
 
 	<properties>
-		<spring-cloud.version>Hoxton.SR2</spring-cloud.version>
+		<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>
 		<kafka-streams-test-utils.version>2.3.1</kafka-streams-test-utils.version>
 	</properties>
 
