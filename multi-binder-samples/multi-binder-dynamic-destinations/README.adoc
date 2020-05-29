@@ -1,0 +1,27 @@
+== Spring Cloud Stream Multibinder Application with two Kafka clusters and dynamic destinations
+
+This example shows how to run a Spring Cloud Stream application with the same binder type configured for two separate Kafka clusters.
+It also demonstrates the usage of dynamic destinations with multiple binders.
+
+## Running the application
+
+Bring up two separate Kafka Clusters with dedicated Zookeeper ensemble for each one.
+
+From the root of the app:
+
+* `./mvnw clean package`
+
+To run the example, command line parameters for the Kafka clusters must be provided.
+In the following example, we assume that there are two clusters provided, on the localhost ports `9092` and `9093` respectively.
+
+```
+java -jar target/multi-binder-dynamic-destinations-0.0.1-SNAPSHOT.jar --kafkaBroker1=localhost:9092 --kafkaBroker2=localhost:9093
+```
+
+In the application, we are consuming from two different topics and check for some conditions.
+Based on the conditions, it dynamically sends data to certain destinations.
+
+Go through the applicaion.yml and change the topic names as need be before running the application or provide them as commandline arguments.
+
+Try to produce data into both of the input topics on the first cluster and consume them on the same topics on the second cluster.
+Check in the application's logic to see what text it expects as input.

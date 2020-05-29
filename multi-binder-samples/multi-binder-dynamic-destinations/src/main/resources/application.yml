@@ -1,0 +1,35 @@
+spring.cloud.stream.source: first;second
+spring:
+  cloud:
+    stream:
+      bindings:
+        process-in-0:
+          destination: a1,a2
+          binder: kafka1
+        first-out-0:
+          destination: a3
+          binder: kafka2
+        second-out-0:
+          destination: a4
+          binder: kafka2
+      function:
+        definition: process
+      binders:
+        kafka1:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: ${kafkaBroker1}
+        kafka2:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: ${kafkaBroker2}
