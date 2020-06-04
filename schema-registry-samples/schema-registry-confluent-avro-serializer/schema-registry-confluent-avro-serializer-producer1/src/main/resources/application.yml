@@ -2,13 +2,21 @@ spring:
   cloud:
     stream:
       bindings:
-        output:
+        supplier-out-0:
           destination: sensor-topic
           producer:
             useNativeEncoding: true
-      kafka:
+
+     kafka:
+#        binder:
+#          producerProperties:
+#            value:
+#              subject:
+#                name:
+#                  strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
+
         bindings:
-          output:
+          supplier-out-0:
             producer:
               configuration:
                 value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer

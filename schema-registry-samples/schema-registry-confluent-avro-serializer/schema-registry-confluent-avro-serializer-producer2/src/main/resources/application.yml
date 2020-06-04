@@ -7,6 +7,13 @@ spring:
           producer:
             useNativeEncoding: true
       kafka:
+        #        binder:
+        #          producerProperties:
+        #            value:
+        #              subject:
+        #                name:
+        #                  strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
+
         bindings:
           output:
             producer:
