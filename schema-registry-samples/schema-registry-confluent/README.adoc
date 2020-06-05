@@ -112,11 +112,11 @@ Once you are done with running the samples, stop the docker containers
 
 and stop the Confluent Schema Registry server.
 
-=== Using Confluent Command Center
+=== Using Confluent Control Center
 
-This test can be run with the [Confluent Command Center](https://docs.confluent.io/current/control-center/index.html) - a web-based tool for managing and monitoring Apache Kafka®. Control Center facilitates building and monitoring production data pipelines and streaming applications.
+This test can be run with the https://docs.confluent.io/current/control-center/index.html[Confluent Control Center] - a web-based tool for managing and monitoring Apache Kafka®. Control Center facilitates building and monitoring production data pipelines and streaming applications.
 
-For a quick start you can install the command center with the help of the `docker-compose-control-center.yaml`:
+For a quick start you can install the control center with the help of the `docker-compose-control-center.yaml`:
 
 [source,bash]
 ----
@@ -128,7 +128,7 @@ The https://docs.confluent.io/current/control-center/topics/schema.html[Schema R
 
 After you run the samples and post couple of messages as explained above.
 
-1. Open the command center at `http://localhost:9021` and click on the provided cluster.
+1. Open the control center at `http://localhost:9021` and click on the provided cluster.
 2. From the vertical menu select `Topics` tab.
 3. From the list of topics select the `sensor-topic` - the topic created by the samples.
 4. Click on the `Schema` tab to see the `Sensors` schema.
@@ -138,11 +138,11 @@ After you have run the samples you should be able to see a schema subject name `
 
 ==== NOTE
 
-Note that currently the Command Center recognizes only schema subjects created with https://docs.confluent.io/current/schema-registry/serdes-develop/index.html[TopicNameStrategy].
+Note that currently the Control Center recognizes only schema subjects created with https://docs.confluent.io/current/schema-registry/serdes-develop/index.html[TopicNameStrategy].
 That means that the schema name (e.g. subject) must be named after your topic name (e.g. spring.cloud.stream.bindings.<channel>:destination) followed by `-value` suffix.
-In our sample the topic (e.g. destination) is called `sensor-topic`. Therefore the schema subject should be named `sensor-topic-value` to be recognizable by the Confluent command center.
+In our sample the topic (e.g. destination) is called `sensor-topic`. Therefore the schema subject should be named `sensor-topic-value` to be recognizable by the Confluent Control center.
 
-Note that the confluent schema registry works fine with different subject naming strategies, only the command center visualization will not show them.
+Note that the confluent schema registry works fine with different subject naming strategies, only the control center visualization will not show them.
 
 To configure a the schema name after the topic name yuo can use the `spring.cloud.schema.avro.subjectNamePrefix`
 and `spring.cloud.schema.avro.subjectNamePrefix.subjectNamingStrategy` properties as shown below (only available with 1.1.x onwards:
