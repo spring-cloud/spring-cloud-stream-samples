@@ -29,6 +29,7 @@
 		<module>partitioning-samples</module>
 		<module>transaction-kafka-samples</module>
 		<module>testing-samples</module>
+		<module>streambridge-samples</module>
 		<module>kafka-e2e-kotlin-sample</module>
 		<module>kafka-native-serialization</module>
 	</modules>

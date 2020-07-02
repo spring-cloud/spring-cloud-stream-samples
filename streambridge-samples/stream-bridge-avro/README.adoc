@@ -1,0 +1,23 @@
+## StreamBridge API and Avro
+
+This sample demonstrates 3 components as functions.
+
+1. Supplier function that generates a `Sensor` which is an Avro object.
+2. Consumer function that receives the sensor and forward to a destination using the `StreamBridge` API.
+3. Another Consumer function that receives the sensor from the destination where `StreamBridge` sent in step #2.
+
+See link:src/main/java/com/example/stream/bridge/avro/StreamBridgeAvroApplication.java[StreamBridgeAvroApplication] for more details.
+
+All of these components are using native encoding (Serialization) by relying on the avro serializers provided by Confluent.
+Thus Spring Cloud Stream will not try to perform any data conversions.
+
+### Steps to run the application
+
+1. Make sure you have Kafka running (the expectation is that you have it running on default ports).
+2. Run Confluent Schema Registry (Again use default port).
+3. Run this application.
+4. You should see the console output getting printed from the second consumer above.
+
+The supplier generates a new Sensor every 10 seconds.
+
+See the link:src/main/resources/application.properties[configuration] for more details.
