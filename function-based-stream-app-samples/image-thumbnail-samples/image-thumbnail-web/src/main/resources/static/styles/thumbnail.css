@@ -1,0 +1,14 @@
+body {
+    background-color: black;
+}
+h1 {
+    color: palegreen;
+}
+
+img {
+    padding: 10px;
+    border: 2px solid white;
+    display: inline-block;
+    vertical-align: top;
+    max-width: 75%;
+}

@@ -1,0 +1,89 @@
+= Thumbnail Stream Sample
+
+== Run with docker-compose
+
+If you have docker installed and running, this is the easiest way to run this sample.
+
+=== Build the link:image-thumbnail-sink[] 
+
+Build the docker image to register with the local Docker daemon. 
+
+```
+cd image-thumbnail-sink
+./mvnw clean package jib:dockerBuild
+```
+=== Create input and output directories `images` and `thumbnails`.
+These names are referenced in link:docker-compose-apps.yml[]
+
+```
+cd image-thumbnail-stream-sample
+mkdir images thumbnails
+```
+
+=== Start the containers
+
+```
+docker-compose -f docker-compose-kafka.yml -f docker-compose-apps.yml up
+```
+
+Proceed to xref:Create_Some_Data[Create Some Data]
+
+== Run standalone
+We will use this sink in a streaming application that reads a text file containing image URLs and create a thumbnail file for each image: `file-source | http-request-processor | image-thumbnail-sink`
+
+=== Download the pre-packaged Source and Processor applications:
+
+```
+wget https://repo.spring.io/snapshot/org/springframework/cloud/stream/app/file-source-kafka/3.0.0-SNAPSHOT/file-source-kafka-3.0.0-SNAPSHOT.jar
+wget https://repo.spring.io/snapshot/org/springframework/cloud/stream/app/http-request-processor-kafka/3.0.0-SNAPSHOT/http-request-processor-kafka-3.0.0-SNAPSHOT.jar
+```
+
+=== Start a Kafka message broker
+
+If you have Docker installed, you can start Kafka with
+```
+docker-compose up -f docker-compose-kafka.yml 
+```
+
+Or install and run Kafka on your local machine. 
+If you are using a remote Kafka cluster, set the property `--spring.cloud.stream.kafka.brokers=kafka_host1,...` to a comma-delimited list of host addresses on each of the following apps.
+
+=== Create input and output directories 
+Named `images` and `thumbnails` in this example.
+
+=== Start the sink
+Build the link:image-thumbnail-sink[], if you haven't already done it.
+Then open a terminal window in `image-thumbnail-sink` and run:
+
+```
+java -jar target/image-thumbnail-sink-0.0.1-SNAPSHOT.jar --file.consumer.directory=$(PWD)/thumbnails --spring.cloud.stream.bindings.input.destination=thumbnail --server.port=0
+```
+
+
+=== Start the source and processor
+
+In separate terminal sessions run the processor and the source:
+
+```
+java -jar http-request-processor-kafka-3.0.0-SNAPSHOT.jar --http.request.url-expression=payload --http.request.expected-response-type=byte[] --http.request.maximum-buffer-size=2097152 --spring.cloud.stream.bindings.input.destination=image --spring.cloud.stream.bindings.output.destination=thumbnail --spring.kafka.producer.properties.max.request.size=2097152 --server.port=0
+```
+
+```
+java -jar file-source-kafka-3.0.0-SNAPSHOT.jar --file.consumer.mode=lines --file.supplier.directory=$(PWD)/images --spring.cloud.stream.bindings.output.destination=image --server.port=0
+```
+[[Create_Some_Data]]
+=== Create some data
+
+Using your favorite text editor, create a file in the `images` directory containing some URLs:
+
+```
+https://i.imgur.com/FQtKSuv.jpeg
+https://i.imgur.com/4Cndaul.jpeg
+https://i.imgur.com/FCPLS42.jpeg
+https://i.imgur.com/DhzHsz8.jpg
+https://i.imgur.com/G7t1ZZl.jpg
+```
+
+You should see the thumbnail files in the `thumbnails` directory.
+
+image:../img/thumbnail-files.png[]

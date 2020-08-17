@@ -1,0 +1,15 @@
+= Thumbnail Demo
+
+image:img/thumbnail-files.png[]
+
+This project demonstrates the use of https://github.com/spring-cloud/stream-applications/tree/master/functions/function/http-request-function[HttpRequestFunction] and the https://github.com/spring-cloud/stream-applications/tree/master/applications/processor/http-request-processor[HTTP Request Processor] with the following modules:
+
+* link:image-thumbnail-processor/[image-thumbnail-processor] - A simple function to create thumbnails from JPEG files.
+* link:image-thumbnail-web/[image-thumbnail-web] - A Spring Boot web application using the HTTP Request Function
+* link:image-thumbnail-stream-sample/[image-thumbnail-stream-sample] - A Spring Cloud Stream Sink Application used in a Spring Cloud Stream application demonstrating the HTTP Request Processor
+
+== Build
+
+```bash
+./mvnw clean install
+```

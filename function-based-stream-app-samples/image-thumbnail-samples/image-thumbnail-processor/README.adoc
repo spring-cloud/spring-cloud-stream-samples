@@ -1,0 +1,10 @@
+= Thumbnail Processor
+
+A plain (no dependencies) Java Function that creates a thumbnail from an JPEG image.
+See https://stackoverflow.com/a/39313627/1743446.
+
+== Build
+
+```
+./mwnw clean install
+```

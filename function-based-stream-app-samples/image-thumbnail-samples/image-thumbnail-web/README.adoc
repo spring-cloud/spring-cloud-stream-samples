@@ -1,0 +1,21 @@
+= Thumbnail Standalone
+
+This demonstrates the use of the Spring https://github.com/spring-cloud/stream-applications/blob/master/functions/function/http-request-function[HttpRequestFunction]
+in a standalone Spring Boot Application
+
+This web app downloads an image from the web and uses the link:../image-thumbnail-processor/src/main/java/io/spring/example/image/thumbnail/processor/ThumbnailProcessor.java[ThumbnailProcessor] to create a thumbnail of it.
+
+== Run
+
+```bash
+./mvnw spring-boot:run
+```
+
+== Try some cat pics!
+
+* http://localhost:8080/thumbnail?url=https://i.imgur.com/FQtKSuv.jpeg
+* http://localhost:8080/thumbnail?url=https://i.imgur.com/4Cndaul.jpeg
+* http://localhost:8080/thumbnail?url=https://i.imgur.com/FCPLS42.jpeg
+* http://localhost:8080/thumbnail?url=https://i.imgur.com/DhzHsz8.jpg
+* http://localhost:8080/thumbnail?url=https://i.imgur.com/G7t1ZZl.jpg
+* http://localhost:8080/thumbnail?url=https://cdn.freeyork.org/wp-content/uploads/2017/11/handicapped-cat-rexie-fy-4-1152x1152.jpg

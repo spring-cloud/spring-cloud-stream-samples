@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.spring.cloud.stream.sample</groupId>
+	<artifactId>image-thumbnail-samples</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>image-thumbnail-samples</name>
+	<description>Samples using HTTP Request Function</description>
+	<packaging>pom</packaging>
+
+	<properties>
+		<java.version>8</java.version>
+	</properties>
+
+	<modules>
+		<module>image-thumbnail-web</module>
+		<module>image-thumbnail-stream-sample/image-thumbnail-sink</module>
+		<module>image-thumbnail-processor</module>
+	</modules>
+
+</project>

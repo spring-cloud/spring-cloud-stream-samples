@@ -1,0 +1,25 @@
+= Thumbnail Sink
+
+A Spring Cloud Stream Sink which composes thumbnailProcessor|filenameEnricher|fileConsumer to create thumbnails and write to a file.
+
+This app registers the link:../image-thumbnail-processor/src/main/java/io/spring/example/image/thumbnail/processor/ThumbnailProcessor.java[ThumbnailProcessor] as a Spring bean and uses the standard https://github.com/spring-cloud/stream-applications/tree/master/functions/consumer/file-consumer[fileConsumer] to write files.
+It implements a link:src/main/java/io/spring/example/image/thumbnail/sink/ThumbnailSinkApplication.java[filenameEnricher] function, which generates filenames as
+`thumbnail-%d.jpg`, incrementing the index on each execution, supplied to the fileConsumer in the `filename` message header.
+See Also link:src/main/resources/application.properties[application.properties].
+
+== Build
+
+```
+./mvnw clean install
+```
+
+or to build a Docker image 
+
+```
+./mvnw clean package jib:dockerBuild
+```
+
+
+
+
+

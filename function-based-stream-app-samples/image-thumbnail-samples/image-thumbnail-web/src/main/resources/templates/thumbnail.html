@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link th:href="@{/styles/thumbnail.css}" rel="stylesheet">
+</head>
+<body>
+<h1 th:text="'Thumbnail for ' + ${url}"/>
+<div class="images">
+    <img id="full" th:src="${url}"/>
+    <img th:src="'data:image/gif;base64,' + ${thumb}" , alt="thumbnail image"/>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+version: '2'
+services:
+  kafka-broker:
+        environment:
+          - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker:9092
+          - KAFKA_ADVERTISED_HOST_NAME=kafka-broker
+  source:
+    container_name: file-source
+    image: springcloudstream/file-source-kafka:3.0.0-SNAPSHOT
+    depends_on: 
+      - kafka-broker
+    environment: 
+      - FILE_SUPPLIER_DIRECTORY=/images
+      - FILE_CONSUMER_MODE=lines
+      - SPRING_CLOUD_STREAM_BINDINGS_OUTPUT_DESTINATION=image
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka-broker
+    volumes:
+      - ./images:/images
+  processor:
+    container_name: http-request-processor
+    image: springcloudstream/http-request-processor-kafka:3.0.0-SNAPSHOT
+    depends_on: 
+      - kafka-broker
+    environment: 
+      - HTTP_REQUEST_URL_EXPRESSION=payload
+      - HTTP_REQUEST_EXPECTED_RESPONSE_TYPE=byte[]
+      - HTTP_REQUEST_MAXIMUM_BUFFER_SIZE=2097152
+      - SPRING_KAFKA_PRODUCER_PROPERTIES_MAX_REQUEST_SIZE=2097152
+      - SPRING_CLOUD_STREAM_BINDINGS_INPUT_DESTINATION=image
+      - SPRING_CLOUD_STREAM_BINDINGS_INPUT_GROUP=thumbnail
+      - SPRING_CLOUD_STREAM_BINDINGS_OUTPUT_DESTINATION=thumbnail
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka-broker
+  sink:
+    container_name: image-thumbnail-sink
+    image: demo/image-thumbnail-sink
+    depends_on: 
+      - kafka-broker
+    environment: 
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka-broker
+      - SPRING_CLOUD_STREAM_BINDINGS_INPUT_DESTINATION=thumbnail
+      - SPRING_CLOUD_STREAM_BINDINGS_INPUT_GROUP=thumbnail
+      - FILE_CONSUMER_DIRECTORY=/thumbnails
+    volumes:
+      - ./thumbnails:/thumbnails
+    
