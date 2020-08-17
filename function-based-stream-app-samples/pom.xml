@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.spring.cloud.stream.sample</groupId>
+	<artifactId>function-based-stream-app-samples</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>function-based-stream-app-samples</name>
+	<description>Samples using Functions and Function-based stream applications</description>
+	<packaging>pom</packaging>
+
+	<properties>
+		<java.version>8</java.version>
+	</properties>
+
+	<modules>
+		<module>image-thumbnail-samples</module>
+	</modules>
+
+</project>

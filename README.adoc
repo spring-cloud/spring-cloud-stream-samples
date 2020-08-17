@@ -56,3 +56,7 @@ A collection of various applications in stream processing using Spring Cloud Str
 
 * Sample with embedded Kafka
 * General testing patterns in Spring Cloud Stream
+
+==== Function-based stream app samples
+
+Contains samples using the re-architected stream-applications and base functions included in https://github.com/spring-cloud/stream-applications. 

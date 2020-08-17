@@ -32,6 +32,7 @@
 		<module>streambridge-samples</module>
 		<module>kafka-e2e-kotlin-sample</module>
 		<module>kafka-native-serialization</module>
+		<module>function-based-stream-app-samples</module>
 	</modules>
 
 	<properties>

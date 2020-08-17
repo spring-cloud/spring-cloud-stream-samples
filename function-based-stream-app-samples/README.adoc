@@ -1,0 +1,4 @@
+= Function Based Stream Application Samples
+
+This directory contains samples using the re-architected stream-applications and base functions included in https://github.com/spring-cloud/stream-applications. 
+
