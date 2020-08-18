@@ -104,7 +104,7 @@ class ToUpperCaseProcessorTests {
 						.build();
 
 		Matcher<Message<Object>> sameExceptIgnorableHeaders =
-				(Matcher<Message<Object>>) (Matcher<?>) sameExceptIgnorableHeaders(expected);
+				(Matcher<Message<Object>>) (Matcher<?>) sameExceptIgnorableHeaders(expected, "accept");
 
 		assertThat(messages, receivesMessageThat(sameExceptIgnorableHeaders));
 	}
