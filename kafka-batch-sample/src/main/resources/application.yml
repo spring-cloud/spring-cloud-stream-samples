@@ -1,0 +1,30 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        consumer-in-0:
+          destination: batch-in
+          group: batch-in
+          consumer:
+            batch-mode: true
+        output-out-0:
+          destination: batch-out
+  kafka:
+    producer:
+      acks: all
+    consumer:
+      auto-offset-reset: earliest
+---
+
+spring:
+  profiles: transactional
+  kafka:
+    consumer:
+      properties:
+        isolation.level: read_committed
+  cloud:
+    stream:
+      kafka:
+        binder:
+          transaction:
+            transaction-id-prefix: batch-tx-

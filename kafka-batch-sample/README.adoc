@@ -1,0 +1,25 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream demonstrating the processing of record batches.
+
+The application simply upper-cases the input records and sends them to another topic.
+
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`docker-compose up -d` (if you don't already have a Kafka broker running locally).
+
+`./mvnw clean package`
+
+`java -jar target/kafka-batch-sample-0.0.1-SNAPSHOT.jar `
+
+There is a simple `@KafkaListener` method to display the records sent to the output topic.
+
+When run with `java -jar target/kafka-batch-sample-0.0.1-SNAPSHOT.jar --spring.profiles.active=transactional` the listener will suspend with
+
+`Hit Enter to exit the listener and commit transaction`.
+
+Pressing the enter key allows the listener to exit and the transaction will commit.
+
+Only then will you see the output from the `@KafkaListener` because its consumer is configured with `isolation.level: read_committed`.
