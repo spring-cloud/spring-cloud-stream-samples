@@ -312,7 +312,7 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9093 --topic ssl-demo
 
 You should be able to connect to Kafka broker for both producer and consumer successfully.
 
-### Running Spring Cloud Stream Application against this secured Kafka using SSLExamplePart3ConfigureKafka
+### Running Spring Cloud Stream Application against this secured Kafka using SSL
 
 Build this application.
 
