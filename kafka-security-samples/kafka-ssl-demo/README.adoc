@@ -1,0 +1,333 @@
+# Kafka SSL Demo with Spring Cloud stream
+
+This sample application will guide you through how to secure a Kafka broker using SSL and and then connect to that broker from a client application.
+
+### Useful reference for setting up Kafka with SSL
+
+If you want comprehensive details on how to setup a Kafka cluster with SSL/TLS enabled, see these links.
+
+https://docs.confluent.io/current/security/security_tutorial.html
+
+https://kafka.apache.org/documentation/#security
+
+https://jaceklaskowski.gitbooks.io/apache-kafka/content/kafka-security-tls-ssl.html
+
+https://jaceklaskowski.gitbooks.io/apache-kafka/content/kafka-demo-secure-inter-broker-communication.html
+
+https://jaceklaskowski.gitbooks.io/apache-kafka/content/kafka-demo-ssl-authentication.html
+
+## Instructions for securing Kafka with SSL
+
+Create a directory for creating all the SSL related files.
+
+For e.g. `mkdir -p /tmp/kafka-ssl-demo && cd /tmp/kafka-ssl-demo`
+
+### Generate a private key and a self-signed certificate for the CA
+
+```
+$ openssl req \
+  -new \
+  -x509 \
+  -days 365 \
+  -keyout ca.key \
+  -out ca.crt \
+  -subj "/C=US/L=NY/CN=Certificate Authority" \
+  -passout pass:1234
+```
+
+Make sure that you see the following files in the directory.
+
+* ca.key - the private key of the certificate authority
+* ca.crt - public key of the certificate authority
+
+### Generate SSL Keys and Certificate for Kafka Broker
+
+```
+$ keytool \
+  -genkey \
+  -keystore server.keystore \
+  -alias localhost \
+  -dname CN=localhost \
+  -keyalg RSA \
+  -validity 365 \
+  -ext san=dns:localhost \
+  -storepass 123456
+```
+
+Make sure that the `server.keystore` file is generated in the directory.
+
+You can verify its contents.
+
+```
+keytool -list -v -keystore server.keystore -storepass 123456
+```
+
+### Sign broker certificate using Certificate authority
+
+Export the server certificate from `server.keystore`.
+
+```
+$ keytool \
+  -certreq \
+  -keystore server.keystore \
+  -alias localhost \
+  -file server.unsigned.crt \
+  -storepass 123456
+```
+
+Sign the certificate signing request (server.unsigned.crt) with the root certificate authority (CA)
+
+```
+$ openssl x509 \
+  -req \
+  -CA ca.crt \
+  -CAkey ca.key \
+  -in server.unsigned.crt \
+  -out server.crt \
+  -days 365 \
+  -CAcreateserial \
+  -passin pass:1234
+```
+
+You should see the following files now.
+
+* server.unsigned.crt
+* ca.srl
+* server.crt - This is the signed certifacte for the Kafka broker.
+
+### Import Certificate to Kafka broker keystore
+
+Create a SSL keystore for the Kafka broker and import the certificate of the CA into the broker keystore.
+
+```
+$ keytool \
+  -import \
+  -file ca.crt \
+  -keystore server.keystore \
+  -alias ca \
+  -storepass 123456 \
+  -noprompt
+```
+
+Import the signed certificate into the broker keystore.
+
+```
+$ keytool \
+  -import \
+  -file server.crt \
+  -keystore server.keystore \
+  -alias localhost \
+  -storepass 123456 \
+  -noprompt
+```
+
+### Adding trust stores
+
+Now, let us configure the Kafka broker to trust a CA, so that other brokers on the cluster can communicate to it using SSL.
+Note: We will do this demo with a single node, however.
+
+```
+$ keytool \
+  -import \
+  -file ca.crt \
+  -keystore server.truststore \
+  -alias ca \
+  -storepass 123456 \
+  -noprompt
+```
+
+### Setting up the Kafka broker configuration for connecting over SSL
+
+Go to your local Kafka installation and go to the `config` directory.
+`cp server.properties server-ssl.properties`
+
+Edit the file `server-ssl.properties`.
+
+Add the following lines at the end of the file.
+
+```
+listeners=SSL://:9093
+ssl.keystore.location=/tmp/kafka-ssl-demo/server.keystore
+ssl.keystore.password=123456
+ssl.key.password=123456
+```
+
+For inter broker communication over SSL, add the trust store information. However, we are only going to demo a single node cluster for this demo.
+We are adding this only as a reference.
+
+```
+security.inter.broker.protocol=SSL
+ssl.truststore.location=/tmp/kafka-ssl-demo/server.truststore
+ssl.truststore.password=123456
+```
+
+We add the following line to the configuration for disabling hostname verification by setting this to an empty string.
+This should only be disabled for demo and testing purposes.
+
+```
+ssl.endpoint.identification.algorithm=
+```
+
+Finally, require SSL authentication for all client connections.
+
+```
+ssl.client.auth=required
+```
+
+Save the file. At this point, we are ready to start the Kafka broker.
+
+```
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+bin/kafka-server-start.sh config/server-ssl.properties
+```
+
+Once Kafka is started, let us now verify that we can authenticate from clients using SSL.
+
+### Generating client authentication certificate
+
+Go back to our working directory (`/tmp/kafka-ssl-demo`).
+
+```
+$ keytool \
+  -genkey \
+  -keystore ssldemo.keystore \
+  -alias ssldemo \
+  -dname CN=ssldemo \
+  -keyalg RSA \
+  -validity 365 \
+  -storepass 123456
+```
+
+This should create a new file called `ssldemo.keystore` in the directory.
+
+You can verify its contents by doing the following.
+
+```
+keytool -list -v -keystore ssldemo.keystore -storepass 123456
+```
+
+## Signing client certificate using CA
+
+First, we need to export the client certificate created above.
+
+```
+$ keytool \
+  -certreq \
+  -keystore ssldemo.keystore \
+  -alias ssldemo \
+  -file ssldemo.unsigned.crt \
+  -storepass 123456
+```
+
+Then, we will sign this request.
+
+```
+$ openssl x509 \
+  -req \
+  -CA ca.crt \
+  -CAkey ca.key \
+  -in ssldemo.unsigned.crt \
+  -out ssldemo.crt \
+  -days 365 \
+  -CAcreateserial \
+  -passin pass:1234
+```
+
+You should now see the signed certificate (`ssldemo.crt`) for the client.
+
+### Importing the signed client certificate a Client Keystore
+
+Firt, import the CA certificate to client keystore
+
+```
+$ keytool \
+  -import \
+  -file ca.crt \
+  -keystore ssldemo.keystore \
+  -alias ca \
+  -storepass 123456 \
+  -noprompt
+```
+
+Now, import the signed certificate to the client key store.
+
+```
+$ keytool \
+  -import \
+  -file ssldemo.crt \
+  -keystore ssldemo.keystore \
+  -alias ssldemo \
+  -storepass 123456 \
+  -noprompt
+```
+
+Verify you see both CA and client certificate entries in the key store.
+```
+keytool -list -v -keystore jacek.keystore -storepass 123456
+```
+
+### Import CA Certificate to Client Truststore
+
+```
+$ keytool \
+  -import \
+  -file ca.crt \
+  -keystore client.truststore \
+  -alias ca \
+  -storepass 123456 \
+  -noprompt
+```
+
+Now, we are ready to verify that clients can connect to our secure Kafka using SSL.
+
+### Verify client communication to the brokers
+
+Create a file called `ssldemo-client.properties` and add the following contents.
+
+```
+security.protocol=SSL
+ssl.truststore.location=/Users/sobychacko/kafka-ssl/client.truststore
+ssl.truststore.password=123456
+ssl.keystore.location=/Users/sobychacko/kafka-ssl/jacek.keystore
+ssl.keystore.password=123456
+ssl.key.password=123456
+ssl.enabled.protocols=TLSv1.2,TLSv1.1,TLSv1
+ssl.truststore.type=JKS
+ssl.keystore.type=JKS
+ssl.endpoint.identification.algorithm=
+```
+
+Before we run our Spring Cloud Stream application, lets verify that clients can connect to the broker using the console scripts provided as part of Kafka.
+
+```
+bin/kafka-console-producer.sh --broker-list :9093 --topic ssl-demo --producer.config config/ssldemo-client.properties
+```
+
+For the Consumer
+
+```
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9093 --topic ssl-demo --consumer.config config/ssldemo-client.properties
+```
+
+You should be able to connect to Kafka broker for both producer and consumer successfully.
+
+### Running Spring Cloud Stream Application against this secured Kafka using SSLExamplePart3ConfigureKafka
+
+Build this application.
+
+```
+./mvnw clean package
+```
+
+Then run the resultant jar.
+
+```
+java -jar target/kafka-ssl-demo-0.0.1-SNAPSHOT.jar
+```
+
+Or Run it from an IDE.
+
+Using the console producer script we ran above, produce data to the topic `ssl-demo`.
+The application also is configured to receive from the same topic.
+When producing data, you should see the message getting printed on the application's console.

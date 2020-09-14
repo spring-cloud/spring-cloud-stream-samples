@@ -33,6 +33,7 @@
 		<module>kafka-e2e-kotlin-sample</module>
 		<module>kafka-native-serialization</module>
 		<module>function-based-stream-app-samples</module>
+		<module>kafka-security-samples</module>
 	</modules>
 
 	<properties>

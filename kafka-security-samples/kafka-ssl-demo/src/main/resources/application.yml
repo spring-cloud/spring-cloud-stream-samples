@@ -1,0 +1,17 @@
+spring.cloud.stream:
+  bindings:
+    consumer-in-0:
+      destination: ssl-demo
+  kafka.binder:
+    brokers: localhost:9093
+    configuration:
+      security.protocol: SSL
+      ssl.truststore.location: /tmp/kafka-ssl-demo/client.truststore
+      ssl.truststore.password: 123456
+      ssl.keystore.location: /tmp/kafka-ssl-demo/ssldemo.keystore
+      ssl.keystore.password: 123456
+      ssl.key.password: 123456
+      ssl.enabled.protocols: TLSv1.2,TLSv1.1,TLSv1
+      ssl.truststore.type: JKS
+      ssl.keystore.type: JKS
+      ssl.endpoint.identification.algorithm:
