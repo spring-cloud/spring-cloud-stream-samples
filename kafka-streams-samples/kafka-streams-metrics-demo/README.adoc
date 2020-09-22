@@ -1,0 +1,171 @@
+== What is this app?
+
+This is an application where we demonstrate a basic Kafka Streams application and then enable Kafka Streams metrics through Prometheus and Micrometer.
+
+The following Prometheus micrometer dependencies are added to the maven configuration.
+
+```
+<dependency>
+	<groupId>io.micrometer</groupId>
+	<artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.micrometer.prometheus</groupId>
+	<artifactId>prometheus-rsocket-spring</artifactId>
+	<version>${prometheus-rsocket.version}</version>
+</dependency>
+```
+
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-metrics-demo-0.0.1-SNAPSHOT.jar`
+
+Run the standalone producer which sends data to the incoming topic for the above processor.
+The iteration size is set to 5000, adjust it according before running.
+
+Then go to: `http://localhost:9000/actuator/prometheus`
+
+You can also get a list of all the avaialable metrics through the standard Boot actuator metrics endpoint:
+
+`http://localhost:9000/actuator/metrics`
+
+There you can see all the metrics available through Kafka Streams metrics.
+
+### Here are some relevant metrics for this application (_if you ran the Producer as described above_)
+
+You should see valid data for the following metrics.
+
+You can find descriptions for these metrics in the Prometheus output.
+
+#### Kafka Conusumer metrics
+
+```
+kafka_consumer_fetch_manager_records_consumed_total
+kafka_consumer_fetch_manager_records_consumed_rate
+kafka_consumer_fetch_manager_records_lead_min
+kafka_consumer_fetch_manager_records_fetch_size_avg
+kafka_consumer_fetch_manager_records_fetch_size_max
+kafka_consumer_fetch_manager_records_fetch_latency_max
+kafka_consumer_fetch_manager_records_records_lag_avg
+kafka_consumer_fetch_manager_records_fetch_latency_avg
+kafka_consumer_fetch_manager_records_fetch_total
+kafka_consumer_fetch_manager_records_bytes_consumed_rate
+kafka_consumer_fetch_manager_records_lead
+kafka_consumer_fetch_manager_records_lead_avg
+kafka_consumer_fetch_manager_records_lag
+
+kafka_consumer_node_incoming_byte_rate
+kafka_consumer_node_incoming_byte_total
+kafka_consumer_response_total
+kafka_consumer_response_rate
+kafka_consumer_time_between_poll_avg
+kafka_consumer_time_between_poll_max
+kafka_consumer_coordinator_commit_rate
+kafka_consumer_network_io_rate
+kafka_consumer_network_io_total
+kafka_consumer_node_outgoing_byte_total
+kafka_consumer_node_outgoing_byte_rate
+kafka_consumer_io_waittime_ns_avg
+kafka_consumer_io_ratio
+kafka_consumer_outgoing_byte_total
+kafka_consumer_outgoing_byte_rate
+kafka_consumer_poll_idle_ratio_avg
+kafka_consumer_io_wait_ratio
+kafka_consumer_request_total
+kafka_consumer_request_size_max
+kafka_consumer_node_request_rate
+kafka_consumer_node_incoming_byte_total
+kafka_consumer_iotime_total
+kafka_consumer_node_request_size_max
+kafka_consumer_incoming_byte_rate
+kafka_consumer_incoming_byte_total
+kafka_consumer_coordinator_heartbeat_rate
+kafka_consumer_select_rate
+kafka_consumer_select_total
+kafka_consumer_io_waittime_total
+kafka_consumer_node_request_total
+kafka_consumer_coordinator_commit_total
+kafka_consumer_io_waittime_total
+kafka_consumer_node_rquest_total
+kafka_consumer_io_time_ns_avg
+kafka_consumer_request_size_avg
+kafka_consumer_node_request_size_avg
+kafka_consumer_coordinator_last_rebalance_seconds_ago
+kafka_consumer_request_rate
+```
+
+#### Kafka Streams Metrics
+
+```
+kafka_stream_thread_process_total
+kafka_stream_thread_commit_total
+kafka_stream_thread_poll_total
+kafka_stream_thread_poll_latency_max
+kafka_stream_thread_process_latency_max
+kafka_stream_thread_poll_rate
+kafka_stream_thread_process_total
+kafka_stream_thread_process_rate
+kafka_stream_thread_process_latency_avg
+kafka_stream_thread_commit_latency_avg
+kafka_stream_thread_commit_latency_max
+kafka_stream_thread_commit_rate
+kafka_stream_thread_poll_latency_avg
+```
+
+#### Kafka Producer Metrics
+
+```
+kafka_producer_record_send_total
+kafka_producer_topic_record_send_total
+kafka_producer_buffer_total_bytes
+kafka_producer_io_waittime_total
+kafka_producer_io_time_ns_avg
+kafka_producer_compression_rate_avg
+kafka_producer_buffer_available_bytes
+kafka_producer_record_queue_time_max
+kafka_producer_reocord_queue_time_avg
+kafka_producer_batch_size_avg
+kafka_producer_response_total
+kafka_producer_response_rate
+kafka_producer_request_latecny_avg
+kafka_producer_record_size_max
+kafka_producer_select_total
+kafka_producer_request_reate
+kafka_producer_io_ratio
+kafka_producer_select_rate
+kafka_producer_request_total
+kafka_producer_node_request_size_avg
+kafka_producer_batch_size_max
+kafka_producer_send_rate
+kafka_producer_network_io_total
+kafka_producer_network_io_rate
+kafka_producer_node_response_rate
+kafka_producer_incoming_byte_total
+kafka_producer_iotime_total
+kafka_producer_io_wait_ratio
+kafka_producer_records_per_request_avg
+kafka_producer_request_size_avg
+kafka_producer_record_send_total
+kafka_producer_incoming_byte_rate
+kafka_producer_outgoing_byte_rate
+kafka_producer_outgoing_byte_total
+kafka_producer_record_size_avg
+kafka_producer_request_latency_max
+kafka_producer_request_size_max
+kafka_producer_topic_record_send_rate
+kafka_producer_topic_byte_total
+kafka_producer_topic_byte_rate
+kafka_producer_node_request_total
+kafka_producer_node_response_total
+kafka_producer_node_request_rate
+kafka_producer_node_incoming_byte_rate
+kafka_producer_node_incoming_byte_total
+kafka_producer_node_outgoing_byte_rate
+kafka_producer_node_outgoing_byte_total
+kafka_producer_node_request_size_max
+kafka_producer_node_request_lateny_avg
+```

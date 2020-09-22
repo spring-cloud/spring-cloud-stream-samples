@@ -21,6 +21,7 @@
         <module>kafka-streams-aggregate</module>
         <module>kafka-streams-to-rabbitmq-message-channel</module>
         <module>kafka-streams-inventory-count</module>
+        <module>kafka-streams-metrics-demo</module>
     </modules>
 
 </project>
