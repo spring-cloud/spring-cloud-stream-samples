@@ -27,7 +27,6 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
 
 import org.springframework.boot.SpringApplication;
@@ -45,7 +44,7 @@ public class KafkaStreamsWordCountApplication {
 
 		public static final String INPUT_TOPIC = "input";
 		public static final String OUTPUT_TOPIC = "output";
-		public static final int WINDOW_SIZE_MS = 30000;
+		public static final int WINDOW_SIZE_MS = 1000;
 
 		@Bean
 		public Function<KStream<Bytes, String>, KStream<Bytes, WordCount>> process() {

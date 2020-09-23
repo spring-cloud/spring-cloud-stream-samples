@@ -1,9 +1,15 @@
 spring.cloud.stream:
-  bindings:
-    process-in-0:
-      destination: words
-    process-out-0:
-      destination: counts
+  function:
+    definition: process
+    bindings:
+      process-in-0: input
+      process-out-0: output
+#  bindings:
+#    input:
+#      destination: input
+#    output:
+#      destination: output
+
   kafka:
     streams:
       binder:
@@ -15,14 +21,23 @@ spring.cloud.stream:
             value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 #Enable metrics
 management:
+  metrics:
+    export:
+      wavefront:
+        enabled: false
+      prometheus:
+        enabled: false
+        rsocket:
+          enabled: false
   endpoint:
     health:
       show-details: ALWAYS
   endpoints:
     web:
       exposure:
-        include: metrics,health
+        include: health,info,bindings
+#        include: metrics,health,info,bindings
 #Enable logging to debug for spring kafka config
-logging:
-  level:
-    org.springframework.kafka.config: debug
+#logging:
+#  level:
+#    org.springframework.kafka.config: debug

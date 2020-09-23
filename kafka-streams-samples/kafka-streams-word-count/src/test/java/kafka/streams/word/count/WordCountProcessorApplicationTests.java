@@ -76,7 +76,9 @@ public class WordCountProcessorApplicationTests {
         final StreamsBuilder builder = new StreamsBuilder();
         KStream<Bytes, String> input = builder.stream(INPUT_TOPIC, Consumed.with(nullSerde, stringSerde));
         KafkaStreamsWordCountApplication.WordCountProcessorApplication app = new KafkaStreamsWordCountApplication.WordCountProcessorApplication();
-        final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = app.process();
+
+        //final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = app.process();
+        final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = null;
 
 		final KStream<Bytes, KafkaStreamsWordCountApplication.WordCount> output = process.apply(input);
 
