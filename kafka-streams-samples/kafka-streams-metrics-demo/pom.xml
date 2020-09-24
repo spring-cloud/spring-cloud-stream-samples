@@ -15,9 +15,8 @@
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
-		<java.version>11</java.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
-		<prometheus-rsocket.version>1.0.0</prometheus-rsocket.version>
+		<prometheus-rsocket.version>1.1.0</prometheus-rsocket.version>
 	</properties>
 
 	<dependencies>
