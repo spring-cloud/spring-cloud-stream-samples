@@ -9,10 +9,6 @@
     <description>Kafka Security Samples</description>
     <packaging>pom</packaging>
 
-    <properties>
-        <java.version>8</java.version>
-    </properties>
-
     <modules>
         <module>kafka-ssl-demo</module>
     </modules>
