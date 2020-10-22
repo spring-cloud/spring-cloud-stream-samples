@@ -2,8 +2,8 @@ spring.cloud.stream:
   function:
     definition: process
     bindings:
-      process-in-0: input
-      process-out-0: output
+      process-in-0: words
+      process-out-0: counts
 #  bindings:
 #    input:
 #      destination: input
