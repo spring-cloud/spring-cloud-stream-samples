@@ -1,0 +1,39 @@
+== What is this app?
+
+This is an application that demonstrates how to use topic patterns for incoming destinations.
+
+=== Running the app:
+
+Go to the root of the repository and do:
+
+`./mvnw clean package`
+
+Ensure that Kafka is running on localhost:9092.
+
+`java -jar target/kafka-streams-destination-pattern-0.0.1-SNAPSHOT.jar`
+
+Once the application started, go ahead and create a new topic called `my.foo` and `another.foo`.
+
+For example, if you are running Kafka as a docker container (like other samples in the repo), you can use the following script to create the topics.
+
+```
+docker exec -it default /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper:2181 --create --topic my.foo --partitions 1 --replication-factor 1
+```
+and
+```
+docker exec -it default /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper:2181 --create --topic another.foo --partitions 1 --replication-factor 1
+```
+
+Then produce data into them.
+
+```
+docker exec -it default /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic my.foo
+```
+and
+```
+docker exec -it default /opt/kafka/bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic another.foo
+```
+
+You should see that the Kafka Streams consumer logging the data on the application console.
+
+In order to see how destination as pattern works, please take a look at the configuration for this application.

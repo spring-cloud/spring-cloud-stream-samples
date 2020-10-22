@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    function:
+      definition: stream
+    stream:
+      bindings:
+        stream-in-0:
+          destination: .*foo
+      kafka:
+        streams:
+          binder:
+            configuration:
+              metadata.max.age.ms: 30000
+          bindings:
+            stream-in-0:
+              consumer:
+                destination-is-pattern: true
