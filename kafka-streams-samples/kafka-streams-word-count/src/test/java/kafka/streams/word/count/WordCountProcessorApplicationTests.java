@@ -16,23 +16,25 @@
 
 package kafka.streams.word.count;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.TestInputTopic;
+import org.apache.kafka.streams.TestOutputTopic;
 import org.apache.kafka.streams.TopologyTestDriver;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
-import org.apache.kafka.streams.test.ConsumerRecordFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -51,12 +53,12 @@ public class WordCountProcessorApplicationTests {
     private TopologyTestDriver testDriver;
     public static final String INPUT_TOPIC = KafkaStreamsWordCountApplication.WordCountProcessorApplication.INPUT_TOPIC;
     public static final String OUTPUT_TOPIC = KafkaStreamsWordCountApplication.WordCountProcessorApplication.OUTPUT_TOPIC;
+    private TestInputTopic inputTopic;
+    private TestOutputTopic outputTopic;
 
     final Serde<String> stringSerde = Serdes.String();
     final JsonSerde<KafkaStreamsWordCountApplication.WordCount> countSerde = new JsonSerde<>(KafkaStreamsWordCountApplication.WordCount.class);
     final Serde<Bytes> nullSerde = Serdes.Bytes(); //Serde for not used key
-    private ConsumerRecordFactory<String, String> recordFactory = new ConsumerRecordFactory<>(
-            stringSerde.serializer(), stringSerde.serializer()); //Key feed in as string, even read as Bytes
 
     static Properties getStreamsConfiguration() {
         final Properties streamsConfiguration = new Properties();
@@ -74,17 +76,19 @@ public class WordCountProcessorApplicationTests {
     @Before
     public void setup() {
         final StreamsBuilder builder = new StreamsBuilder();
-        KStream<Bytes, String> input = builder.stream(INPUT_TOPIC, Consumed.with(nullSerde, stringSerde));
-        KafkaStreamsWordCountApplication.WordCountProcessorApplication app = new KafkaStreamsWordCountApplication.WordCountProcessorApplication();
-
-        //final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = app.process();
-        final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = app.process();
-
-		final KStream<Bytes, KafkaStreamsWordCountApplication.WordCount> output = process.apply(input);
-
-		output.to(OUTPUT_TOPIC, Produced.with(nullSerde, countSerde));
+        buildStreamProcessingPipeline(builder);
 
         testDriver = new TopologyTestDriver(builder.build(), getStreamsConfiguration());
+        inputTopic = testDriver.createInputTopic(INPUT_TOPIC, nullSerde.serializer(), stringSerde.serializer());
+        outputTopic = testDriver.createOutputTopic(OUTPUT_TOPIC, nullSerde.deserializer(), countSerde.deserializer());
+    }
+
+    private void buildStreamProcessingPipeline(StreamsBuilder builder) {
+        KStream<Bytes, String> input = builder.stream(INPUT_TOPIC, Consumed.with(nullSerde, stringSerde));
+        KafkaStreamsWordCountApplication.WordCountProcessorApplication app = new KafkaStreamsWordCountApplication.WordCountProcessorApplication();
+        final Function<KStream<Bytes, String>, KStream<Bytes, KafkaStreamsWordCountApplication.WordCount>> process = app.process();
+        final KStream<Bytes, KafkaStreamsWordCountApplication.WordCount> output = process.apply(input);
+        output.to(OUTPUT_TOPIC, Produced.with(nullSerde, countSerde));
     }
 
     @After
@@ -99,43 +103,20 @@ public class WordCountProcessorApplicationTests {
     }
 
     /**
-     * Read one Record from output topic.
-     *
-     * @return ProducerRecord containing WordCount as value
-     */
-    private ProducerRecord<Bytes, KafkaStreamsWordCountApplication.WordCount> readOutput() {
-        return testDriver.readOutput(OUTPUT_TOPIC, nullSerde.deserializer(), countSerde.deserializer());
-    }
-
-    /**
-     * Read counts from output to map ignoring start and end dates
-     * If existing word is incremented, it can appear twice in output and is replaced in map
-     *
-     * @return Map of Word and counts
-     */
-    private Map<String, Long> getOutputList() {
-        final Map<String, Long> output = new HashMap<>();
-        ProducerRecord<Bytes, KafkaStreamsWordCountApplication.WordCount> outputRow;
-        while ((outputRow = readOutput()) != null) {
-            output.put(outputRow.value().getWord(), outputRow.value().getCount());
-        }
-        return output;
-    }
-
-    /**
      * Simple test validating count of one word
      */
     @Test
     public void testOneWord() {
         final String nullKey = null;
         //Feed word "Hello" to inputTopic and no kafka key, timestamp is irrelevant in this case
-        testDriver.pipeInput(recordFactory.create(INPUT_TOPIC, nullKey, "Hello", 1L));
+        inputTopic.pipeInput(nullKey, "Hello", 1L);
+
         //Read and validate output
-        final ProducerRecord<Bytes, KafkaStreamsWordCountApplication.WordCount> output = readOutput();
+        final Object output = outputTopic.readValue();
         assertThat(output).isNotNull();
-        assertThat(output.value()).isEqualToComparingFieldByField(new KafkaStreamsWordCountApplication.WordCount("hello", 1L, new Date(0), new Date(KafkaStreamsWordCountApplication.WordCountProcessorApplication.WINDOW_SIZE_MS)));
+        assertThat(output).isEqualToComparingFieldByField(new KafkaStreamsWordCountApplication.WordCount("hello", 1L, new Date(0), new Date(KafkaStreamsWordCountApplication.WordCountProcessorApplication.WINDOW_SIZE_MS)));
         //No more output in topic
-        assertThat(readOutput()).isNull();
+        assertThat(outputTopic.isEmpty()).isTrue();
     }
 
     /**
@@ -162,8 +143,24 @@ public class WordCountProcessorApplicationTests {
         expectedWordCounts.put("kafka", 2L);
         expectedWordCounts.put("using", 1L);
 
-        testDriver.pipeInput(recordFactory.create(INPUT_TOPIC, inputRecords, 1L, 1000L)); //All feed in same 30s time window
+        inputTopic.pipeKeyValueList(inputRecords, Instant.ofEpochSecond(1L), Duration.ofMillis(1000L));
         final Map<String, Long> actualWordCounts = getOutputList();
         assertThat(actualWordCounts).containsAllEntriesOf(expectedWordCounts).hasSameSizeAs(expectedWordCounts);
+    }
+
+    /**
+     * Read counts from output to map ignoring start and end dates
+     * If existing word is incremented, it can appear twice in output and is replaced in map
+     *
+     * @return Map of Word and counts
+     */
+    private Map<String, Long> getOutputList() {
+        final Map<String, Long> output = new HashMap<>();
+        KafkaStreamsWordCountApplication.WordCount outputRow;
+        while (!outputTopic.isEmpty()) {
+            outputRow = (KafkaStreamsWordCountApplication.WordCount) outputTopic.readValue();
+            output.put(outputRow.getWord(), outputRow.getCount());
+        }
+        return output;
     }
 }
