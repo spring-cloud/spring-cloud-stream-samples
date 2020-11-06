@@ -264,7 +264,7 @@ $ keytool \
 
 Verify you see both CA and client certificate entries in the key store.
 ```
-keytool -list -v -keystore jacek.keystore -storepass 123456
+keytool -list -v -keystore ssldemo.keystore -storepass 123456
 ```
 
 ### Import CA Certificate to Client Truststore
