@@ -3,7 +3,7 @@ spring:
     stream:
       bindings:
         supplier-out-0:
-          contentType: application/+avro
+          contentType: application/*+avro
           destination: sensor-topic
       schema-registry-client:
         endpoint: http://localhost:8990
