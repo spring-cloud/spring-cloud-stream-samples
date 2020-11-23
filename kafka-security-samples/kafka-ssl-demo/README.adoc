@@ -316,6 +316,8 @@ You should be able to connect to Kafka broker for both producer and consumer suc
 
 Build this application.
 
+Before building, move the certificate files to `src/main/resources` folder so that they are available on the classpath.
+
 ```
 ./mvnw clean package
 ```
