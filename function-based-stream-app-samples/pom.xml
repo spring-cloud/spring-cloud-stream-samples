@@ -15,6 +15,7 @@
 
 	<modules>
 		<module>image-thumbnail-samples</module>
+		<module>couchbase-stream-applications</module>
 	</modules>
 
 </project>

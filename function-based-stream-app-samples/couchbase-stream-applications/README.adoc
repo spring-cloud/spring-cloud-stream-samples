@@ -1,0 +1,14 @@
+= Couchbase Stream Applications
+
+A sample Spring Cloud Stream Application and Consumer to demonstrate testing strategies using TestContainers.
+
+This project includes the following modules:
+
+* link:couchbase-consumer/[couchbase-consumer] - A Consumer to upsert documents into Couchbase
+* link:couchbase-sink/[couchbase-sink] - A Spring Cloud Stream sink application to invoke the consumer
+
+== Build
+
+```bash
+./mvnw clean install
+```

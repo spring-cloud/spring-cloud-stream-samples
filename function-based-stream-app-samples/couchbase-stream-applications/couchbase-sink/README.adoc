@@ -1,0 +1,22 @@
+== Options
+
+The **$$couchbase$$** $$sink$$ has the following options:
+
+
+//tag::configuration-properties[]
+Properties grouped by prefix:
+
+
+=== couchbase.consumer
+
+$$bucket-expression$$:: $$A SpEL expression to specify the bucket.$$ *($$Expression$$, default: `$$<none>$$`)*
+$$collection-expression$$:: $$A SpEL expression to specify the collection.$$ *($$Expression$$, default: `$$<none>$$`)*
+$$key-expression$$:: $$A SpEL expression to specify the key.$$ *($$Expression$$, default: `$$<none>$$`)*
+$$value-expression$$:: $$A SpEL expression to specify the value (default is payload).$$ *($$Expression$$, default: `$$<none>$$`)*
+
+=== spring.couchbase
+
+$$connection-string$$:: $$Connection string used to locate the Couchbase cluster.$$ *($$String$$, default: `$$<none>$$`)*
+$$password$$:: $$Cluster password.$$ *($$String$$, default: `$$<none>$$`)*
+$$username$$:: $$Cluster username.$$ *($$String$$, default: `$$<none>$$`)*
+//end::configuration-properties[]
