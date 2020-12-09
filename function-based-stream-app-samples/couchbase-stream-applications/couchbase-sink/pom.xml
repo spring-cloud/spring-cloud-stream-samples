@@ -14,10 +14,6 @@
 	<name>couchbase-sink</name>
 	<description>Demo Couchbase Sink</description>
 
-	<properties>
-		<test.group>!integration</test.group>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>io.spring.example</groupId>
