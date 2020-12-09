@@ -46,7 +46,12 @@ import org.springframework.messaging.support.MessageBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+@Testcontainers
+public class CouchbaseConsumerTests {
 
+	@Container
+	static CouchbaseContainer container = new CouchbaseContainer("couchbase/server:6.6.0")
+			.withBucket(new BucketDefinition("test"));
 
 	private ApplicationContextRunner applicationContextRunner;
 
