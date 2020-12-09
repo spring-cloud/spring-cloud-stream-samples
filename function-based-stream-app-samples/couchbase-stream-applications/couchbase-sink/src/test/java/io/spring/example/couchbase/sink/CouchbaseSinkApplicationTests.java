@@ -58,7 +58,7 @@ public class CouchbaseSinkApplicationTests {
 	void test() {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(
 				TestChannelBinderConfiguration
-						.getCompleteConfiguration(CouchbaseSinkApplication.class, CouchbaseSinkApplication.class))
+						.getCompleteConfiguration(CouchbaseSinkApplication.class))
 								.web(WebApplicationType.NONE)
 								.properties(connectProperties)
 								.run("--couchbase.consumer.bucketExpression='test'",
