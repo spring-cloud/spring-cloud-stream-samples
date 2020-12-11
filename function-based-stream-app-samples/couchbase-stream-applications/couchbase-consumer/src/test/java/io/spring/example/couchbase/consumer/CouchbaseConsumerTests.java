@@ -16,8 +16,8 @@
 
 package io.spring.example.couchbase.consumer;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -163,11 +163,11 @@ public class CouchbaseConsumerTests {
 					Cluster cluster = context.getBean(Cluster.class);
 					String bucketName = "test";
 					MessageBuilder.withPayload(new User("David", "david@david.com"))
-							.copyHeaders(Map.of("bucketName", bucketName)).build();
+							.copyHeaders(Collections.singletonMap("bucketName", bucketName)).build();
 					Function<Flux<Message<?>>, Flux<MutationResult>> couchbaseConsumerFunction = context
 							.getBean("couchbaseConsumerFunction", Function.class);
 					Message<?> message = MessageBuilder.withPayload(new User("David", "david@david.com"))
-							.copyHeaders(Map.of("bucketName", bucketName)).build();
+							.copyHeaders(Collections.singletonMap("bucketName", bucketName)).build();
 					StepVerifier.create(couchbaseConsumerFunction.apply(Flux.just(message)))
 							.expectNextMatches(
 									(MutationResult mutationResult) -> mutationResult.mutationToken().get().bucketName()
@@ -195,7 +195,8 @@ public class CouchbaseConsumerTests {
 							.getBean("couchbaseConsumerFunction", Function.class);
 					StepVerifier.create(couchbaseConsumerFunction
 							.apply(Flux
-									.just(new GenericMessage<>(Map.of("user", new User("David", "david@david.com"))))))
+									.just(new GenericMessage<>(
+											Collections.singletonMap("user", new User("David", "david@david.com"))))))
 							.expectNextMatches(
 									mutationResult -> mutationResult.mutationToken().get().bucketName().equals(
 											bucketName))
