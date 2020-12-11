@@ -16,7 +16,7 @@
 	<description>Demo Stream Applications project for Couchhbase</description>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
 		<spring-cloud.version>2020.0.0-M5</spring-cloud.version>
 		<playtika-testcontainers.version>1.86</playtika-testcontainers.version>
 		<couchbase-java-client.version>3.0.10</couchbase-java-client.version>
@@ -77,6 +77,35 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+	<profiles>
+		<profile>
+			<id>integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<groups>integration</groups>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<groups>!integration</groups>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 
 </project>

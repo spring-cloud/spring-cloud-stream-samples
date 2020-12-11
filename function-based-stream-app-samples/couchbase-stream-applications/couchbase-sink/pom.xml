@@ -67,39 +67,53 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>org.junit.jupiter</groupId>
+								<artifactId>junit-jupiter-engine</artifactId>
+								<version>5.7.0</version>
+							</dependency>
+						</dependencies>
+
+						<configuration>
+							<groups>integration</groups>
+							<includes>
+								<include>*IntegrationTests.java</include>
+							</includes>
+							<failIfNoTests>true</failIfNoTests>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>build-imagage</id>
+								<goals>
+									<goal>build-image</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.junit.jupiter</groupId>
-						<artifactId>junit-jupiter-engine</artifactId>
-						<version>5.7.0</version>
-					</dependency>
-				</dependencies>
-
-				<configuration>
-					<groups>integration</groups>
-					<includes>
-						<include>*IntegrationTests.java</include>
-					</includes>
-					<failIfNoTests>true</failIfNoTests>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>build-imagage</id>
-						<goals>
-							<goal>build-image</goal>
-						</goals>
-						<phase>pre-integration-test</phase>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.cloud</groupId>
@@ -115,14 +129,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<groups>!integration</groups>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-
 </project>

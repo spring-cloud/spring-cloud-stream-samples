@@ -12,3 +12,8 @@ This project includes the following modules:
 ```bash
 ./mvnw clean install
 ```
+
+=== Build container image and run integration tests
+```bash
+./mvnw install -Pintegration
+```
