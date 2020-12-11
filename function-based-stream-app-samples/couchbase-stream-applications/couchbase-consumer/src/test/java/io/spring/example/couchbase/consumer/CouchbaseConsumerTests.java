@@ -81,8 +81,8 @@ public class CouchbaseConsumerTests {
 				"couchbase.consumer.keyExpression=payload.email")
 				.run(context -> {
 					CouchbaseConsumerProperties properties = context.getBean(CouchbaseConsumerProperties.class);
-					Cluster cluster = context.getBean(Cluster.class);
 					String bucketName = properties.getBucketExpression().getValue(String.class);
+					Cluster cluster = context.getBean(Cluster.class);
 					Function<Flux<Message<?>>, Flux<MutationResult>> couchbaseConsumerFunction = context
 							.getBean("couchbaseConsumerFunction", Function.class);
 					StepVerifier.create(couchbaseConsumerFunction
