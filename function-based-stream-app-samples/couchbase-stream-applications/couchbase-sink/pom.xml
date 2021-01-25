@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud.stream.app</groupId>
 			<artifactId>stream-applications-test-support</artifactId>
-			<version>3.0.0-RC1</version>
+			<version>3.0.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -89,6 +89,7 @@
 								<include>*IntegrationTests.java</include>
 							</includes>
 							<failIfNoTests>true</failIfNoTests>
+							<skipITs>false</skipITs>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -96,7 +97,7 @@
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>build-imagage</id>
+								<id>build-image</id>
 								<goals>
 									<goal>build-image</goal>
 								</goals>
