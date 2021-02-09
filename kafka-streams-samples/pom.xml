@@ -9,6 +9,7 @@
     <description>Collection of Spring Cloud Stream Kafka Streams samples</description>
 
     <modules>
+        <module>kafka-streams-avro</module>
         <module>kafka-streams-word-count</module>
         <module>kafka-streams-branching</module>
         <module>kafka-streams-dlq-sample</module>

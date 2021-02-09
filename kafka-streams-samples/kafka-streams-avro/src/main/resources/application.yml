@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: process;supplier
+      bindings:
+        process-in-0:
+          destination: foo-1
+        supplier-out-0:
+          destination: foo-1
+          producer:
+            use-native-encoding: true
+      kafka:
+        bindings:
+          supplier-out-0:
+           producer:
+             configuration:
+               schema.registry.url: http://localhost:8081
+               value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+        streams:
+          binder:
+            configuration:
+              schema.registry.url: http://localhost:8081
+              specific.avro.reader: true

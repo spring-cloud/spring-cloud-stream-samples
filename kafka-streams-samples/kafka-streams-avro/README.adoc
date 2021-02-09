@@ -1,0 +1,21 @@
+== What is this app?
+
+This is an example of a Kafka Streams application in which it shows how to deal with avro records.
+To learn more about the details, take a look at the application code and configuration.
+There is a supplier provided that produces messages every second, so that we can verify the Kafka Streams processor.
+
+=== Running the app:
+
+Before running the application, please ensure that you have Kafka and Confluent Schema Registry running on default ports (9092, 8081 respectively).
+Go to the root of the module: `./mvnw clean pacakge`
+Run: `java -jar target/kafka-streams-avro-0.0.1-SNAPSHOT.jar`
+
+Here is a sample of the output that you should see on the console:
+
+```
+value: {"id": "5ff23631-c247-4bed-bfbd-a7e2dbda0656-v1", "temperature": 19.00903, "acceleration": 1.9602519, "velocity": 94.81839}
+ value: {"id": "1401cd49-7ef8-4f2d-84b2-ee353614ff17-v1", "temperature": 28.70042, "acceleration": 3.8848882, "velocity": 35.728233}
+ value: {"id": "0e441af2-7663-407f-8114-28c9293b07b7-v1", "temperature": 35.18999, "acceleration": 5.7880907, "velocity": 91.13803}
+ value: {"id": "db7efc65-65ab-42ec-b427-b4ed22f16867-v1", "temperature": 38.2617, "acceleration": 5.0047708, "velocity": 52.519302}
+```
+
