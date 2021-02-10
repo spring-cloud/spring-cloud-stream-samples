@@ -1,0 +1,23 @@
+logging:
+  level:
+    org.springframework.cloud: debug
+    com.example: debug
+spring:
+  cloud:
+    schema-registry-client:
+      endpoint: http://localhost:8990
+    schema:
+      avro:
+        prefix: vnd
+        schema-locations: classpath:avro/sensor.avsc
+    stream:
+      function:
+        bindings:
+          consume-in-0: consume1
+      bindings:
+        sensor:
+          destination: sensor-1
+          content-type: application/*+avro
+        consume1:
+          destination: sensor-1
+          content-type: application/*+avro

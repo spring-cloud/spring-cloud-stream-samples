@@ -14,6 +14,7 @@
         <module>schema-registry-confluent</module>
         <module>schema-registry-confluent-avro-serializer</module>
         <module>kafka-streams-schema-evolution</module>
+        <module>spring-schema-registry-kafka-standalone</module>
     </modules>
 
 </project>

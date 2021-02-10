@@ -1,0 +1,37 @@
+== Spring Schema Registry + Kafka Standalone
+
+This sample application will demonstrate the combination of Spring's schema registry + Kafka + avro.
+
+=== Running the application
+
+- Start Kafka
+
+[source,bash]
+----
+docker-compose up -d
+----
+
+- Start the Schema Registry server (Chnage these commands accordingly if you are not on a Unix like platform)
+[source,bash]
+----
+wget -O /tmp/schema-registry-server.jar https://repo.maven.apache.org/maven2/org/springframework/cloud/spring-cloud-schema-registry-client/1.0.9.RELEASE//spring-cloud-schema-registry-server-1.0.9.RELEASE.jar
+cd /tmp
+----
+
+Start the Schema Registry server using in-memory H2 database:
+[source,bash]
+----
+java -jar schema-registry-server-1.0.9.RELEASE.jar
+----
+
+You might have to build this application to generate the avro classes.
+For that, use the build command: `./mvnw clean package` (Or you can use your IDE plugins to generate the avro classes)
+
+Then run this application.
+You should see a one-time `Sensor` output from the consumer in the application (which is originally produced by the `CommandlineRunner`).
+
+=== Cleanup
+
+Once you are done with running the sample, stop the docker container.
+
+`docker-compose down`
