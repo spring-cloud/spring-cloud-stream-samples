@@ -1,7 +1,9 @@
-package com.example;
+package com.example.demo;
 
 import java.util.Random;
 import java.util.function.Consumer;
+
+import com.example.Sensor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
