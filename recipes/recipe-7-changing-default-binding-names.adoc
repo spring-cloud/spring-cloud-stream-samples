@@ -1,0 +1,37 @@
+# How do I override the default binding names in Spring Cloud Stream?
+
+## Problem Statement
+
+Spring Cloud Stream creates default bindings based on the function definition and signature, but how do I override these to more domain friendly names?
+
+## Solution
+
+Assume that following is your function signature.
+
+```
+@Bean
+public Function<KStream<String, Order>, KTable<String, Account>, KStream<String, EnrichedOrder>> processOrder() {
+...
+}
+```
+
+By default, Spring Cloud Stream will create three different binding names for this function.
+
+1. processOrder-in-0
+2. processOrder-in-1
+3. processOrder-out-0
+
+You have to use these binding names each time you want to set some configuration on these bindings.
+You don't like that, and you want to use more domain-friendly and readable binding names, for example, something like.
+
+1. orders
+2. accounts
+3. enrichedOrders
+
+You can easily do that by simply setting these three properties
+
+1. spring.cloud.stream.function.bindings.processOrder-in-0=orders
+2. spring.cloud.stream.function.bindings.processOrder-in-1=accounts
+3. spring.cloud.stream.function.bindings.processOrder-out-0=enrichedOrders
+
+Once you do that, it overrides the default binding names and any properties that you want to set on them must be on these new binding names.

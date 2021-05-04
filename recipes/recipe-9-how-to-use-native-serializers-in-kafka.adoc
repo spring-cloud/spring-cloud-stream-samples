@@ -1,0 +1,53 @@
+# How do I use native serializer and deserializer instead of message conversion done by Spring Cloud Stream?
+
+## Problem Statement
+
+Instead of using the message converters in Spring Cloud Stream, I want to use native Serializer and Deserializer in Kafka.
+By default, Spring Cloud Stream takes care of this conversion using its internal built-in message converters.
+How can I bypass this and delegate the responsibility to Kafka?
+
+## Solution
+
+This is really easy to do.
+
+All you have to do is to provide the following property to enable native serialization.
+
+```
+spring.cloud.stream.kafka.bindings.<binding-name>.producer.useNativeEncoding: true
+```
+
+Then, you need to also set the serailzers.
+There are a couple of ways to do this.
+
+```
+spring.cloud.stream.kafka.bindings.<binding-name>.producer.configurarion.key.serializer: org.apache.kafka.common.serialization.StringSerializer
+spring.cloud.stream.kafka.bindings.<binding-name>.producer.configurarion.value.serializer: org.apache.kafka.common.serialization.StringSerializer
+```
+
+or using the binder configuration.
+
+```
+spring.cloud.stream.kafka.binder.configurarion.key.serializer: org.apache.kafka.common.serialization.StringSerializer
+spring.cloud.stream.kafka.binder.configurarion.value.serializer: org.apache.kafka.common.serialization.StringSerializer
+```
+
+When using the binder way, it is applied against all the bindings whereas setting them at the bindings are per binding.
+
+On the deserializing side, you just need to provide the deserializers as configuration.
+
+For example,
+
+```
+spring.cloud.stream.kafka.bindings.<binding-name>.consumer.configurarion.key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+spring.cloud.stream.kafka.bindings.<binding-name>.producer.configurarion.value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+```
+
+You can also set them at the binder level.
+
+There is an optional property that you can set to force native decoding.
+
+```
+spring.cloud.stream.kafka.bindings.<binding-name>.consumer.useNativeDecoding: true
+```
+
+However, in the case of Kafka binder, this is unncessary, as by the time it reaches to the binder, Kafka already deserializes them using the configured deserializers.
