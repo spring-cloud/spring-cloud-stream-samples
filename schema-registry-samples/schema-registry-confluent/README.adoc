@@ -144,7 +144,7 @@ In our sample the topic (e.g. destination) is called `sensor-topic`. Therefore t
 
 Note that the confluent schema registry works fine with different subject naming strategies, only the control center visualization will not show them.
 
-To configure a the schema name after the topic name yuo can use the `spring.cloud.schema.avro.subjectNamePrefix`
+To configure a the schema name after the topic name you can use the `spring.cloud.schema.avro.subjectNamePrefix`
 and `spring.cloud.schema.avro.subjectNamePrefix.subjectNamingStrategy` properties as shown below (only available with 1.1.x onwards:
 
 [source,yaml]
