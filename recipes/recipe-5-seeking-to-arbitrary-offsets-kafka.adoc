@@ -54,7 +54,7 @@ Partition   start offset
 3           1000
 ```
 
-Thi could be achieved by implementing the above method as below.
+This could be achieved by implementing the above method as below.
 
 ```
 

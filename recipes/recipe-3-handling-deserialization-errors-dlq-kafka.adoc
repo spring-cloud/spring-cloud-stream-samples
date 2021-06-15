@@ -32,7 +32,7 @@ In the case of `String` types, it does not make much sense, but for more complex
 Now when the consumer receives the data, let us assume that there is a bad record that causes a deserilziation errror, maybe someone passed an `Integer` instead of a `String` for example.
 In that case, if you don't do something in the application, the excption will be propagated through the chain and your application will exit eventually.
 
-In order to handle this, you can add a `ListenerContainerCustomizer` `@Bean` that configurs a `SeekToCurrentErrorHandler`.
+In order to handle this, you can add a `ListenerContainerCustomizer` `@Bean` that configures a `SeekToCurrentErrorHandler`.
 This `SeekToCurrentErrorHandler` is configured with a `DeadLetterPublishingRecoverer`.
 We also need to configure an `ErrorHandlingDeserializer` for the consumer.
 That sounds like a lot of complex things, but in reality, it boils down to these 3 beans in this case.
@@ -81,8 +81,8 @@ We also need to configure an `ErrorHandlingDeserializer` through application con
 https://docs.spring.io/spring-kafka/docs/current/reference/html/#error-handling-deserializer
 
 The `ErrorHandlingDeserializer` delegates to the actual deserializer.
-In case of errors, it sets key/value of the record to be null and include the raw bytes of the message.
-It then sets the exception in a header and pass this record to the listener, which then calls the registered error handler.
+In case of errors, it sets key/value of the record to be null and includes the raw bytes of the message.
+It then sets the exception in a header and passes this record to the listener, which then calls the registered error handler.
 
 Following is the configuration required:
 
@@ -113,5 +113,5 @@ spring.cloud.stream:
 We are providing the `ErrorHandlingDeserializer` through the `configuration` property on the binding.
 We are also indicating that the actual deserializer to delegate is the `StringDeserializer`.
 
-Keep in mind that none of the dlq properties above is relevant for the discussions in this recipe.
+Keep in mind that none of the dlq properties above are relevant for the discussions in this recipe.
 They are purely meant for addressing any application level errors only.

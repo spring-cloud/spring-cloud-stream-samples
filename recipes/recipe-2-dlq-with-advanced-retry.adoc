@@ -36,7 +36,7 @@ spring.cloud.stream.bindings.processData-in-0.consumer.defaultRetryable=false
 You can also provide your own `RetryTemplate` and mark it as `@StreamRetryTemplate` which will be scanned and used by the binder.
 This is useful when you want more sophisticated retry strategies and policies.
 
-If you have multiple such `@StreamRetryTemplate` beans, then you can specify which one your binding wants by using the property,
+If you have multiple `@StreamRetryTemplate` beans, then you can specify which one your binding wants by using the property,
 
 ```
 spring.cloud.stream.bindings.processData-in-0.consumer.retry-template-name=<your-retry-template-bean-name>

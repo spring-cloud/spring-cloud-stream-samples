@@ -13,7 +13,7 @@ https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.1.3-SNAPSHOT/refe
 Here is it in a gist:
 
 Kafka supports two types of offsets to start with by default - `earliest` and `latest`.
-There semantics are self explanatory from their names.
+Their semantics are self-explanatory from their names.
 
 Assuming you are running the consumer for the first time.
 If you miss the group.id in your Spring Cloud Stream application, then it becomes an anonymous consumer.
@@ -29,5 +29,5 @@ This is true, even when you have a `startOffset` value provided.
 
 However, you can override the default behavior where the consumer starts from the last committed offset by using the `resetOffsets` property.
 In order to do that, set the property `spring.cloud.stream.kafka.bindings.<binding-name>.consumer.resetOffsets` to `true` (which is `false` by default).
-Then make sure that you provide teh `startOffset` value (either `earliest` or `latest`).
+Then make sure you provide the `startOffset` value (either `earliest` or `latest`).
 When you do that and then start the consumer application, each time you start, it starts as if this is starting for the first time and ignore any committed offsets for the partition.

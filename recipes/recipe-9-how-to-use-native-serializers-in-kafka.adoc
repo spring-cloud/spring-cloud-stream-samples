@@ -50,4 +50,4 @@ There is an optional property that you can set to force native decoding.
 spring.cloud.stream.kafka.bindings.<binding-name>.consumer.useNativeDecoding: true
 ```
 
-However, in the case of Kafka binder, this is unncessary, as by the time it reaches to the binder, Kafka already deserializes them using the configured deserializers.
+However, in the case of Kafka binder, this is unncessary, as by the time it reaches the binder, Kafka already deserializes them using the configured deserializers.

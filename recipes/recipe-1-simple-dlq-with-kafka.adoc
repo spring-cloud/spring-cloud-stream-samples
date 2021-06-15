@@ -19,7 +19,7 @@ public Consumer<byte[]> processData() {
   };
 ```
 
-This is a very trivial function that throws an exception for all the records that it processes, but you can take this function and extend this to any other similar situatiohns.
+This is a very trivial function that throws an exception for all the records that it processes, but you can take this function and extend it to any other similar situations.
 
 In order to send the records in error to a DLT, we need to provide the following configuration.
 
@@ -44,7 +44,7 @@ Finally, we can optionally provide the DLT name by providing the `dlqName` on Ka
 
 Note that in the example consumer provided above, the type of the payload is `byte[]`.
 By default, the DLQ producer in Kafka binder expects the payload of type `byte[]`.
-If that is not the case, then we need to provide configuration for proper serializer.
+If that is not the case, then we need to provide the configuration for proper serializer.
 For example, let us re-write the consumer function as below:
 
 ```
@@ -56,7 +56,7 @@ public Consumer<String> processData() {
 }
 ```
 
-Now, we need to tell Spring Cloud Stream, how we want to seialize the data when writing to the DLT.
+Now, we need to tell Spring Cloud Stream, how we want to serialize the data when writing to the DLT.
 Here is the modified configuration for this scenario:
 
 ```

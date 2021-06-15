@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Using Kafka binder, I want to manually acknowledge the messages in my consumer.
+Using Kafka binder, I want to manually acknowledge messages in my consumer.
 How do I do that?
 
 ## Solution

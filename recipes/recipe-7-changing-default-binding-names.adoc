@@ -8,9 +8,33 @@ Spring Cloud Stream creates default bindings based on the function definition an
 
 Assume that following is your function signature.
 
+
 ```
 @Bean
-public Function<KStream<String, Order>, KTable<String, Account>, KStream<String, EnrichedOrder>> processOrder() {
+public Function<String, String> uppercase(){
+...
+}
+```
+
+By default, Spring Cloud Stream will create the bindings as below.
+
+1. uppercase-in-0
+2. uppercase-out-0
+
+You can override these bindings to something by using the following properties.
+
+```
+spring.cloud.stream.function.bindings.uppercase-in-0=my-transformer-in
+spring.cloud.stream.function.bindings.uppercase-out-0=my-transformer-out
+```
+
+After this, all binding properties must be made on the new names, `my-transformer-in` and `my-transformer-out`.
+
+Here is another example with Kafka Streams and multiple inputs.
+
+```
+@Bean
+public BiFunction<KStream<String, Order>, KTable<String, Account>, KStream<String, EnrichedOrder>> processOrder() {
 ...
 }
 ```

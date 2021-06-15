@@ -3,7 +3,7 @@
 In this directory, we are providing a wide array of stream processing use cases as simple to digest recipes and how-to instructions.
 If a particular solution is only applicable to a specific middleware or binder technology, that will be specified in the recipe.
 
-For the most part, theser receipes are derived from our interaction with the community on Stack Overflow or Gitter.
+For the most part, these recipes are derived from our interaction with the community on Stack Overflow or Gitter.
 Therefore, these are real world use cases in which people have stumbled and were looking for solutions.
 
 If you have more such recipes or situations, we encourage you to contribute that as a new recipe.
