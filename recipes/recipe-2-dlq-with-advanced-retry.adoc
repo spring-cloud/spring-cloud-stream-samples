@@ -1,0 +1,43 @@
+# DLQ with Advanced Retry Options
+
+## Problem Statement
+
+This is similar to recipe-1, but as a developer I would like to configure the way retries are handled.
+
+## Solution
+
+If you followed recipe-1, then you get the default retry options built into the Kafka binder when the processing encounters an error.
+
+By default, the binder retires for a maximum of 3 attempts with 1 second initial delay, 2.0 multiplier with each back off with a max delay of 10 seconds.
+You can change all these configurations as below:
+
+```
+spring.cloud.stream.bindings.processData-in-0.consumer.maxAtttempts
+spring.cloud.stream.bindings.processData-in-0.consumer.backOffInitialInterval
+spring.cloud.stream.bindings.processData-in-0.consumer.backOffMultipler
+spring.cloud.stream.bindings.processData-in-0.consumer.backOffMaxInterval
+```
+
+If you want, you can also provide a list of retryable exceptions by providing a map of boolean values.
+For example,
+
+```
+spring.cloud.stream.bindings.processData-in-0.consumer.retryableExceptions.java.lang.IllegalStateException=true
+spring.cloud.stream.bindings.processData-in-0.consumer.retryableExceptions.java.lang.IllegalArgumentException=false
+```
+
+By default, any exceptions not listed in the map above will be retried.
+If that is not desired, then you can disable that by providing,
+
+```
+spring.cloud.stream.bindings.processData-in-0.consumer.defaultRetryable=false
+```
+
+You can also provide your own `RetryTemplate` and mark it as `@StreamRetryTemplate` which will be scanned and used by the binder.
+This is useful when you want more sophisticated retry strategies and policies.
+
+If you have multiple `@StreamRetryTemplate` beans, then you can specify which one your binding wants by using the property,
+
+```
+spring.cloud.stream.bindings.processData-in-0.consumer.retry-template-name=<your-retry-template-bean-name>
+```
