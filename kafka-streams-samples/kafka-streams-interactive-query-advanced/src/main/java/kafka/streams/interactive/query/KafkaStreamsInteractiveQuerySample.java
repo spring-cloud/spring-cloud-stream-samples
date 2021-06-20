@@ -322,11 +322,11 @@ public class KafkaStreamsInteractiveQuerySample {
 	static class TopFiveSongs implements Iterable<SongPlayCount> {
 		private final Map<Long, SongPlayCount> currentSongs = new HashMap<>();
 		private final TreeSet<SongPlayCount> topFive = new TreeSet<>((o1, o2) -> {
-			final int result = o2.getPlays().compareTo(o1.getPlays());
+			final int result = Long.compare(o2.getPlays(), o1.getPlays());
 			if (result != 0) {
 				return result;
 			}
-			return o1.getSongId().compareTo(o2.getSongId());
+			return Long.compare(o1.getSongId(), o2.getSongId());
 		});
 
 		public void add(final SongPlayCount songPlayCount) {
