@@ -1,0 +1,31 @@
+spring.cloud.stream:
+  function:
+    definition: process;hello
+  bindings:
+    process-in-0.destination: words
+    process-out-0.destination: counts
+    hello-in-0.destination: counts
+  kafka:
+    streams:
+      binder:
+        applicationId: hello-word-count-sample
+        jaas:
+          loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
+          options:
+            username: admin
+            password: admin-secret
+        configuration:
+          commit.interval.ms: 100
+          security.protocol: SASL_PLAINTEXT
+          sasl.mechanism: PLAIN
+    #The following is for the test consumer (that is based on the regular Kafka binder).
+    #This is not needed for Kafka Streams apps, but in order to test the processor using the consumer, we need this.
+    binder:
+      jaas:
+        loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
+        options:
+          username: admin
+          password: admin-secret
+      configuration:
+        security.protocol: SASL_PLAINTEXT
+        sasl.mechanism: PLAIN

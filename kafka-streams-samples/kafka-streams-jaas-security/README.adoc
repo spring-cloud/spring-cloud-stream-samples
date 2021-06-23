@@ -1,0 +1,133 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream Kafka Streams application against a Kafka broker that is secured.
+
+=== Secure Kafka with JAAS Security (SASL_PLAINTEXT)
+
+Download Apache Kafka. Following steps are for version 2.8.0, please update accordingly if you have a different Kafka version.
+
+`wget https://apache.claz.org/kafka/2.8.0/kafka_2.13-2.8.0.tgz`
+
+`tar -xvf kafka_2.13-2.8.0.tgz`
+
+`cd kafka_2.13-2.8.0/config`
+
+`vi kafka_server_jaas.conf` (Or use your favorite editor).
+
+Add the following content:
+
+```
+KafkaServer {
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   username="admin"
+   password="admin-secret"
+   user_admin="admin-secret";
+};
+
+Client {
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   username="admin"
+   password="admin-secret";
+};
+```
+
+`vi zookeeper_jaas.conf`
+
+Add the following content:
+
+```
+Server {
+   org.apache.kafka.common.security.plain.PlainLoginModule required
+   username="admin"
+   password="admin-secret"
+   user_admin="admin-secret";
+};
+```
+
+Edit the `server.properties` file to have the following content:
+
+```
+security.inter.broker.protocol=SASL_PLAINTEXT
+sasl.mechanism.inter.broker.protocol=PLAIN
+sasl.enabled.mechanisms=PLAIN
+
+listeners=SASL_PLAINTEXT://localhost:9092
+advertised.listeners=SASL_PLAINTEXT://localhost:9092
+```
+
+Edit the file zookeeper.properties and add the following properties:
+
+```
+authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+requireClientAuthScheme=sasl
+jaasLoginRenew=3600000
+```
+
+Edit the file producer.properties and add the following content:
+
+```
+security.protocol=SASL_PLAINTEXT
+sasl.mechanism=PLAIN
+```
+
+Edit the file consumer.properties and add the following content:
+
+```
+security.protocol=SASL_PLAINTEXT
+sasl.mechanism=PLAIN
+```
+
+Terminal 1
+
+```
+cd <kafka-installation-dir>
+
+$ export KAFKA_OPTS="-Djava.security.auth.login.config=config/zookeeper_jaas.conf"
+$ bin/zookeeper-server-start.sh config/zookeeper.properties
+```
+
+Terminal 2
+
+```
+cd <kafka-installation-dir>
+
+$ export KAFKA_OPTS="-Djava.security.auth.login.config=config/kafka_server_jaas.conf"
+$ ./<PATH-TO-CLUSTER-1>/bin/kafka-server-start.sh config/server.properties
+```
+
+=== Running the application
+
+The sample application comes with a Kafka Streams processor and a regular test Kafka consumer.
+Kafka Streams processor is the word count application and the test consumer will simply print out the data from the processor output.
+In order to see how security is configured for Kafka Streams binder, take a look at the configuration (`application.yml`).
+
+Go to the root of the repository.
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-jaas-security-0.0.1-SNAPSHOT.jar`
+
+Or run it from your preferred IDE.
+
+=== Verify the application
+
+Create a file in a local directory (for ex, `/tmp`) that we name as `kafka_client_jaas.conf`.
+Add the following content to this file.
+
+```
+KafkaClient {
+  org.apache.kafka.common.security.plain.PlainLoginModule required
+  username="admin"
+  password="admin-secret";
+};
+```
+
+`cd <Kafka-install-dir>`
+
+`export KAFKA_OPTS="-Djava.security.auth.login.config=/tmp/kafka_client_jaas.conf"`
+
+`./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic words --producer.config=config/producer.properties`
+
+Enter some sample text at the console producer.
+
+Now go back to where you are running the app and verify that the test consumer is logging the output data from the Kafka Streams processor.

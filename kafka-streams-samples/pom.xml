@@ -24,6 +24,7 @@
         <module>kafka-streams-inventory-count</module>
         <module>kafka-streams-metrics-demo</module>
         <module>kafka-streams-destination-pattern</module>
+        <module>kafka-streams-jaas-security</module>
     </modules>
 
 </project>
