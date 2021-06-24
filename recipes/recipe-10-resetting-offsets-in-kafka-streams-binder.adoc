@@ -1,0 +1,34 @@
+# Explain how offset resetting work in Kafka Streams binder
+
+## Problem Statement
+
+By default, Kafka Streams binder always starts from the earliest offset for a new consumer.
+Sometimes, it is beneficial or required by the application to start from the latest offset.
+Kafka Streams binder allows you to do that.
+
+## Solution
+
+Before we look at the solution, let us look at the following scenario.
+
+```
+@Bean
+public BiConsumer<KStream<Object, Object>, KTable<Object, Object>> myBiConsumer{
+    (s, t) -> s.join(t, ...)
+    ...
+}
+```
+
+We have a `BiConsumer` bean that requires two input bindings.
+In this case, the first binding is for a `KStream` and the second one is for a `KTable`.
+When running this application for the first time, by default, both bindings start from the `earliest` offset.
+What about I want to start from the `latest` offset due to some requirements?
+You can do this by enabling the following properties.
+
+```
+spring.cloud.stream.kafka.streams.bindings.myBiConsumer-in-0.consumer.startOffset: latest
+spring.cloud.stream.kafka.streams.bindings.myBiConsumer-in-1.consumer.startOffset: latest
+```
+
+If you want only one binding to start from the `latest` offset and the other to consumer from the default `earliest`, then leave the latter binding out from the configuration.
+
+Keep in mind that, once there are committed offsets, these setting are *not* honored and the committed offsets take precedence.
