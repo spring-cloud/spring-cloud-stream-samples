@@ -97,15 +97,15 @@ $ ./<PATH-TO-CLUSTER-1>/bin/kafka-server-start.sh config/server.properties
 ```
 KafkaServer {
    org.apache.kafka.common.security.plain.PlainLoginModule required
-   username="admin"
-   password="admin-secret"
-   user_admin="admin-secret";
+   username="foo"
+   password="foo-secret"
+   user_foo="foo-secret";
 };
 
 Client {
    org.apache.kafka.common.security.plain.PlainLoginModule required
-   username="admin"
-   password="admin-secret";
+   username="foo"
+   password="foo-secret";
 };
 ```
 
@@ -114,9 +114,9 @@ Client {
 ```
 Server {
    org.apache.kafka.common.security.plain.PlainLoginModule required
-   username="admin"
-   password="admin-secret"
-   user_admin="admin-secret";
+   username="foo"
+   password="foo-secret"
+   user_foo="foo-secret";
 };
 ```
 
@@ -181,8 +181,6 @@ $ ./<PATH-TO-CLUSTER-2>/bin/kafka-server-start.sh config/server.properties
 
 ## Running the application
 
-The application's configuration is matched with the plaintext config that is set above (Please review the yml file)
-
 The application contains two `StreamListener` methods. The first one receives records from a topic in cluster-1 and output that to a topic in cluster-2.
 The second `StreamListener` method receives records from a topic in cluster-2 and output that to a topic in cluster-1.
 
@@ -190,7 +188,17 @@ Cluster-1 input topic is named as kafka1-in and output topic is kafka1-out. Simi
 
 Run the application `MultiBinderKafkaJaasSample` on the IDE or from CLI.
 
-## Verify that the application is running
+## Running and verifying the application
+
+Review the application's configuration for kafka client security settings.
+
+The application contains a supplier (`supply`) that produces data to a topic in Kafka-1.
+From this topic, a function ('receive1) will consume records and then produce to a topic in Kafka-2.
+We provide another consumer ('consume`) in the application that consumes data from this topic in Kafka-2 and then log on the console.
+
+This is the function definition: `supply;receive;consume`
+
+You can simply run the main application and then see the test consumer prints data on the console.
 
 * Terminal 5
 
@@ -204,13 +212,17 @@ KafkaClient {
 };
 ```
 
+You can also change the function definition to this `spring.cloud.function.definition: receive`.
+In this case, we only run a single function, and it is your responsibility to send data to the listening topic.
+For that, you can follow the instructions below.
+
 * Terminal 6 - Produce data to kafka1 - input.
 
 $ `export KAFKA_OPTS="-Djava.security.auth.login.config=/home/username/kafka_client_jaas.conf"`
 
 Go to the kafka installation directory (It doesn't matter if you are in cluster-1 or cluster-2 directories for the instructions below)
 
-$ `./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic kafka1-in --producer.config=config/producer.properties`
+$ `./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic foo --producer.config=config/producer.properties`
 
 * Terminal 7 (or split the above terminal into 2 window panes) - Consume data from kafka2 - output where the above data is expected to come through the processor.
 
@@ -218,28 +230,9 @@ $ `export KAFKA_OPTS="-Djava.security.auth.login.config=/home/username/kafka_cli
 
 Go to the kafka installation directory (It doesn't matter if you are in cluster-1 or cluster-2 at for the instructions below)
 
-$ `./bin/kafka-console-consumer.sh --topic kafka2-out --consumer.config=config/consumer.properties  --bootstrap-server=localhost:9093`
+$ `./bin/kafka-console-consumer.sh --topic bar --consumer.config=config/consumer.properties  --bootstrap-server=localhost:9093`
 
+* Now start adding some text to the terminal session where you are running console producer on kafka1 input topic (`foo`).
+  Then verify that, you see the same exact text, but in uppercase, on the terminal session where you are running the console consumer on kafka2 output topic (`bar`).
 
-* Terminal 8 - Produce data to kafka2 - input.
-
-$ `export KAFKA_OPTS="-Djava.security.auth.login.config=/home/username/kafka_client_jaas.conf"`
-
-Go to the kafka installation directory (It doesn't matter if you are in cluster-1 or cluster-2 at for the instructions below)
-
-$ `./bin/kafka-console-producer.sh --broker-list localhost:9093 --topic kafka2-in --producer.config=config/producer.properties`
-
-* Terminal 9 (or split the above terminal into 2 window panes) - Consume data from kafka1 - output where the above data is expected to come through the second processor in the application.
-
-$ `export KAFKA_OPTS="-Djava.security.auth.login.config=/home/username/kafka_client_jaas.conf"`
-
-Go to the kafka installation directory (It doesn't matter if you are in cluster-1 or cluster-2 at for the instructions below)
-
-$ `./bin/kafka-console-consumer.sh --topic kafka1-out --consumer.config=config/consumer.properties  --bootstrap-server=localhost:9092`
-
-* Now start adding some text to the terminal session where you are running console producer on kafka1-in.
-  Then verify that, you see the same exact text on the the terminal session where you are running the console consumer on kafka2-out.
-  Similarly, start adding some text to the terminal session where you are running console producer on kafka2-in.
-  Then verify that, you see the same exact text on the the terminal session where you are running the console consumer on kafka1-out.
-
-PS: Once you are done with the testing, remember to stop the application, console consumers and producers and your local kafka clusters used for testing.
+PS: Once you are done with the testing, remember to stop the application, console consumer and producer (if you are running them), and your local kafka clusters used for testing.

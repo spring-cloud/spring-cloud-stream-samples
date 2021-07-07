@@ -1,18 +1,18 @@
 spring.cloud.stream:
-  function.definition: receive;receive1
+  function.definition: supply;receive;consume
   bindings:
+    supply-out-0:
+      destination: foo
+      binder: kafka1
     receive-in-0:
-      destination: kafka1-in
+      destination: foo
       binder: kafka1
     receive-out-0:
-      destination: kafka2-out
+      destination: bar
       binder: kafka2
-    receive1-in-0:
-      destination: kafka2-in
+    consume-in-0:
+      destination: bar
       binder: kafka2
-    receive1-out-0:
-      destination: kafka1-out
-      binder: kafka1
   binders:
     kafka1:
       type: kafka
@@ -21,10 +21,14 @@ spring.cloud.stream:
            cloud:
              stream:
               kafka:
-                binder.brokers: localhost:9092
-                binder.jaas.loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
-                binder.jaas.options.username: admin
-                binder.jaas.options.password: admin-secret
+                binder:
+                  brokers: localhost:9092
+                  configuration.sasl.jaas.config: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"admin-secret\";"
+                # The following properties should not be used if you have separate authorization contexts for the two clusters.
+                # Only use them if they are identical (in which case, you don't need the above property - sasl.jaas.config.
+#                binder.jaas.loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
+#                binder.jaas.options.username: admin
+#                binder.jaas.options.password: admin-secret
     kafka2:
       type: kafka
       environment:
@@ -33,11 +37,13 @@ spring.cloud.stream:
             stream:
               kafka:
                 binder:
-                  zkNodes: localhost:2182
                   brokers: localhost:9093
-                  jaas.loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
-                  jaas.options.username: admin
-                  jaas.options.password: admin-secret
+                  configuration.sasl.jaas.config: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"foo\" password=\"foo-secret\";"
+                  # The following properties should not be used if you have separate authorization contexts for the two clusters.
+                  # Only use them if they are identical (in which case, you don't need the above property - sasl.jaas.config.
+#                  jaas.loginModule: org.apache.kafka.common.security.plain.PlainLoginModule
+#                  jaas.options.username: foo
+#                  jaas.options.password: foo-secret
   kafka.binder:
     configuration:
       security.protocol: SASL_PLAINTEXT

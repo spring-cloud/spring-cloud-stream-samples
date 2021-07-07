@@ -16,7 +16,10 @@
 
 package multibinder.kafka.jaas;
 
+import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,14 +34,26 @@ public class MultiBinderKafkaJaasSample {
 
 	static class Foo {
 
+		Random random = new Random();
+
 		@Bean
 		public Function<String, String> receive() {
-			return foo -> foo;
+			return String::toUpperCase;
 		}
 
 		@Bean
 		public Function<String, String> receive1() {
 			return foo -> foo;
+		}
+
+		@Bean
+		public Supplier<String> supply() {
+			return () -> "foo-" + random.nextInt();
+		}
+
+		@Bean
+		public Consumer<String> consume() {
+			return System.out::println;
 		}
 	}
 
