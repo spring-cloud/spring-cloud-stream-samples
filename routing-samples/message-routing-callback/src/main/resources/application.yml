@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    stream:
+      function:
+        routing:
+          enabled: true

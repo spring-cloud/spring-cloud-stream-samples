@@ -34,6 +34,7 @@
 		<module>kafka-native-serialization</module>
 		<module>function-based-stream-app-samples</module>
 		<module>kafka-security-samples</module>
+		<module>routing-samples</module>
 	</modules>
 
 	<properties>

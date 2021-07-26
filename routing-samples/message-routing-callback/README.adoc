@@ -1,0 +1,24 @@
+## Spring Cloud Stream Message Routing Sample
+
+Demo for MessageRoutingCallback.
+
+### Running the app
+
+Make sure that you have Kafka running.
+
+Run the main class - `MessageRoutingApplication`. You should see the following in the console output.
+
+```
+Menu(id=null, name=null)
+```
+
+and
+
+```
+Order(id=null, price=null)
+```
+
+The `CustoMessageRoutingCallback` examines each method sent to the routing function (`functionRouter`) and then route to the appropriate function.
+The main class sends two messages - one for `Menu` and another for `Order` - to the `functionRouter-in-0` topic which is intercepted by the routing callback for invoking the correct function.
+
+
