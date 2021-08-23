@@ -16,9 +16,8 @@ This sample is a Spring Boot application that uses Spring Cloud Stream to receiv
 * EmbeddedKafkaApplication - the Spring Boot Main Application
 * EmbeddedKafkaApplicationTests - the test case
 
-The `spring-kafka-test` dependency added to the `pom.xml` puts the `KafkaEmbedded` JUnit `@Rule` on the class path.
+The `spring-kafka-test` dependency added to the `pom.xml` puts the `EmbeddedKafkaBroker` class on the class path.
 Refer to the [Spring for Apache Kafka Reference Manual](https://docs.spring.io/spring-kafka/reference/htmlsingle/#testing) for more information about this.
-Notice how the `@BeforeClass` method sets up the Boot and binder properties to locate the servers.
 
 See the test method for the details on interacting with Embedded Kafka.
 The test method starts by sending a message to the input destination.
@@ -31,4 +30,3 @@ Build the sample and run the test by executing:
 `./mvnw clean package`
 
 or run the test in your favorite IDE.
-
