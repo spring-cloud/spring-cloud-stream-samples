@@ -34,6 +34,7 @@ package demo;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.junit.jupiter.api.Test;
@@ -63,12 +64,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest
 @EmbeddedKafka(topics = { EmbeddedKafkaApplicationTests.INPUT_TOPIC, EmbeddedKafkaApplicationTests.OUTPUT_TOPIC },
+		partitions = 1,
 		bootstrapServersProperty = "spring.kafka.bootstrap-servers")
 public class EmbeddedKafkaApplicationTests {
 
 	public static final String INPUT_TOPIC = "testEmbeddedIn";
 	public static final String OUTPUT_TOPIC = "testEmbeddedOut";
-	private static final String GROUP_NAME = "embeddedKafkaApplication";
+	private static final String GROUP_NAME = "embeddedKafkaApplicationTest";
 
 	@Test
 	void testSendReceive(@Autowired EmbeddedKafkaBroker embeddedKafka) {
@@ -87,7 +89,7 @@ public class EmbeddedKafkaApplicationTests {
 		DefaultKafkaConsumerFactory<byte[], byte[]> cf = new DefaultKafkaConsumerFactory<>(consumerProps);
 
 		Consumer<byte[], byte[]> consumer = cf.createConsumer();
-		consumer.subscribe(Collections.singleton(OUTPUT_TOPIC));
+		consumer.assign(Collections.singleton(new TopicPartition(OUTPUT_TOPIC, 0)));
 		ConsumerRecords<byte[], byte[]> records = consumer.poll(Duration.ofSeconds(10));
 		consumer.commitSync();
 
