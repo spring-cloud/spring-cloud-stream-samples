@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        routeRequests-in-0:
+          destination: foo,bar,buzz
+      kafka:
+        streams:
+          binder:
+            functions:
+              routeRequests:
+                applicationId: a.b.c.d.e

@@ -17,7 +17,7 @@
         <module>kafka-streams-global-table-join</module>
         <module>kafka-streams-interactive-query-basic</module>
         <module>kafka-streams-interactive-query-advanced</module>
-	    <module>kafka-streams-message-channel</module>
+        <module>kafka-streams-message-channel</module>
         <module>kafka-streams-product-tracker</module>
         <module>kafka-streams-aggregate</module>
         <module>kafka-streams-to-rabbitmq-message-channel</module>
@@ -25,6 +25,7 @@
         <module>kafka-streams-metrics-demo</module>
         <module>kafka-streams-destination-pattern</module>
         <module>kafka-streams-jaas-security</module>
+        <module>kafka-streams-multiple-input-topics</module>
     </modules>
 
 </project>
