@@ -81,3 +81,5 @@ It will be max tried a total of 3 in the example above (initial try + the 2 atte
 
 See the https://stackoverflow.com/questions/68928091/dlq-bounded-retry-and-eos-when-producing-to-multiple-topics-using-spring-cloud[SO thread] for more details on how to test this code.
 If you are using Spring Cloud Stream to test it by adding more consumer functions, make sure to set the `isolation-level` on the consumer binding to `read-committed`.
+
+This https://stackoverflow.com/questions/68941306/spring-cloud-stream-database-transaction-does-not-roll-back[SO thread] is also related to this discussion.
