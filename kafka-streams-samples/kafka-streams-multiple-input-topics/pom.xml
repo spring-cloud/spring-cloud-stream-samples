@@ -14,7 +14,6 @@
 	<name>kafka-streams-multiple-input-topics</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>11</java.version>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 	</properties>
 	<dependencies>
