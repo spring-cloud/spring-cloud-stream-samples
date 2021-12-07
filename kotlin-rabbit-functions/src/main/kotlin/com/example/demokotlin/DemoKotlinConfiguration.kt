@@ -7,14 +7,14 @@ import java.util.function.Function
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class DemoKotlinConfiguration {
+open class DemoKotlinConfiguration {
 	@Bean
-	fun uppercase(): (String) -> String {
+	open fun uppercase(): (String) -> String {
 		return { it.toUpperCase() }
 	}
 	
 	@Bean
-	fun javaFunction(): Function<String, String> {
+	open fun javaFunction(): Function<String, String> {
 		return Function { x -> x }
 	}
 }
