@@ -6,9 +6,6 @@ spring:
         process-in-0:
           destination: dataIn
           binder: kafka1
-#        process-out-0:
-#          destination: dataOut
-#          binder: kafka2
         #Test sink binding (used for testing)
         sendTestData-out-0:
           destination: dataIn

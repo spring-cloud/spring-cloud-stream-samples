@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2022-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,6 @@ public class MultibinderApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MultibinderApplication.class, args);
 	}
-
-//	@Bean
-//	public Function<String, String> process() {
-//		return payload -> payload.toUpperCase();
-//	}
 
 	@Bean
 	public Function<String, Message<String>> process() {
