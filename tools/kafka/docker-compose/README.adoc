@@ -6,7 +6,7 @@ Runs a multi-node Kafka cluster w/ 3 brokers available at `locahost:9091,localho
 To start the brokers run the following command:
 [source,shell]
 ----
-docker-compose -f ./kafka-cluster.yml -d up
+docker-compose -f ./kafka-cluster.yml up
 ----
 To stop the brokers run the following command:
 [source,shell]
