@@ -78,7 +78,7 @@ The consumer should log the results.
 {"id": "149637a9-c7a6-4ab8-b7aa-021c72d9ebd7-v2", "internalTemperature": 2.2332578, "externalTemperature": 0.0, "acceleration": 6.251889, "velocity": 65.84996}
 ----
 
-You can also sue external tools to query:
+You can also use external tools to query such as the avro console consumer that is part of the Confluent Schema Registry:
 
 ----
 ./bin/kafka-avro-console-consumer --topic sensor-topic \
