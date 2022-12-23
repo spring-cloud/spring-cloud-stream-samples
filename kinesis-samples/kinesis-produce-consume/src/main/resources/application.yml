@@ -20,11 +20,23 @@ spring:
           content-type: application/json
           producer:
             partitionKeyExpression: "1"
+            headerMode: none
         processOrder-in-0:
           destination: test_stream
           content-type: application/json
+        processOrders-in-0:
+          destination: test_stream
+          content-type: application/json
+          consumer:
+            headerMode: none
+      kinesis:
+        bindings:
+          processOrders-in-0:
+            consumer:
+              listenerMode: batch
+              recordsLimit: 5
     function:
-      definition: processOrder;produceOrder
+      definition: processOrder;produceOrder;processOrders
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
