@@ -27,6 +27,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.context.annotation.Bean;
 
 import demo.repository.OrderRepository;
+import org.springframework.stereotype.Component;
 
 /**
  *
@@ -34,6 +35,7 @@ import demo.repository.OrderRepository;
  * @author Artem Bilan
  *
  */
+@Component
 public class OrderStreamConfiguration {
 
 	private final Log logger = LogFactory.getLog(getClass());
