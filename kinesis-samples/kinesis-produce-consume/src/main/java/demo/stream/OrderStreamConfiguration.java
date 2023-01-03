@@ -16,6 +16,7 @@
 
 package demo.stream;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
@@ -50,6 +51,22 @@ public class OrderStreamConfiguration {
 			}
 			else {
 				logger.info("An order has been placed from this service " + event.toString());
+			}
+		};
+	}
+
+	@Bean
+	public Consumer<List<Event>> processOrders(OrderRepository orders) {
+		return eventList -> {
+			//log the number of orders received and each order
+			logger.info("Received " + eventList.size() + " orders");
+			for(Event event: eventList) {
+				if (!event.getOriginator().equals("KinesisProducer")) {
+					logger.info("An order has been received " + event.toString());
+				}
+				else {
+					logger.info("An order has been placed from this service " + event.toString());
+				}
 			}
 		};
 	}
