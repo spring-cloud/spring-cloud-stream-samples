@@ -2,7 +2,8 @@
 
 This is an example of a Spring Cloud Stream demonstrating the processing of record batches.
 
-The application simply upper-cases the input records and sends them to another topic.
+The application simply upper-cases the input records and sends them to another topic using two different
+implementations. the `batch-produce` profile enables batch publishing.
 
 === Running the app:
 

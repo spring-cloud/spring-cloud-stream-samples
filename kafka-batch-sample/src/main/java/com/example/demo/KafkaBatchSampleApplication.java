@@ -100,8 +100,8 @@ class BatchProduce extends Base {
 	@Bean
 	Function<List<String>, List<Message<String>>> consumer() {
 		return list -> list.stream()
-			.map(string -> string + "-batch-produced")
-			.map(string -> MessageBuilder.withPayload(string).build())
+			.map(string -> string.toUpperCase())
+			.map(uppercasedString -> MessageBuilder.withPayload(uppercasedString).build())
 			.collect(Collectors.toList());
 	}
 
