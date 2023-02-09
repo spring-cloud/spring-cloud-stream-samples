@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 @SpringBootApplication
@@ -86,6 +90,19 @@ class Transactions extends Base {
 				throw new UncheckedIOException(e);
 			}
 		};
+	}
+
+}
+
+@Component
+@Profile("batch-produce")
+class BatchProduce extends Base {
+	@Bean
+	Function<List<String>, List<Message<String>>> consumer() {
+		return list -> list.stream()
+			.map(string -> string.toUpperCase())
+			.map(uppercasedString -> MessageBuilder.withPayload(uppercasedString).build())
+			.collect(Collectors.toList());
 	}
 
 }
