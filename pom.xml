@@ -19,22 +19,20 @@
 	</parent>
 
 	<modules>
-		<module>source-samples</module>
-		<module>processor-samples</module>
-		<module>kafka-streams-samples</module>
-		<module>multi-functions-samples</module>
-		<module>multi-binder-samples</module>
-		<module>kinesis-samples</module>
-		<module>schema-registry-samples</module>
-		<module>partitioning-samples</module>
-		<module>transaction-kafka-samples</module>
-		<module>testing-samples</module>
-		<module>streambridge-samples</module>
+		<module>function-based-stream-app-samples</module>
+		<module>kafka-batch-sample</module>
 		<module>kafka-e2e-kotlin-sample</module>
 		<module>kafka-native-serialization</module>
-		<module>function-based-stream-app-samples</module>
 		<module>kafka-security-samples</module>
+		<module>kafka-streams-samples</module>
+		<module>kinesis-samples</module>
+		<module>kotlin-rabbit-functions</module>
+		<module>multi-functions-samples</module>
+		<module>multi-binder-samples</module>
+		<module>partitioning-samples</module>
 		<module>routing-samples</module>
+		<module>testing-samples</module>
+		<module>transaction-kafka-samples</module>
 	</modules>
 
 	<properties>

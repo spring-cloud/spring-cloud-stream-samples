@@ -1,6 +1,6 @@
 == Spring Cloud Stream Sample Applications
 
-This repository contains a collection of applications written using Spring Cloud Stream. All the applications are self contained.
+This repository contains a collection of applications written using Spring Cloud Stream. All the applications are self-contained.
 They can be run against either Kafka or RabbitMQ middleware technologies.
 You have the option of running the samples against local or Docker containerized versions of Kafka and Rabbit.
 For convenience, `docker-compose.yml` files are provided as part of each application wherever it is applicable.
@@ -11,52 +11,3 @@ You can read the README that is part of each sample and follow along the instruc
 
 You can build the entire samples by going to the root of the repository and then do: `./mvnw clean package`
 However, the recommended approach to build them is to pick the sample that you are interested in and go to that particular app and follow the instructions there in the README for that app. 
-
-=== Following is the list of various sample applications provided
-
-==== Source samples
-
-* Source with dynamic destinations (Kafka and Rabbit)
-
-==== Processor samples
-
-* Basic StreamListener sample (Kafka and Rabbit)
-* Transformer sample (Kafka and Rabbit)
-* Reactive processor sample (Kafka and Rabbit)
-* Sensor average calculation using reactive patterns (Kafka and Rabbit)
-
-==== Multi IO sample
-
-* Sample with multiple input/output bindings (Kafka and Rabbit)
-
-==== Multi Binder samples
-
-* Multi binder - Input with Kafka and output with Rabbit
-* Multi binder - Same binder type but different clusters (Kafka only, but can be extended for Rabbit as well)
-
-==== Kinesis
-
-* Kinesis produce consume sample
-
-==== Kafka Streams samples
-
-A collection of various applications in stream processing using Spring Cloud Stream support for Kafka Streams binding.
-
-* Kafka Streams word count
-* Kafka Streams branching
-* Kafka Streams DLQ
-* Kafka Streams aggregation
-* Kafka Streams Interactive query basic
-* Kafka Streams Interactive query advanced
-* Kafka Streams product tracker
-* Kafka Streams KTable join
-* Kafka Streams and normal Kafka binder together
-
-==== Testing samples
-
-* Sample with embedded Kafka
-* General testing patterns in Spring Cloud Stream
-
-==== Function-based stream app samples
-
-Contains samples using the re-architected stream-applications and base functions included in https://github.com/spring-cloud/stream-applications. 
