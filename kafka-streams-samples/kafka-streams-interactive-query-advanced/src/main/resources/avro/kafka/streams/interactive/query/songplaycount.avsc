@@ -1,8 +1,0 @@
-{"namespace": "kafka.streams.interactive.query.avro",
- "type": "record",
- "name": "SongPlayCount",
- "fields": [
-     {"name": "song_id",  "type": "long"},
-     {"name": "plays",   "type": "long"}
- ]
-}
