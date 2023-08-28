@@ -24,7 +24,7 @@
         <module>kafka-streams-destination-pattern</module>
         <module>kafka-streams-jaas-security</module>
         <module>kafka-streams-multiple-input-topics</module>
-<!--        <module>kafka-streams-interactive-query</module>-->
+        <module>kafka-streams-interactive-query</module>
     </modules>
 
 </project>
