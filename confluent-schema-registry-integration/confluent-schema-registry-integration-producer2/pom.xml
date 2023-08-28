@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>io.spring.cloud.stream.sample</groupId>
 		<artifactId>confluent-schema-registry-integration</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
+		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
