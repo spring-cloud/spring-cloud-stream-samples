@@ -27,3 +27,8 @@ More details are available at link:spring-cloud-stream-schema-registry-integrati
 This sample app shows how to write batch consumers and producers using spring Cloud Stream and Apache Kafka.
 More details are at link:batch-producer-consumer/README.adoc[README].
 
+==== Kafka Binder Native App
+
+This sample shows how to run the same Spring Cloud Stream Kafka based application on the normal JVM, AOT-only mode on the JVM and finally, natively on graalvm.
+For more information, please see link:kafka-binder-native-app/README.adoc[README].
+

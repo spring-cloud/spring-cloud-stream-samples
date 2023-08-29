@@ -22,9 +22,9 @@ For example, when running this app, we used the following JVM.
 ```
  java -version
 
-openjdk version "19.0.1" 2022-10-18
-OpenJDK Runtime Environment GraalVM CE 22.3.0 (build 19.0.1+10-jvmci-22.3-b08)
-OpenJDK 64-Bit Server VM GraalVM CE 22.3.0 (build 19.0.1+10-jvmci-22.3-b08, mixed mode, sharing)
+openjdk version "20.0.2" 2023-07-18
+OpenJDK Runtime Environment GraalVM CE 20.0.2+9.1 (build 20.0.2+9-jvmci-23.0-b15)
+OpenJDK 64-Bit Server VM GraalVM CE 20.0.2+9.1 (build 20.0.2+9-jvmci-23.0-b15, mixed mode, sharing)
 ```
 
 ==== Testing in regular JVM  mode
