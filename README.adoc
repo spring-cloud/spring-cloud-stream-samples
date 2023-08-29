@@ -17,3 +17,8 @@ Below, you can find the list of all the provided sample applications.
 This set of sample applications show how Spring Cloud Stream Kafka applications integrate with Confluent Schema Registry.
 You can find more details at link:confluent-schema-registry-integration/README.adoc[README].
 
+==== Spring Cloud Stream Schema Registry Integration
+
+These samples show how Spring Cloud Stream Schema Registry can help with schema evolution use cases.
+More details are available at link:spring-cloud-stream-schema-registry-integration/README.adoc/[README].
+

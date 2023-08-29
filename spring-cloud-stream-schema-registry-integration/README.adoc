@@ -1,6 +1,6 @@
 == Spring Cloud Stream and Schema Evolution in Action with Kafka Binder.
 
-:project-version: 4.0.0-SNAPSHOT
+:spring-cloud-stream-version: 4.0.4
 
 These are a set of Spring Boot applications to demonstrate Schema Evolution using Spring Cloud Stream with Kafka binder.
 Producer V1 (`producer1`), Producer V2 (`producer2`), and Consumer (`consumer`) are included in this project.
@@ -20,15 +20,6 @@ Both producers and consumers interact with the SCSt schema registry to register 
 ====
 NOTE: It is expected that this repo has been checked out locally and All commands are executed from this sample's directory `spring-cloud-stream-schema-registry-integration` unless otherwise noted.
 ====
-
-==== Build the schema registry
-The schema registry must be built by executing the following command:
-[source,bash]
-----
-pushd ../../schema-registry
-../mvnw clean install
-popd
-----
 
 ==== Build the apps
 To build the applications simply execute the following command:
@@ -51,7 +42,7 @@ NOTE: It is expected that this repo has been checked out locally and All command
 * The components have all been built by following the <<build-apps>> steps.
 * Apache Kafka broker available at `localhost:9092`
 
-TIP: The included link:../../../tools/kafka/docker-compose/README.adoc#_all_the_things[Kafka tools] can be used to easily start a broker locally on the required coordinates
+TIP: The included link:../tools/kafka/docker-compose/README.adoc#_all_the_things[Kafka tools] can be used to easily start a broker locally on the required coordinates
 
 * By default, the schema registry is backed by an `H2` database.
 ** To instead use `Postgres` it must be available at `localhost:5432`
@@ -64,13 +55,20 @@ TIP: Docker compose files are provided for both link:./postgres.yml[Postgres] an
 Make sure the above pre-requisites are satisfied and follow the steps below.
 
 ===== Start Schema Registry
-Start the Schema Registry server (_adjust commands accordingly if you are not on a Unix like platform_)
+
+Download Spring Cloud Stream Schema Registry (_Note that the version below is used as an example, please update the version to the latest GA release_)
+
+`wget https://repo.maven.apache.org/maven2/org/springframework/cloud/spring-cloud-stream-schema-registry-server/{spring-cloud-stream-version}/spring-cloud-stream-schema-registry-server-{spring-cloud-stream-version}.jar`
+
+
+Start the Schema Registry server (_adjust commands accordingly if you are not on a Unix like platform_).
+If you downloaded the Schema Registry server to a different location, update the location below when you start the server.
 [source,bash,subs="attributes"]
 ----
-java -jar ../../schema-registry/spring-cloud-stream-schema-registry-server/target/spring-cloud-stream-schema-registry-server-4.0.0-SNAPSHOT.jar
+java -jar ./spring-cloud-stream-schema-registry-server-{spring-cloud-stream-version}.jar
 ----
 
-By default the schema registry starts with a local `H2` database.
+By default, the schema registry starts with a local `H2` database.
 
 .To use `Postgres` database instead of `H2`...
 [%collapsible]
@@ -78,7 +76,7 @@ By default the schema registry starts with a local `H2` database.
 additional properties must be specified when starting the server:
 [source,bash,subs="attributes"]
 ----
-java -jar ../../schema-registry/spring-cloud-stream-schema-registry-server/target/spring-cloud-stream-schema-registry-server-{project-version}.jar \
+java -jar ./spring-cloud-stream-schema-registry-server-{spring-cloud-stream-version}.jar \
   --spring.datasource.url=jdbc:postgresql://localhost:5432/registry \
   --spring.datasource.username=root \
   --spring.datasource.password=rootpw \
@@ -97,7 +95,7 @@ java -jar ../../schema-registry/spring-cloud-stream-schema-registry-server/targe
 additional properties must be specified when starting the server:
 [source,bash,subs="attributes"]
 ----
-java -jar ../../schema-registry/spring-cloud-stream-schema-registry-server/target/spring-cloud-stream-schema-registry-server-{project-version}.jar \
+java -jar ./spring-cloud-stream-schema-registry-server-{spring-cloud-stream-version}.jar \
   --spring.datasource.url=jdbc:mariadb://localhost:3306/registry \
   --spring.datasource.username=root \
   --spring.datasource.password=rootpw \
@@ -113,21 +111,21 @@ java -jar ../../schema-registry/spring-cloud-stream-schema-registry-server/targe
 Start `consumer` on another terminal session (or run it from an IDE)
 [source,bash,subs="attributes"]
 ----
-java -jar schema-registry-consumer-kafka/target/schema-registry-consumer-kafka-{project-version}.jar
+java -jar schema-registry-consumer-kafka/target/schema-registry-consumer-kafka-0.0.1-SNAPSHOT.jar
 ----
 
 ===== Start V1 producer
 Start `producer1` on another terminal session (or run it from an IDE)
 [source,bash,subs="attributes"]
 ----
-java -jar schema-registry-producer1-kafka/target/schema-registry-producer1-kafka-{project-version}.jar
+java -jar schema-registry-producer1-kafka/target/schema-registry-producer1-kafka-0.0.1-SNAPSHOT.jar
 ----
 
 ===== Start V2 producer
 Start `producer2` on another terminal session (or run it from an IDE)
 [source,bash,subs="attributes"]
 ----
-java -jar schema-registry-producer2-kafka/target/schema-registry-producer2-kafka-{project-version}.jar
+java -jar schema-registry-producer2-kafka/target/schema-registry-producer2-kafka-0.0.1-SNAPSHOT.jar
 ----
 
 === Sample Data
