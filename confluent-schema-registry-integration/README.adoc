@@ -30,7 +30,7 @@ NOTE: The apps can be built and run from w/in an IDE (such as IntelliJ) but you 
 * Apache Kafka broker available at `localhost:9092`
 * Confluent Schema Registry available at `localhost:8081`
 
-TIP: The included link:../../../tools/kafka/docker-compose/README.adoc#_all_the_things[Kafka tools] can be used to easily start a broker and schema registry locally on the required coordinates
+TIP: The included link:../tools/kafka/docker-compose/README.adoc#_all_the_things[Kafka tools] can be used to easily start a broker and schema registry locally on the required coordinates
 ****
 
 ==== Steps
