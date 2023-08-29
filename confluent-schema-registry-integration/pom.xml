@@ -20,8 +20,6 @@
 		<module>confluent-schema-registry-integration-producer2</module>
 	</modules>
 
-
-
 	<build>
 		<pluginManagement>
 			<plugins>

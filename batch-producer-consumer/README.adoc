@@ -1,4 +1,4 @@
-== Spring Function Batch Producer Consumer
+== Spring Cloud Stream Batch Producer Consumer
 
 This sample application demonstrates a Spring Cloud Stream functional interface implementation of batch consuming and batch producing messages.
 
@@ -33,7 +33,7 @@ To build the app simply execute the following command in the base directory:
 ==== Start the streams app
 [source,bash]
 ----
-java -jar target/stream-function-batch-producer-consumer-0.0.1-SNAPSHOT.jar
+java -jar target/batch-producer-consumer-0.0.1-SNAPSHOT.jar
 ----
 
 The application should automatically begin executing. All messages are printed in real-time as received by different parts of the application.

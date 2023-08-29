@@ -22,3 +22,8 @@ You can find more details at link:confluent-schema-registry-integration/README.a
 These samples show how Spring Cloud Stream Schema Registry can help with schema evolution use cases.
 More details are available at link:spring-cloud-stream-schema-registry-integration/README.adoc/[README].
 
+==== Batch Producer Consumer
+
+This sample app shows how to write batch consumers and producers using spring Cloud Stream and Apache Kafka.
+More details are at link:batch-producer-consumer/README.adoc[README].
+
