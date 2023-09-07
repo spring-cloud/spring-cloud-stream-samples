@@ -22,7 +22,7 @@ To build the app simply execute the following command in the base directory:
 * Apache Kafka broker available at `localhost:9092`
 
 [#kafka_tools]
-TIP: The included xref:../../../tools/kafka/docker-compose/README.adoc#run_kafka_cluster[Kafka tools] can be used to easily start a broker at the required coordinates
+TIP: The included xref:../../tools/kafka/docker-compose/README.adoc#run_kafka_cluster[Kafka tools] can be used to easily start a broker at the required coordinates
 ****
 
 We will run 2 instances of the app to demonstrate that regardless of which instance hosts the keys, the REST endpoint will serve the requests.
