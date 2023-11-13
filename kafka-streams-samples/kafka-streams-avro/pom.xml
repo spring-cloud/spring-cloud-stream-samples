@@ -17,7 +17,7 @@
 		<java.version>8</java.version>
 		<spring-cloud.version>2020.0.2</spring-cloud.version>
 		<confluent.version>5.2.0</confluent.version>
-		<avro.version>1.8.2</avro.version>
+		<avro.version>1.11.3</avro.version>
 	</properties>
 	<dependencies>
 		<dependency>
