@@ -100,7 +100,7 @@ class BatchProduce extends Base {
 	@Bean
 	Function<List<String>, List<Message<String>>> consumer() {
 		return list -> list.stream()
-			.map(string -> string.toUpperCase())
+			.map(String::toUpperCase)
 			.map(uppercasedString -> MessageBuilder.withPayload(uppercasedString).build())
 			.collect(Collectors.toList());
 	}
