@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "config.enableSupplier",
+      "type": "java.lang.String",
+      "description": "Description for config.enableSupplier."
+  }
+] }

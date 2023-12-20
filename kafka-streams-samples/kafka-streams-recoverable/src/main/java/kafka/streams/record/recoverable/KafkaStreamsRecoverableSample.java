@@ -5,6 +5,7 @@ import org.apache.kafka.streams.processor.api.ProcessorSupplier;
 import org.apache.kafka.streams.processor.api.Record;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.stream.binder.kafka.streams.DltAwareProcessor;
 import org.springframework.cloud.stream.binder.kafka.streams.DltPublishingContext;
 import org.springframework.cloud.stream.binder.kafka.streams.RecordRecoverableProcessor;
@@ -35,6 +36,7 @@ public class KafkaStreamsRecoverableSample {
 
     // Create a new integer every 2 seconds
     @Bean
+    @ConditionalOnProperty("${config.enable-supplier}")
     public Supplier<String> dataSupplier() {
         return () -> {
             var oldCounterValue = counter;
@@ -57,7 +59,7 @@ public class KafkaStreamsRecoverableSample {
                     } else {
                         return new Record<>(numRecord.key(), "Success", Instant.now().getEpochSecond());
                     }
-                }, "default-out", dltPublishingContext));
+                }, "error-default-out", dltPublishingContext));
     }
 
     // Using custom recoverer using RecordRecoverableProcessor, throw an exception on every number divisible by 4
@@ -74,7 +76,7 @@ public class KafkaStreamsRecoverableSample {
                         },
                         (uuidIntegerRecord, e) -> {
                             System.out.println("Custom Error Logged");
-                            dltPublishingContext.getStreamBridge().send("custom-out",
+                            dltPublishingContext.getStreamBridge().send("error-custom-out",
                                     format("%s:%s", uuidIntegerRecord, e.getMessage()));
                         }
                 ));
