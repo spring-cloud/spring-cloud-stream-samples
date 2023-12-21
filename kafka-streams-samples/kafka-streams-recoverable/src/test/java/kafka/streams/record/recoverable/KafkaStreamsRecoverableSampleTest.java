@@ -4,9 +4,9 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -17,7 +17,6 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +24,7 @@ import java.util.Map;
 
 import static java.lang.Thread.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @EmbeddedKafka(
         partitions = 1,
@@ -43,7 +40,7 @@ public class KafkaStreamsRecoverableSampleTest {
     private static Consumer<String, String> consumer;
 
     @AfterEach
-    public static void tearDown() {
+    public void tearDown() {
         consumer.close();
         System.clearProperty("spring.cloud.stream.kafka.streams.binder.brokers");
     }
@@ -138,7 +135,7 @@ public class KafkaStreamsRecoverableSampleTest {
     }
 
     void validateErrorCustomOut(List<ConsumerRecord<String, String>> records) {
-        assertTrue(records.get(0).value().contains("value=4"));
-        assertTrue(records.get(0).value().contains("Something went wrong, Error"));
+        Assertions.assertTrue(records.get(0).value().contains("value=4"));
+        Assertions.assertTrue(records.get(0).value().contains("Something went wrong, Error"));
     }
 }
