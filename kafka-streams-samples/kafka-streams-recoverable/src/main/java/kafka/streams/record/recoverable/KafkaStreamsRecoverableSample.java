@@ -24,7 +24,6 @@ import static java.lang.String.format;
 /**
  * @author Steven Gantz
  */
-@EnableKafka
 @SpringBootApplication
 public class KafkaStreamsRecoverableSample {
 
