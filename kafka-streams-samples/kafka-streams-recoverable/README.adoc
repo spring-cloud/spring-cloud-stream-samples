@@ -1,0 +1,26 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+This is a demonstration of utilizing the RecordRecoverableProcessor and DltAwareProcessor.
+
+The example increments a java.util.Suppler integer by 1 every 2 seconds, and publishes
+to the `topic-in` kafka topic.
+
+There's then two processors, both of which are listening on `topic-in`.
+
+The first processor throws an exception in the workflow when the integer is divisible by 5.
+The second processor throws an exception in the workflow when the integer is divisible by 4.
+
+This sample uses lambda expressions and thus requires Java 8+.
+
+=== Running the app:
+
+`docker-compose up -d`
+
+Go to the root of the repository and do: `./mvnw clean package`
+
+`java -jar target/kafka-streams-recoverable-0.0.1-SNAPSHOT.jar`
+
+The Supplier will automatically publish messages and the consumers
+will write messages to the application log.

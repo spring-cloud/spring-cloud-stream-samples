@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    function:
+      definition: dataSupplier;defaultRecovererProcessor;customRecovererProcessor
+    stream:
+      bindings:
+        dataSupplier-out-0:
+          destination: topic-in
+
+        defaultRecovererProcessor-in-0:
+          destination: topic-in
+          group: defaultRecovererProcessor
+        defaultRecovererProcessor-out-0:
+          destination: default-out
+
+        customRecovererProcessor-in-0:
+          destination: topic-in
+          group: customRecovererProcessor
+        customRecovererProcessor-out-0:
+          destination: custom-out
+      kafka:
+        binder:
+          brokers: localhost:9092
+config:
+  enableSupplier: true
