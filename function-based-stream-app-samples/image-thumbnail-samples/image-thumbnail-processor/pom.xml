@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>6.0.16</version>
+			<version>6.1.14</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
